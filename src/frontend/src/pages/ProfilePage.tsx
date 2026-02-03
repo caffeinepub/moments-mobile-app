@@ -32,7 +32,6 @@ function ProfilePage() {
       setToastMessage('Copied to clipboard');
       setShowToast(true);
     } catch (err) {
-      // Fallback for browsers that don't support clipboard API
       const textArea = document.createElement('textarea');
       textArea.value = profile.inviteCode;
       textArea.style.position = 'fixed';
@@ -66,6 +65,10 @@ function ProfilePage() {
     navigate({ to: '/home' });
   };
 
+  const handleSettingsClick = () => {
+    navigate({ to: '/settings' });
+  };
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black overflow-hidden">
       <div
@@ -87,7 +90,13 @@ function ProfilePage() {
           >
             Profile
           </h1>
-          <div className="w-10"></div>
+          <button
+            onClick={handleSettingsClick}
+            className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-200 transition-colors"
+            aria-label="Settings"
+          >
+            <i className="fa fa-cog text-gray-700 text-xl"></i>
+          </button>
         </header>
 
         {/* Scrollable content */}

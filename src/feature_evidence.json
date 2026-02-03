@@ -2,10 +2,12 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-remove-the-entire-home-screen-promotional-card-section-shown-in-the-provided-screenshot-the-orange-card-with-the-title-plan-meaningful-moments-the-add-your-moment-button-and-the-character-image-this-removal-must-be-implemented-by-deleting-the-corresponding-promo-card-block-in-frontend-src-pages-homescreen-tsx-so-that-the-section-is-no-longer-rendered-on-home",
-      "featureTitle": "Remove the entire Home screen promotional card section shown in the provided screenshot (the orange card with the title “Plan Meaningful Moments”, the “Add Your Moment” button, and the character image). This removal must be implemented by deleting the corresponding promo-card block in `frontend/src/pages/HomeScreen.tsx` so that the section is no longer rendered on Home.",
+      "featureId": "feature-add-subtle-motion-to-the-vault-list-screen-to-reduce-the-static-bland-feel-animate-month-sections-and-photo-cards-on-initial-render-and-when-they-enter-the-viewport-e-g-fade-slide-up-slight-scale-and-add-a-gentle-pressed-tap-micro-interaction-on-card-click",
+      "featureTitle": "Add subtle motion to the Vault list screen to reduce the static/bland feel: animate month sections and photo cards on initial render and when they enter the viewport (e.g., fade/slide-up + slight scale), and add a gentle pressed/tap micro-interaction on card click.",
       "files": [
-        "frontend/src/pages/HomeScreen.tsx"
+        "frontend/src/hooks/useInView.ts",
+        "frontend/src/index.css",
+        "frontend/src/pages/VaultPage.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -23,12 +25,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-fetch-the-user-s-location-automatically-via-browser-geolocation-permission-based-by-default-and-persist-the-result-into-the-existing-local-first-user-profile-so-it-appears-wherever-profile-location-is-displayed-e-g-the-moments-image-card-header-ensure-denial-unavailability-is-handled-gracefully-without-breaking-the-ui",
-      "featureTitle": "Fetch the user’s location automatically via browser geolocation (permission-based) by default, and persist the result into the existing local-first user profile so it appears wherever `profile.location` is displayed (e.g., the Moments image card header). Ensure denial/unavailability is handled gracefully without breaking the UI.",
+      "featureId": "feature-redesign-vault-month-card-thumbnails-so-they-look-consistent-and-intentional-apply-the-app-s-glassmorphic-card-styling-standard-to-the-thumbnail-tiles-or-a-clearly-improved-equivalent-refine-spacing-radius-shadows-and-ensure-the-grid-reads-cleanly-on-mobile",
+      "featureTitle": "Redesign Vault month card thumbnails so they look consistent and intentional: apply the app’s glassmorphic card styling standard to the thumbnail tiles (or a clearly improved equivalent), refine spacing/radius/shadows, and ensure the grid reads cleanly on mobile.",
       "files": [
-        "frontend/src/hooks/useAutoGeolocation.ts",
-        "frontend/src/hooks/useProfile.ts",
-        "frontend/src/utils/profileStorage.ts"
+        "frontend/src/index.css",
+        "frontend/src/pages/VaultPage.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -46,12 +47,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-make-glassmorphic-styling-the-new-visual-standard-for-cards-across-the-app-excluding-buttons-implement-a-reusable-glass-card-style-css-utility-class-and-update-existing-card-containers-that-currently-render-as-solid-white-cards-e-g-frontend-src-components-momentsimagecard-tsx-outer-card-and-the-home-empty-state-card-in-frontend-src-pages-homescreen-tsx-to-use-the-glassmorphic-style-while-keeping-all-button-styles-unchanged",
-      "featureTitle": "Make glassmorphic styling the new visual standard for cards across the app (excluding buttons). Implement a reusable glass card style (CSS utility/class) and update existing card containers that currently render as solid white cards (e.g., `frontend/src/components/MomentsImageCard.tsx` outer card and the Home empty-state card in `frontend/src/pages/HomeScreen.tsx`) to use the glassmorphic style while keeping all button styles unchanged.",
+      "featureId": "feature-ensure-vault-photos-render-as-true-square-thumbnails-across-all-supported-browsers-by-removing-reliance-on-tailwind-s-aspect-square-class-which-may-not-be-enabled-and-enforcing-a-square-layout-via-explicit-css-inline-aspect-ratio-fallback-keep-object-fit-cover-for-thumbnails-so-the-square-crop-is-consistent",
+      "featureTitle": "Ensure Vault photos render as true square thumbnails across all supported browsers by removing reliance on Tailwind’s `aspect-square` class (which may not be enabled) and enforcing a square layout via explicit CSS/inline aspect-ratio fallback. Keep `object-fit: cover` for thumbnails so the square crop is consistent.",
       "files": [
-        "frontend/src/components/MomentsImageCard.tsx",
         "frontend/src/index.css",
-        "frontend/src/pages/HomeScreen.tsx"
+        "frontend/src/pages/VaultPage.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -65,6 +65,52 @@
       ],
       "testIds": [
         "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-improve-the-enlarged-moment-viewing-experience-from-vault-thumbnails-so-the-user-always-gets-an-enlarged-clear-view-when-a-thumbnail-is-tapped-open-a-full-screen-view-that-prioritizes-the-image-high-contrast-background-no-unintended-compression-and-provide-an-obvious-close-back-control-ensure-the-route-vault-momentid-or-an-equivalent-modal-overlay-reliably-shows-the-full-image-and-feels-crisp",
+      "featureTitle": "Improve the enlarged moment viewing experience from Vault thumbnails so the user always gets an enlarged, clear view: when a thumbnail is tapped, open a full-screen view that prioritizes the image (high contrast background, no unintended compression), and provide an obvious close/back control. Ensure the route `/vault/$momentId` (or an equivalent modal overlay) reliably shows the full image and feels “crisp”.",
+      "files": [
+        "frontend/src/index.css",
+        "frontend/src/pages/VaultMomentPage.tsx",
+        "frontend/src/pages/VaultPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "blob-storage@4.0.0",
+        "authorization@4.0.0",
+        "camera@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-apply-the-same-subtle-pulsating-animation-used-for-the-camera-icon-button-camerapulse-camera-pulse-to-all-buttons-across-the-app-including-icon-only-buttons-like-back-arrows-while-ensuring-disabled-buttons-do-not-pulse-provide-a-safe-opt-out-mechanism-e-g-a-no-pulse-class-for-any-button-where-pulsing-harms-usability",
+      "featureTitle": "Apply the same subtle pulsating animation used for the camera icon/button (`cameraPulse` / `.camera-pulse`) to all buttons across the app (including icon-only buttons like back arrows), while ensuring disabled buttons do not pulse. Provide a safe opt-out mechanism (e.g., a `no-pulse` class) for any button where pulsing harms usability.",
+      "files": [
+        "frontend/src/index.css",
+        "frontend/src/pages/VaultMomentPage.tsx",
+        "frontend/src/pages/VaultPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "blob-storage@4.0.0",
+        "authorization@4.0.0",
+        "camera@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
       ],
       "confidence": "high"
     }

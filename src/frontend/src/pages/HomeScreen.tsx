@@ -23,8 +23,8 @@ function HomeScreen() {
         navigate({ to: '/calendar' });
     };
 
-    const handleMomentsClick = () => {
-        navigate({ to: '/moments' });
+    const handleVaultClick = () => {
+        navigate({ to: '/vault' });
     };
 
     const handleProfileClick = () => {
@@ -44,44 +44,17 @@ function HomeScreen() {
                 <div className="flex-1 overflow-y-auto pb-24">
                     {/* Header Navigation */}
                     <header className="relative w-full px-8 pt-8 pb-4">
-                        <div className="flex items-center justify-between">
-                            {/* Left: Profile Button */}
-                            <button 
-                                onClick={handleProfileClick}
-                                className="flex items-center justify-center w-12 h-12 rounded-full border-2 border-gray-300 bg-gray-100 hover:opacity-70 transition-opacity overflow-hidden"
-                                aria-label="Profile"
-                            >
-                                {profile.profilePicture ? (
-                                    <img
-                                        src={profile.profilePicture}
-                                        alt="Profile"
-                                        className="w-full h-full object-cover"
-                                    />
-                                ) : (
-                                    <i className="fa fa-user text-gray-400 text-xl"></i>
-                                )}
-                            </button>
-                            
-                            {/* Center: Logo Image - significantly enlarged */}
-                            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                                <img 
-                                    src="/assets/Gel Polish Manicure (1).png" 
-                                    alt="Moments Logo"
-                                    className="h-16 w-auto object-contain"
-                                />
-                            </div>
-                            
-                            {/* Right: Notification Icon */}
-                            <button 
-                                className="flex items-center justify-center w-12 h-12 rounded-full border-2 border-gray-300 bg-gray-100 hover:opacity-70 transition-opacity"
-                                aria-label="Notifications"
-                            >
-                                <i className="fa fa-bell text-gray-400 text-xl"></i>
-                            </button>
+                        <div className="flex items-center justify-center">
+                            {/* Center: Logo Image - increased size */}
+                            <img 
+                                src="/assets/Gel Polish Manicure (1).png" 
+                                alt="Moments Logo"
+                                className="h-24 w-auto object-contain"
+                            />
                         </div>
                     </header>
 
-                    {/* Search Bar - narrower with reduced padding, pushed up closer to header */}
+                    {/* Search Bar */}
                     <div className="px-12 mt-3">
                         <div 
                             className="relative w-full flex items-center gap-2.5 px-4 py-2.5"
@@ -92,10 +65,7 @@ function HomeScreen() {
                                 boxShadow: '0 2px 6px rgba(0, 0, 0, 0.06)'
                             }}
                         >
-                            {/* Search Icon */}
                             <i className="fa fa-search text-gray-400 text-sm"></i>
-                            
-                            {/* Search Input */}
                             <input
                                 type="text"
                                 placeholder="Search for family or friends.."
@@ -117,11 +87,14 @@ function HomeScreen() {
                                 displayName={profile.displayName}
                                 location={profile.location}
                                 timestamp={formatRelativeTime(mostRecent.timestamp)}
+                                who={mostRecent.who}
+                                reflection={mostRecent.reflection}
+                                feeling={mostRecent.feeling}
                             />
                         ) : (
                             <div className="px-10">
                                 <div
-                                    className="glass-card w-full p-8 text-center"
+                                    className="home-empty-glass-card w-full p-8 text-center"
                                     style={{
                                         borderRadius: '20px',
                                     }}
@@ -148,7 +121,7 @@ function HomeScreen() {
                     </div>
                 </div>
 
-                {/* Curved Floating Footer Navigation Menu - slimmer with reduced width and padding */}
+                {/* Curved Floating Footer Navigation Menu */}
                 <footer 
                     className="fixed left-0 right-0 w-full max-w-[340px] mx-auto"
                     style={{
@@ -215,66 +188,66 @@ function HomeScreen() {
                             </span>
                         </button>
 
-                        {/* Camera - yellow button with camera icon */}
+                        {/* Camera - yellow button with camera icon and pulsating animation */}
                         <button 
                             onClick={handleCameraClick}
-                            className="yellow-button-footer"
+                            className="yellow-button-footer camera-pulse"
                             aria-label="Camera"
                         >
                             <i className="fa-solid fa-camera text-black" style={{ fontSize: '20px' }}></i>
                         </button>
 
-                        {/* Moments */}
+                        {/* Vault */}
                         <button 
-                            onClick={handleMomentsClick}
+                            onClick={handleVaultClick}
                             className="flex flex-col items-center justify-center gap-0.5 min-w-[52px] transition-all duration-300 ease-in-out"
-                            aria-label="Moments"
-                            onMouseEnter={() => setHoveredNav('moments')}
+                            aria-label="Vault"
+                            onMouseEnter={() => setHoveredNav('vault')}
                             onMouseLeave={() => setHoveredNav(null)}
                         >
                             <i 
-                                className="fa-regular fa-clipboard-list transition-colors duration-300 ease-in-out"
+                                className="fa-solid fa-box-archive transition-colors duration-300 ease-in-out"
                                 style={{ 
-                                    color: hoveredNav === 'moments' ? '#ffa500' : '#000000',
+                                    color: hoveredNav === 'vault' ? '#ffa500' : '#000000',
                                     fontSize: '15px'
                                 }}
                             ></i>
                             <span 
                                 className="text-xs font-medium transition-colors duration-300 ease-in-out"
                                 style={{ 
-                                    color: hoveredNav === 'moments' ? '#ffa500' : '#000000',
+                                    color: hoveredNav === 'vault' ? '#ffa500' : '#000000',
                                     fontFamily: "'Bricolage Grotesque', sans-serif",
                                     fontSize: '9px'
                                 }}
                             >
-                                Moments
+                                Vault
                             </span>
                         </button>
 
-                        {/* Settings */}
+                        {/* Profile/Settings */}
                         <button 
-                            onClick={handleSettingsClick}
+                            onClick={handleProfileClick}
                             className="flex flex-col items-center justify-center gap-0.5 min-w-[52px] transition-all duration-300 ease-in-out"
-                            aria-label="Settings"
-                            onMouseEnter={() => setHoveredNav('settings')}
+                            aria-label="Profile"
+                            onMouseEnter={() => setHoveredNav('profile')}
                             onMouseLeave={() => setHoveredNav(null)}
                         >
                             <i 
-                                className="fa-solid fa-user-gear transition-colors duration-300 ease-in-out"
+                                className="fa-solid fa-user transition-colors duration-300 ease-in-out"
                                 style={{ 
-                                    color: hoveredNav === 'settings' ? '#ffa500' : '#000000',
+                                    color: hoveredNav === 'profile' ? '#ffa500' : '#000000',
                                     fontSize: '15px'
                                 }}
                             ></i>
                             <span 
                                 className="text-xs font-medium transition-colors duration-300 ease-in-out"
                                 style={{ 
-                                    color: hoveredNav === 'settings' ? '#ffa500' : '#000000',
+                                    color: hoveredNav === 'profile' ? '#ffa500' : '#000000',
                                     fontFamily: "'Bricolage Grotesque', sans-serif",
                                     fontSize: '9px'
                                 }}
                             >
-                                Settings
+                                Profile
                             </span>
                         </button>
                     </nav>

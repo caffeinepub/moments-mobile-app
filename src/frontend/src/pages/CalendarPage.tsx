@@ -84,7 +84,7 @@ function CalendarPage() {
 
   const checkIfDateHasPhotoMoments = (date: Date): boolean => {
     try {
-      const momentsData = localStorage.getItem('momentsPhotos');
+      const momentsData = localStorage.getItem('moments_photos');
       if (!momentsData) return false;
 
       const photos: PhotoMetadata[] = JSON.parse(momentsData);
@@ -216,7 +216,7 @@ function CalendarPage() {
         {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto calendar-scrollbar px-4 py-3">
           {/* Weekly Calendar Strip */}
-          <div className="mb-4">
+          <div className="glass-card rounded-2xl p-4 mb-4">
             {/* Week headers */}
             <div className="grid grid-cols-7 gap-1 mb-2">
               {weekDays.map((day) => (

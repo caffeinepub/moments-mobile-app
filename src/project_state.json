@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 56,
-  "summary": "Moments remains a mobile-first React web app with an onboarding slideshow into auth and core screens. The UI direction now includes making glassmorphic cards the default styling standard across the app (excluding buttons), and adding automatic (permission-based) browser geolocation to fetch a user’s location by default. The previously added Home 'completed/verified' section referenced in the screenshot is to be removed.",
+  "projectStateVersion": 83,
+  "summary": "Refine Moments into a minimal, behavior-shaping app centered on live→capture→confirm→quiet memory vault (avoid feed/social-media feel). Next steps: redesign the post-camera Save/Confirm screen pixel-by-pixel, collapse navigation into a strict 5-screen architecture, and remove the standalone Moments feed/tab from primary navigation (access memories via calendar/date + reflection/vault instead).",
   "existing_features": [
     {
       "id": "IF-1",
@@ -294,19 +294,6 @@
       "version": 1
     },
     {
-      "id": "IF-27",
-      "title": "Home screen 'Moments image' section component integrated below header/search",
-      "synonyms": [
-        "MomentsImageCard",
-        "Home content extension"
-      ],
-      "description": "Extends the existing Home screen by adding the referenced 'Moments image' section/content below the existing header/search area (via a dedicated MomentsImageCard component) while keeping the rest of the layout/design unchanged.",
-      "reqIds": [
-        "AR-20"
-      ],
-      "version": 1
-    },
-    {
       "id": "IF-28",
       "title": "Inline toast/notification component for lightweight in-app feedback",
       "synonyms": [
@@ -317,26 +304,134 @@
       "version": 1
     },
     {
-      "id": "feature-remove-the-entire-home-screen-promotional-card-section-shown-in-the-provided-screenshot-the-orange-card-with-the-title-plan-meaningful-moments-the-add-your-moment-button-and-the-character-image-this-removal-must-be-implemented-by-deleting-the-corresponding-promo-card-block-in-frontend-src-pages-homescreen-tsx-so-that-the-section-is-no-longer-rendered-on-home",
-      "title": "Remove the entire Home screen promotional card section shown in the provided screenshot (the orange card with the title “Plan Meaningful Moments”, the “Add Your Moment” button, and the character image). This removal must be implemented by deleting the corresponding promo-card block in `frontend/src/pages/HomeScreen.tsx` so that the section is no longer rendered on Home.",
+      "id": "IF-29",
+      "title": "Automatic browser geolocation hook for default user location",
+      "synonyms": [
+        "useAutoGeolocation",
+        "permission-based location retrieval"
+      ],
+      "description": "Adds a reusable `useAutoGeolocation` hook that automatically requests browser geolocation (permission-based) to fetch the user’s location by default and exposes loading/success/error/denied states so UI can handle unavailable/denied scenarios gracefully.",
+      "reqIds": [
+        "AR-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "IF-30",
+      "title": "Glassmorphic card styling adopted as default card standard (excluding buttons)",
+      "synonyms": [
+        "Glass card style",
+        "Default glassmorphism"
+      ],
+      "description": "Updates the app’s card styling approach so that glassmorphic cards are the default visual standard across the UI (excluding buttons), aligning core surfaces to the new glass design direction.",
+      "reqIds": [
+        "AR-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "IF-31",
+      "title": "Post-camera Save/Confirm screen for captured moments",
+      "synonyms": [
+        "SaveMomentConfirmPage",
+        "Save Moment confirmation UI"
+      ],
+      "description": "Adds a dedicated post-capture confirmation screen to review the photo and confirm/save the moment (minimal confirm step rather than immediate return to Home), aligning the capture→confirm flow.",
+      "reqIds": [
+        "AR-33"
+      ],
+      "version": 1
+    },
+    {
+      "id": "IF-32",
+      "title": "Vault screens for quiet memory access (vault list + single-moment view)",
+      "synonyms": [
+        "VaultPage",
+        "VaultMomentPage",
+        "Memory vault"
+      ],
+      "description": "Introduces Vault browsing surfaces (a vault page and a per-moment vault detail page) to access saved memories in a non-feed, private-vault style UI.",
+      "reqIds": [
+        "AR-32"
+      ],
+      "version": 1
+    },
+    {
+      "id": "IF-33",
+      "title": "Pending moment draft persistence utility for capture→confirm flow",
+      "synonyms": [
+        "pendingMomentDraftStorage",
+        "pending draft storage"
+      ],
+      "description": "Adds a local persistence utility to store/retrieve an in-progress (pending) moment draft between capture and confirmation steps, improving reliability of the capture→confirm→save workflow.",
+      "reqIds": [
+        "AR-33"
+      ],
+      "version": 1
+    },
+    {
+      "id": "IF-34",
+      "title": "Post-moment emotional check-in page",
+      "synonyms": [
+        "MomentFeelingCheckPage",
+        "How did this feel check-in"
+      ],
+      "description": "Adds a lightweight post-moment emotional check-in screen to capture a simple feeling response after completing/saving a moment.",
+      "reqIds": [
+        "AR-27"
+      ],
+      "version": 1
+    },
+    {
+      "id": "IF-35",
+      "title": "Centralized Moments photos hook and storage utilities",
+      "synonyms": [
+        "useMomentsPhotos",
+        "momentsPhotosStorage"
+      ],
+      "description": "Introduces a dedicated hook and storage helpers to load/save Moments photos consistently, reducing duplication and improving cross-page access to saved moments.",
+      "reqIds": [
+        "AR-32"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-subtle-motion-to-the-vault-list-screen-to-reduce-the-static-bland-feel-animate-month-sections-and-photo-cards-on-initial-render-and-when-they-enter-the-viewport-e-g-fade-slide-up-slight-scale-and-add-a-gentle-pressed-tap-micro-interaction-on-card-click",
+      "title": "Add subtle motion to the Vault list screen to reduce the static/bland feel: animate month sections and photo cards on initial render and when they enter the viewport (e.g., fade/slide-up + slight scale), and add a gentle pressed/tap micro-interaction on card click.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-fetch-the-user-s-location-automatically-via-browser-geolocation-permission-based-by-default-and-persist-the-result-into-the-existing-local-first-user-profile-so-it-appears-wherever-profile-location-is-displayed-e-g-the-moments-image-card-header-ensure-denial-unavailability-is-handled-gracefully-without-breaking-the-ui",
-      "title": "Fetch the user’s location automatically via browser geolocation (permission-based) by default, and persist the result into the existing local-first user profile so it appears wherever `profile.location` is displayed (e.g., the Moments image card header). Ensure denial/unavailability is handled gracefully without breaking the UI.",
+      "id": "feature-redesign-vault-month-card-thumbnails-so-they-look-consistent-and-intentional-apply-the-app-s-glassmorphic-card-styling-standard-to-the-thumbnail-tiles-or-a-clearly-improved-equivalent-refine-spacing-radius-shadows-and-ensure-the-grid-reads-cleanly-on-mobile",
+      "title": "Redesign Vault month card thumbnails so they look consistent and intentional: apply the app’s glassmorphic card styling standard to the thumbnail tiles (or a clearly improved equivalent), refine spacing/radius/shadows, and ensure the grid reads cleanly on mobile.",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-make-glassmorphic-styling-the-new-visual-standard-for-cards-across-the-app-excluding-buttons-implement-a-reusable-glass-card-style-css-utility-class-and-update-existing-card-containers-that-currently-render-as-solid-white-cards-e-g-frontend-src-components-momentsimagecard-tsx-outer-card-and-the-home-empty-state-card-in-frontend-src-pages-homescreen-tsx-to-use-the-glassmorphic-style-while-keeping-all-button-styles-unchanged",
-      "title": "Make glassmorphic styling the new visual standard for cards across the app (excluding buttons). Implement a reusable glass card style (CSS utility/class) and update existing card containers that currently render as solid white cards (e.g., `frontend/src/components/MomentsImageCard.tsx` outer card and the Home empty-state card in `frontend/src/pages/HomeScreen.tsx`) to use the glassmorphic style while keeping all button styles unchanged.",
+      "id": "feature-ensure-vault-photos-render-as-true-square-thumbnails-across-all-supported-browsers-by-removing-reliance-on-tailwind-s-aspect-square-class-which-may-not-be-enabled-and-enforcing-a-square-layout-via-explicit-css-inline-aspect-ratio-fallback-keep-object-fit-cover-for-thumbnails-so-the-square-crop-is-consistent",
+      "title": "Ensure Vault photos render as true square thumbnails across all supported browsers by removing reliance on Tailwind’s `aspect-square` class (which may not be enabled) and enforcing a square layout via explicit CSS/inline aspect-ratio fallback. Keep `object-fit: cover` for thumbnails so the square crop is consistent.",
       "reqIds": [
         "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-improve-the-enlarged-moment-viewing-experience-from-vault-thumbnails-so-the-user-always-gets-an-enlarged-clear-view-when-a-thumbnail-is-tapped-open-a-full-screen-view-that-prioritizes-the-image-high-contrast-background-no-unintended-compression-and-provide-an-obvious-close-back-control-ensure-the-route-vault-momentid-or-an-equivalent-modal-overlay-reliably-shows-the-full-image-and-feels-crisp",
+      "title": "Improve the enlarged moment viewing experience from Vault thumbnails so the user always gets an enlarged, clear view: when a thumbnail is tapped, open a full-screen view that prioritizes the image (high contrast background, no unintended compression), and provide an obvious close/back control. Ensure the route `/vault/$momentId` (or an equivalent modal overlay) reliably shows the full image and feels “crisp”.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-the-same-subtle-pulsating-animation-used-for-the-camera-icon-button-camerapulse-camera-pulse-to-all-buttons-across-the-app-including-icon-only-buttons-like-back-arrows-while-ensuring-disabled-buttons-do-not-pulse-provide-a-safe-opt-out-mechanism-e-g-a-no-pulse-class-for-any-button-where-pulsing-harms-usability",
+      "title": "Apply the same subtle pulsating animation used for the camera icon/button (`cameraPulse` / `.camera-pulse`) to all buttons across the app (including icon-only buttons like back arrows), while ensuring disabled buttons do not pulse. Provide a safe opt-out mechanism (e.g., a `no-pulse` class) for any button where pulsing harms usability.",
+      "reqIds": [
+        "REQ-5"
       ],
       "version": 1
     }
@@ -445,25 +540,85 @@
       "status": "pending"
     },
     {
-      "id": "AR-21",
-      "summary": "Home screen: remove the entire newly added section that was marked as completed",
+      "id": "AR-24",
+      "summary": "De-emphasize/limit any feed-style UI to avoid a social-media feel (reduce infinite scrolling surfaces; make memories feel like a private vault/timeline instead of a public feed)",
       "reqIds": [],
       "status": "pending"
     },
     {
-      "id": "AR-22",
-      "summary": "Profile/Home: fetch and use user location by default (automatic location retrieval)",
+      "id": "AR-25",
+      "summary": "Add 'connection gap' insights (derived from user behavior): e.g., time since last moment with key relationships, planned vs completed count, gentle awareness without guilt",
       "reqIds": [],
       "status": "pending"
     },
     {
-      "id": "AR-23",
-      "summary": "UI restyle: replace white cards with a glassmorphic card style",
+      "id": "AR-26",
+      "summary": "Add a default weekly 'anchor moment' (one recurring planned moment users can customize) to create rhythm with minimal setup",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-28",
+      "summary": "Add monthly reflection/recap screen (quiet minimal recap of 3–5 memories + simple prompt) instead of heavy gamification",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-29",
+      "summary": "Refine Moment Ideas to be situational/contextual (time-of-day, time available, who hasn't been seen recently) while keeping UI minimal",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-30",
+      "summary": "Simplify Relationship Selector UX (limit choices up-front and progressively reveal more) to reduce overwhelm and keep the flow WHO→WHAT→WHEN fast",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-31",
+      "summary": "Progress tracker redesign to be more human and less gamified (connected-with avatars, last meaningful moment highlight, gentle month-over-month comparison; avoid points/streak obsession)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-34",
+      "summary": "Collapse/simplify the app into a 5-screen maximum architecture aligned to capture→confirm→vault (minimal navigation, reduced cognitive load)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-35",
+      "summary": "Decide and implement which primary tab to remove/de-emphasize to eliminate feed-like browsing (e.g., remove/hidden Moments tab; access memories via calendar/reflection instead)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-36",
+      "summary": "Vault UX polish: add subtle motion/animation so Vault doesn’t feel static/bland",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-37",
+      "summary": "Vault cards redesign: improve card look/spacing; ensure photos render as square thumbnails",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-38",
+      "summary": "Vault moment detail: tapping a Vault card should open an enlarged, clear photo view (non-feed)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-39",
+      "summary": "Button animation standard: apply the same subtle pulsating motion used on the camera button to all buttons",
       "reqIds": [],
       "status": "pending"
     }
   ],
-  "architecturalNotes": [
+  "architectural_notes": [
     "Frontend uses React + TanStack Router for client-side routing and TanStack React Query for query caching; `useActor` creates and caches an authenticated/anonymous ICP actor instance keyed by the user principal.",
     "Internet Identity auth is encapsulated in a React Context provider (`InternetIdentityProvider`) using `@dfinity/auth-client`, with delegation validity checks and a 30-day TTL.",
     "Frontend UI is designed as a fixed-size mobile viewport (max 390x844) centered on screen, with Tailwind CSS utility classes and custom CSS animations (slide-in text, card transitions, dot bounces, etc.).",
@@ -480,14 +635,21 @@
     "Calendar planned-moment creation bottom sheet should be ~75% viewport height (not 50%).",
     "Planned-moment Time input UI should be custom: separate hour/minute boxes with +/- steppers and optional direct typing, styled to match reference.",
     "Added shared UI overlay components (e.g., HamburgerMenu, SignInOverlay) to centralize menu/auth prompt presentation across pages rather than duplicating page-level UI patterns.",
-    "Decision: do not remove the Moments tab yet; proceed by building the new Home (post-capture verification) screen and Profile logic/storage alongside the existing app flow.",
-    "Scope clarification: Keep the Moments tab/section for now (do not remove yet); build the new Home screen additions and Profile logic/storage alongside existing navigation.",
     "Added local-first profile persistence utilities (`profileStorage`) and a `useProfile` hook to load/save profile name + image without requiring backend connectivity.",
     "Introduced a reusable `MomentsImageCard` component and integrated it into the Home screen to render the new 'Moments image' section while preserving the existing Home layout.",
     "UI direction: adopt glassmorphic styling as the new default for card components app-wide (excluding buttons).",
-    "Location behavior: use automatic browser geolocation (permission-based) to fetch user location by default; must handle denial/unavailable states gracefully."
+    "Location behavior: use automatic browser geolocation (permission-based) to fetch user location by default; must handle denial/unavailable states gracefully.",
+    "Introduced a `useAutoGeolocation` hook to centralize permission-based browser geolocation retrieval and provide consistent status/error handling across pages/components.",
+    "Product direction: eliminate feed-style Moments browsing (no TikTok-style viewer/music/counters); moments should be accessed contextually (after capture confirmation, by date/calendar, and/or via reflection surfaces) to avoid social-media feel.",
+    "Decision update: remove/de-emphasize the standalone Moments feed/tab from primary navigation to avoid social-media feel; moments should be accessed contextually (post-capture confirmation, by date/calendar, and via monthly reflection/vault surfaces).",
+    "Plan: collapse navigation into a strict 5-screen architecture aligned to live→capture→confirm→remember (no browse-first/feed behavior).",
+    "Plan: redesign the post-camera confirmation screen pixel-by-pixel to be minimal and non-social (photo preview + who + optional 1-sentence + Save; retake as secondary).",
+    "Introduced a pending-moment draft local persistence layer (`pendingMomentDraftStorage`) to support a multi-step capture→confirm flow without losing state between screens.",
+    "Added Vault surfaces (`VaultPage`, `VaultMomentPage`) as a non-feed memory access pattern for saved Moments.",
+    "Added a `useMomentsPhotos` hook + `momentsPhotosStorage` utilities to centralize Moments photo persistence/loading across Camera/Calendar/Vault/other pages.",
+    "Added a lightweight post-moment emotional check-in surface (`MomentFeelingCheckPage`) to capture a simple feeling response after saving a moment."
   ],
-  "knownIssues": [
+  "known_issues": [
     "Environment variable names appear inconsistent/typo-prone in blob storage: `CAFFFEINE_STORAGE_CASHIER_PRINCIPAL` (extra 'F') may not match intended deployment configuration.",
     "Duplicate/competing global CSS files exist (`frontend/src/index.css` and `frontend/index.css`), which can cause confusion or styling inconsistencies depending on build configuration; the app imports `./index.css` from `src/main.tsx` (i.e., `frontend/src/index.css`).",
     "Home screen 'Add Your Moment' promotional button has no click handler (non-functional call-to-action).",
@@ -499,13 +661,14 @@
     "Calendar behavior/functionality has been reported as 'dummy'/non-functional by the user; needs to be backed by real 2026 dates and user data rather than placeholder UI.",
     "Deployments are failing intermittently; user requests redeploy but build/deploy pipeline returns 'Deployment failed'.",
     "Deployment failures persist intermittently (redeploy attempts continue to fail), blocking rapid iteration/testing.",
-    "Internet Identity sign-in reliability issue: sign-in/redirect does not work consistently across all browsers and may not handle already-signed-in users (reauth/continue) correctly."
+    "Internet Identity sign-in reliability issue: sign-in/redirect does not work consistently across all browsers and may not handle already-signed-in users (reauth/continue) correctly.",
+    "UI consistency: some card/container surfaces are still rendered as white instead of using the app-wide glassmorphic card styling standard (excluding buttons).",
+    "Vault UX issue: Vault feels bland/static; cards look odd and tapping a card does not open an enlarged/clear photo view.",
+    "Vault media rendering issue: photos should be square but currently are not consistently square."
   ],
-  "isFixRequest": false,
+  "isFixRequest": true,
   "gameProjectType": "none",
   "projectName": "Moments Mobile App",
-  "clarification_mode": "pro",
-  "clarification_rounds": 0,
-  "requiresBackendChanges": false,
-  "requiresFrontendChanges": true
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
 }

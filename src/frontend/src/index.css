@@ -83,6 +83,15 @@ body {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
+/* Home screen empty state card - transparent navbar-like glass */
+.home-empty-glass-card {
+  background: transparent;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid #d0d0d0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
 /* ============================================
    SPLASH SCREEN ANIMATIONS
    ============================================ */
@@ -395,6 +404,34 @@ body {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
+}
+
+/* ============================================
+   GLOBAL BUTTON PULSE ANIMATION
+   ============================================ */
+
+/* Pulsating animation keyframes */
+@keyframes cameraPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* 
+ * Global pulse animation applied to all buttons by default.
+ * Opt-out: Add class "no-pulse" to any button that should not pulse.
+ * Disabled buttons are automatically excluded.
+ */
+button:not(:disabled):not(.no-pulse) {
+  animation: cameraPulse 2s ease-in-out infinite;
+}
+
+/* Explicit class for camera button (legacy support) */
+.camera-pulse {
+  animation: cameraPulse 2s ease-in-out infinite;
 }
 
 /* Contextual CTA button - themed per slide/page */
@@ -876,4 +913,143 @@ body {
 
 .with-who-pill-selected:hover {
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================
+   VAULT PAGE ANIMATIONS & STYLES
+   ============================================ */
+
+/* Vault month section entrance animation */
+.vault-month-section {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.vault-month-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Vault thumbnail tile styling with glassmorphic surface */
+.vault-thumbnail-tile {
+  position: relative;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  opacity: 0;
+  transform: scale(0.95);
+  animation: vaultTileEnter 0.4s ease-out forwards;
+}
+
+@keyframes vaultTileEnter {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.vault-thumbnail-tile:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.vault-thumbnail-tile:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Square thumbnail wrapper - forces 1:1 aspect ratio */
+.vault-thumbnail-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+
+/* Fallback for browsers without aspect-ratio support */
+@supports not (aspect-ratio: 1 / 1) {
+  .vault-thumbnail-wrapper::before {
+    content: '';
+    display: block;
+    padding-top: 100%;
+  }
+  
+  .vault-thumbnail-wrapper > img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* Vault thumbnail image styling */
+.vault-thumbnail-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* ============================================
+   VAULT ENLARGED VIEW STYLES
+   ============================================ */
+
+/* Vault viewer backdrop - high contrast black */
+.vault-viewer-backdrop {
+  background: #000000;
+  animation: vaultBackdropFadeIn 0.3s ease-out forwards;
+}
+
+@keyframes vaultBackdropFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Vault close button - prominent and accessible */
+.vault-close-button {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.vault-close-button:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* Vault enlarged image - crisp full-screen display */
+.vault-enlarged-image {
+  max-width: 100%;
+  max-height: 85vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  animation: vaultImageZoomIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes vaultImageZoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

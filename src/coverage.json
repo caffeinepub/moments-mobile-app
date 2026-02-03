@@ -1,54 +1,84 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-03T16:45:30.192Z",
+  "generatedAt": "2026-02-03T21:49:31.979Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 3,
-    "implemented": 3,
+    "total": 5,
+    "implemented": 5,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Remove the entire Home screen promotional card section shown in the provided screenshot (the orange card with the title “Plan Meaningful Moments”, the “Add Your Moment” button, and the character image). This removal must be implemented by deleting the corresponding promo-card block in `frontend/src/pages/HomeScreen.tsx` so that the section is no longer rendered on Home.",
+        "summary": "Add subtle motion to the Vault list screen to reduce the static/bland feel: animate month sections and photo cards on initial render and when they enter the viewport (e.g., fade/slide-up + slight scale), and add a gentle pressed/tap micro-interaction on card click.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/HomeScreen.tsx"
+          "frontend/src/hooks/useInView.ts",
+          "frontend/src/pages/VaultPage.tsx",
+          "frontend/src/index.css"
         ],
         "matchedFiles": [
-          "frontend/src/pages/HomeScreen.tsx"
+          "frontend/src/hooks/useInView.ts",
+          "frontend/src/pages/VaultPage.tsx",
+          "frontend/src/index.css"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Fetch the user’s location automatically via browser geolocation (permission-based) by default, and persist the result into the existing local-first user profile so it appears wherever `profile.location` is displayed (e.g., the Moments image card header). Ensure denial/unavailability is handled gracefully without breaking the UI.",
+        "summary": "Redesign Vault month card thumbnails so they look consistent and intentional: apply the app’s glassmorphic card styling standard to the thumbnail tiles (or a clearly improved equivalent), refine spacing/radius/shadows, and ensure the grid reads cleanly on mobile.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useAutoGeolocation.ts",
-          "frontend/src/hooks/useProfile.ts",
-          "frontend/src/utils/profileStorage.ts"
+          "frontend/src/pages/VaultPage.tsx",
+          "frontend/src/index.css"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useAutoGeolocation.ts",
-          "frontend/src/hooks/useProfile.ts",
-          "frontend/src/utils/profileStorage.ts"
+          "frontend/src/pages/VaultPage.tsx",
+          "frontend/src/index.css"
         ]
       },
       {
         "id": "REQ-3",
-        "summary": "Make glassmorphic styling the new visual standard for cards across the app (excluding buttons). Implement a reusable glass card style (CSS utility/class) and update existing card containers that currently render as solid white cards (e.g., `frontend/src/components/MomentsImageCard.tsx` outer card and the Home empty-state card in `frontend/src/pages/HomeScreen.tsx`) to use the glassmorphic style while keeping all button styles unchanged.",
+        "summary": "Ensure Vault photos render as true square thumbnails across all supported browsers by removing reliance on Tailwind’s `aspect-square` class (which may not be enabled) and enforcing a square layout via explicit CSS/inline aspect-ratio fallback. Keep `object-fit: cover` for thumbnails so the square crop is consistent.",
         "status": "implemented",
         "plannedFiles": [
           "frontend/src/index.css",
-          "frontend/src/components/MomentsImageCard.tsx",
-          "frontend/src/pages/HomeScreen.tsx"
+          "frontend/src/pages/VaultPage.tsx"
         ],
         "matchedFiles": [
           "frontend/src/index.css",
-          "frontend/src/components/MomentsImageCard.tsx",
-          "frontend/src/pages/HomeScreen.tsx"
+          "frontend/src/pages/VaultPage.tsx"
+        ]
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Improve the enlarged moment viewing experience from Vault thumbnails so the user always gets an enlarged, clear view: when a thumbnail is tapped, open a full-screen view that prioritizes the image (high contrast background, no unintended compression), and provide an obvious close/back control. Ensure the route `/vault/$momentId` (or an equivalent modal overlay) reliably shows the full image and feels “crisp”.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/VaultPage.tsx",
+          "frontend/src/pages/VaultMomentPage.tsx",
+          "frontend/src/index.css"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/VaultPage.tsx",
+          "frontend/src/pages/VaultMomentPage.tsx",
+          "frontend/src/index.css"
+        ]
+      },
+      {
+        "id": "REQ-5",
+        "summary": "Apply the same subtle pulsating animation used for the camera icon/button (`cameraPulse` / `.camera-pulse`) to all buttons across the app (including icon-only buttons like back arrows), while ensuring disabled buttons do not pulse. Provide a safe opt-out mechanism (e.g., a `no-pulse` class) for any button where pulsing harms usability.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/index.css",
+          "frontend/src/pages/VaultPage.tsx",
+          "frontend/src/pages/VaultMomentPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/index.css",
+          "frontend/src/pages/VaultPage.tsx",
+          "frontend/src/pages/VaultMomentPage.tsx"
         ]
       }
     ]
@@ -58,12 +88,10 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/MomentsImageCard.tsx",
-    "frontend/src/hooks/useAutoGeolocation.ts",
-    "frontend/src/hooks/useProfile.ts",
+    "frontend/src/hooks/useInView.ts",
     "frontend/src/index.css",
-    "frontend/src/pages/HomeScreen.tsx",
-    "frontend/src/utils/profileStorage.ts",
+    "frontend/src/pages/VaultMomentPage.tsx",
+    "frontend/src/pages/VaultPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

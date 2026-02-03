@@ -1,72 +1,122 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Home promo removal, auto geolocation persistence, and glassmorphic card standard",
+  "title": "Vault UX polish: motion, square thumbnails, crisp full-screen view, and global button pulse",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Remove the Home promotional card block so it no longer renders and leaves no layout gap.",
+      "summary": "Add subtle entrance/scroll motion for month sections and photo cards on the Vault list, plus a pressed/tap micro-interaction on thumbnail click.",
       "acceptanceCriteria": [
-        "On the Home screen, the orange promo card with the “Plan Meaningful Moments” heading and “Add Your Moment” button no longer appears.",
-        "No empty spacing or layout gap remains where the removed promo card previously rendered."
+        "When opening /vault, month headers and card grids animate in subtly (no jarring bounce).",
+        "Tapping a thumbnail provides immediate visual feedback (pressed/scale-down) before navigation."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/HomeScreen.tsx",
+          "path": "frontend/src/hooks/useInView.ts",
+          "operation": "create",
+          "description": "Add a lightweight IntersectionObserver-based hook to detect when a month section or thumbnail card enters the viewport so Vault can trigger subtle fade/slide/scale-in animations."
+        },
+        {
+          "path": "frontend/src/pages/VaultPage.tsx",
           "operation": "modify",
-          "description": "Delete the promotional card JSX block (the orange promo card section) so it is no longer rendered, and adjust surrounding spacing/margins so no visual gap remains."
+          "description": "Apply initial-render and in-viewport entrance animations to each month group and to thumbnail tiles using the in-view hook; add a pressed/tap micro-interaction (scale-down + quick transition) on thumbnail button interaction prior to navigation."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add Vault-specific motion classes/keyframes for subtle fade/slide-up + slight scale entrance (for month headers/groups and thumbnail tiles), and a reusable pressed/tap interaction class for card buttons."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Automatically request browser geolocation when profile.location is not set and persist the resulting coordinates into the existing local-first profile, while handling denial/unavailability gracefully.",
+      "summary": "Redesign Vault thumbnails to use consistent glassmorphic tile styling with refined spacing/radius/shadows and a clean 3-column mobile grid.",
       "acceptanceCriteria": [
-        "On a fresh session (or when location is not yet set), the app requests geolocation permission using the browser geolocation API.",
-        "If permission is granted and coordinates are returned, `profile.location` is automatically updated and persisted (survives reload) using the existing profile storage/update mechanism.",
-        "If permission is denied or geolocation fails/unavailable, the app continues functioning and shows the existing fallback behavior (e.g., “Location not set”) without crashes."
+        "Vault thumbnails have consistent corner radius, spacing, and a cohesive card surface (no mismatched/unstyled tiles).",
+        "The grid remains 3 columns and does not overflow or distort on a 390x844 viewport."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useAutoGeolocation.ts",
-          "operation": "create",
-          "description": "Create a reusable hook that uses the browser geolocation API to request permission and read coordinates when `profile.location` is missing; include a session-level guard (e.g., sessionStorage flag) to avoid repeated prompts within the same session and ensure failures/denials are caught and do not throw."
+          "path": "frontend/src/pages/VaultPage.tsx",
+          "operation": "modify",
+          "description": "Update the thumbnail tile/button structure and Tailwind classes to consistently apply the app’s glassmorphic card surface (e.g., via the existing .glass-card styling), refine padding/inner framing, and ensure the 3-column grid remains stable and readable on mobile."
         },
         {
-          "path": "frontend/src/hooks/useProfile.ts",
+          "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "Integrate automatic geolocation: when the loaded local-first profile has no `location`, invoke the new geolocation hook and persist the returned coordinates by calling the existing `updateProfile` / `saveProfile` mechanism; ensure UI state updates without breaking if geolocation is unsupported/denied."
-        },
-        {
-          "path": "frontend/src/utils/profileStorage.ts",
-          "operation": "modify",
-          "description": "If needed for robustness, extend local-first profile persistence helpers to support any additional non-nullable fields used by the auto-geolocation flow (while keeping `location` as the display field) and ensure save/load remains backward-compatible with existing stored profiles."
+          "description": "Add/adjust Vault thumbnail tile styling helpers (e.g., a dedicated Vault tile class that composes glassmorphic surface + consistent radius/shadow + spacing) to ensure cohesive visuals across months."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Introduce a reusable glassmorphic card style and apply it to existing solid-white card containers (excluding buttons), including MomentsImageCard and Home empty-state card.",
+      "summary": "Force Vault thumbnails to render as true squares without relying on Tailwind’s aspect-square, while preserving object-fit: cover.",
       "acceptanceCriteria": [
-        "Cards that previously used a flat white background now render with a glassmorphic look (semi-transparent fill, backdrop blur, subtle border/highlight, soft shadow) on top of the beige app background.",
-        "Buttons retain their existing styling (e.g., `.yellow-button`, `.yellow-button-small`, `.yellow-button-footer`) and are not converted to glassmorphic styling.",
-        "The Moments image card and the Home “No moments captured yet” empty-state card both visibly reflect the glassmorphic style."
+        "All Vault thumbnails render as perfect squares (1:1) on mobile and desktop browsers.",
+        "Thumbnails use `object-fit: cover` and do not appear stretched."
       ],
       "file_operations": [
         {
           "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "Add a reusable glassmorphic card utility/class (e.g., `.glass-card`) that provides semi-transparent background, backdrop blur, subtle border/highlight, and soft shadow suitable for the beige app background; do not alter existing button classes."
+          "description": "Add a robust square-thumbnail utility (aspect-ratio: 1 / 1 plus a CSS fallback for browsers/environments where needed) that can be applied to Vault thumbnail wrappers without using Tailwind’s aspect-square class."
         },
         {
-          "path": "frontend/src/components/MomentsImageCard.tsx",
+          "path": "frontend/src/pages/VaultPage.tsx",
           "operation": "modify",
-          "description": "Update the outer card container that currently uses a solid white background to use the new reusable glassmorphic card class, keeping existing button/engagement controls unchanged."
+          "description": "Remove reliance on the `aspect-square` class and instead apply the new square-thumbnail styling (or an inline aspectRatio plus fallback wrapper) to guarantee a 1:1 tile layout; keep images set to object-fit: cover."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Ensure tapping a Vault thumbnail always opens a crisp, full-screen (or near full-screen) enlarged image view with an obvious close/back control using the original stored image data.",
+      "acceptanceCriteria": [
+        "Tapping a Vault thumbnail always results in a full-screen (or near full-screen) image view with a clear close/back action.",
+        "The enlarged view uses the original stored image data (not a smaller thumbnail variant).",
+        "The enlarged image is displayed without visible distortion; the user can see it clearly against the background."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/VaultPage.tsx",
+          "operation": "modify",
+          "description": "Confirm thumbnail navigation consistently targets the existing /vault/$momentId route using the moment id (not derived thumbnail data) so the detail view loads the original stored moment image."
         },
         {
-          "path": "frontend/src/pages/HomeScreen.tsx",
+          "path": "frontend/src/pages/VaultMomentPage.tsx",
           "operation": "modify",
-          "description": "Update the Home empty-state card container (shown when there is no most recent moment) to use the new reusable glassmorphic card class instead of a flat white background, without changing any button styling."
+          "description": "Polish the full-screen moment view to prioritize the image (high-contrast background, stable sizing, no unintended container constraints that reduce clarity), ensure the close/back control is obvious and consistently accessible, and keep the image displayed without distortion."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add/adjust styles for the Vault full-screen viewer (e.g., viewer backdrop, close button visibility/affordance, and any crispness-related presentation tweaks) to ensure an enlarged, clear view."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Apply the existing camera pulse animation to all buttons across the app, exclude disabled buttons, and provide a documented opt-out class.",
+      "acceptanceCriteria": [
+        "All clickable buttons visibly pulse with the same rhythm as the camera button.",
+        "Disabled buttons do not pulse.",
+        "At least one opt-out mechanism exists and is documented in code (e.g., `className=\"no-pulse\"`)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Extend the existing `cameraPulse` / `.camera-pulse` animation behavior to apply by default to buttons (including icon-only buttons), while explicitly excluding disabled buttons and any element with a `no-pulse` opt-out class; document the opt-out mechanism in a code comment near the global rule."
+        },
+        {
+          "path": "frontend/src/pages/VaultPage.tsx",
+          "operation": "modify",
+          "description": "Audit Vault buttons (e.g., back arrow, thumbnail buttons) to ensure they inherit the global pulse by default; apply the `no-pulse` class selectively where pulsing harms usability (if any) to demonstrate the opt-out mechanism."
+        },
+        {
+          "path": "frontend/src/pages/VaultMomentPage.tsx",
+          "operation": "modify",
+          "description": "Ensure the enlarged viewer close/back control is treated as a button that pulses when enabled, and apply `no-pulse` only if needed to maintain usability (e.g., if pulse competes with critical viewing focus)."
         }
       ]
     }

@@ -1,4 +1,5 @@
 import React from 'react';
+import { MomentFeeling } from '../utils/momentsPhotosStorage';
 
 interface MomentsImageCardProps {
   imageUrl: string;
@@ -6,6 +7,9 @@ interface MomentsImageCardProps {
   displayName?: string;
   location?: string;
   timestamp: string;
+  who?: string;
+  reflection?: string;
+  feeling?: MomentFeeling;
 }
 
 function MomentsImageCard({
@@ -14,6 +18,9 @@ function MomentsImageCard({
   displayName,
   location,
   timestamp,
+  who,
+  reflection,
+  feeling,
 }: MomentsImageCardProps) {
   return (
     <div className="w-full px-10">
@@ -84,46 +91,51 @@ function MomentsImageCard({
           />
         </div>
 
-        {/* Bottom engagement bar */}
+        {/* Bottom metadata section - quiet and private */}
         <div
-          className="flex items-center justify-between px-4 py-3"
+          className="px-4 py-3 space-y-2"
           style={{
             backgroundColor: '#FFF9E6',
             borderBottomLeftRadius: '20px',
             borderBottomRightRadius: '20px',
           }}
         >
-          <div className="flex items-center gap-4">
-            {/* Heart icon */}
-            <button
-              className="flex items-center gap-1 text-gray-600 hover:text-red-500 transition-colors"
-              aria-label="Like"
+          {/* Who */}
+          {who && (
+            <p
+              className="text-sm text-gray-700"
+              style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
             >
-              <i className="fa-regular fa-heart text-lg"></i>
-            </button>
+              <span className="font-semibold">With:</span> {who}
+            </p>
+          )}
 
-            {/* Comment icon */}
-            <button
-              className="flex items-center gap-1 text-gray-600 hover:text-blue-500 transition-colors"
-              aria-label="Comment"
+          {/* Reflection */}
+          {reflection && (
+            <p
+              className="text-sm text-gray-600 italic"
+              style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
             >
-              <i className="fa-regular fa-comment text-lg"></i>
+              "{reflection}"
+            </p>
+          )}
+
+          {/* Feeling */}
+          {feeling && (
+            <div className="flex items-center gap-2 pt-1">
+              <span className="text-lg">
+                {feeling === 'Meaningful' && '❤️'}
+                {feeling === 'Good' && '🙂'}
+                {feeling === 'Okay' && '😐'}
+              </span>
               <span
-                className="text-xs"
+                className="text-xs text-gray-500"
                 style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
               >
-                12 comments
+                {feeling}
               </span>
-            </button>
-          </div>
-
-          {/* Share icon */}
-          <button
-            className="text-gray-600 hover:text-green-500 transition-colors"
-            aria-label="Share"
-          >
-            <i className="fa-solid fa-share-nodes text-lg"></i>
-          </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

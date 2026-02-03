@@ -1,10 +1,15 @@
 // Local-first storage utilities for moments photos
 
+export type MomentFeeling = 'Meaningful' | 'Good' | 'Okay';
+
 export interface MomentsPhoto {
   id: number;
   data: string; // base64 data URL
   timestamp: number;
   type: string; // MIME type
+  who?: string; // relationship/category
+  reflection?: string; // optional one-sentence reflection
+  feeling?: MomentFeeling; // post-save emotional check
 }
 
 const STORAGE_KEY = 'moments_photos';
@@ -35,7 +40,31 @@ export function saveMomentsPhoto(photo: MomentsPhoto): void {
     const photos = loadMomentsPhotos();
     photos.push(photo);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(photos));
+    
+    // Dispatch custom event for same-tab updates
+    window.dispatchEvent(new Event('moments_photos_updated'));
   } catch (error) {
     console.error('Error saving moments photo:', error);
   }
+}
+
+export function updateMomentsPhoto(id: number, updates: Partial<MomentsPhoto>): void {
+  try {
+    const photos = loadMomentsPhotos();
+    const index = photos.findIndex(p => p.id === id);
+    if (index !== -1) {
+      photos[index] = { ...photos[index], ...updates };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(photos));
+      
+      // Dispatch custom event for same-tab updates
+      window.dispatchEvent(new Event('moments_photos_updated'));
+    }
+  } catch (error) {
+    console.error('Error updating moments photo:', error);
+  }
+}
+
+export function getMomentById(id: number): MomentsPhoto | null {
+  const photos = loadMomentsPhotos();
+  return photos.find(p => p.id === id) || null;
 }

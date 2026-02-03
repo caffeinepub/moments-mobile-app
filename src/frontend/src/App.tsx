@@ -3,9 +3,12 @@ import MobileSplashScreen from './pages/MobileSplashScreen';
 import WelcomePage from './pages/WelcomePage';
 import HomeScreen from './pages/HomeScreen';
 import CameraScreen from './pages/CameraScreen';
+import SaveMomentConfirmPage from './pages/SaveMomentConfirmPage';
+import MomentFeelingCheckPage from './pages/MomentFeelingCheckPage';
 import SettingsPage from './pages/SettingsPage';
 import CalendarPage from './pages/CalendarPage';
-import MomentsPage from './pages/MomentsPage';
+import VaultPage from './pages/VaultPage';
+import VaultMomentPage from './pages/VaultMomentPage';
 import ProfilePage from './pages/ProfilePage';
 
 // Root component without forced redirects
@@ -41,6 +44,18 @@ const cameraRoute = createRoute({
     component: CameraScreen
 });
 
+const saveMomentRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/save-moment',
+    component: SaveMomentConfirmPage
+});
+
+const feelingCheckRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/feeling-check',
+    component: MomentFeelingCheckPage
+});
+
 const settingsRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: '/settings',
@@ -53,10 +68,16 @@ const calendarRoute = createRoute({
     component: CalendarPage
 });
 
-const momentsRoute = createRoute({
+const vaultRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: '/moments',
-    component: MomentsPage
+    path: '/vault',
+    component: VaultPage
+});
+
+const vaultMomentRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/vault/$momentId',
+    component: VaultMomentPage
 });
 
 const profileRoute = createRoute({
@@ -65,7 +86,19 @@ const profileRoute = createRoute({
     component: ProfilePage
 });
 
-const routeTree = rootRoute.addChildren([indexRoute, welcomeRoute, homeRoute, cameraRoute, settingsRoute, calendarRoute, momentsRoute, profileRoute]);
+const routeTree = rootRoute.addChildren([
+    indexRoute, 
+    welcomeRoute, 
+    homeRoute, 
+    cameraRoute, 
+    saveMomentRoute,
+    feelingCheckRoute,
+    settingsRoute, 
+    calendarRoute, 
+    vaultRoute,
+    vaultMomentRoute,
+    profileRoute
+]);
 
 const router = createRouter({ routeTree });
 

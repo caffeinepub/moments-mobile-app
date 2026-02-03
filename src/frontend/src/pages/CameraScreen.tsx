@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useCamera } from '../camera/useCamera';
+import { saveDraft } from '../utils/pendingMomentDraftStorage';
 
 function CameraScreen() {
     const navigate = useNavigate();
     const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
+    const [capturedPhotoType, setCapturedPhotoType] = useState<string>('image/jpeg');
     const [isFlashOn, setIsFlashOn] = useState(false);
-    const [isSaving, setIsSaving] = useState(false);
 
     const {
         isActive,
@@ -41,47 +42,35 @@ function CameraScreen() {
         if (photo) {
             const url = URL.createObjectURL(photo);
             setCapturedPhoto(url);
+            setCapturedPhotoType(photo.type);
         }
     };
 
-    const handleSavePhoto = async () => {
+    const handleNext = async () => {
         if (!capturedPhoto) return;
         
-        setIsSaving(true);
         try {
-            // Convert blob URL to actual blob data
+            // Convert blob URL to base64 for draft storage
             const response = await fetch(capturedPhoto);
             const blob = await response.blob();
             
-            // Convert blob to base64 for localStorage persistence
             const reader = new FileReader();
             reader.onloadend = () => {
                 const base64data = reader.result as string;
                 
-                // Get existing photos from Moments collection
-                const savedPhotos = JSON.parse(localStorage.getItem('moments_photos') || '[]');
-                
-                // Add new photo with metadata
-                savedPhotos.push({
-                    id: Date.now(),
-                    data: base64data,
-                    timestamp: Date.now(),
-                    type: blob.type
+                // Save draft to sessionStorage
+                saveDraft({
+                    photoDataUrl: base64data,
+                    photoType: capturedPhotoType,
+                    timestamp: Date.now()
                 });
                 
-                // Save back to localStorage
-                localStorage.setItem('moments_photos', JSON.stringify(savedPhotos));
-                
-                // Dispatch custom event for same-tab updates
-                window.dispatchEvent(new Event('moments_photos_updated'));
-                
-                // Navigate back to home
-                navigate({ to: '/home' });
+                // Navigate to confirmation screen
+                navigate({ to: '/save-moment' });
             };
             reader.readAsDataURL(blob);
         } catch (err) {
-            console.error('Failed to save photo:', err);
-            setIsSaving(false);
+            console.error('Failed to process photo:', err);
         }
     };
 
@@ -102,6 +91,7 @@ function CameraScreen() {
         if (file) {
             const url = URL.createObjectURL(file);
             setCapturedPhoto(url);
+            setCapturedPhotoType(file.type);
         }
     };
 
@@ -208,15 +198,10 @@ function CameraScreen() {
                             </button>
 
                             <button
-                                onClick={handleSavePhoto}
-                                disabled={isSaving}
+                                onClick={handleNext}
                                 className="yellow-button-camera"
                             >
-                                {isSaving ? (
-                                    <div className="animate-spin rounded-full h-6 w-6 border-2 border-black border-t-transparent"></div>
-                                ) : (
-                                    <i className="fa fa-check text-2xl text-black"></i>
-                                )}
+                                <i className="fa fa-arrow-right text-2xl text-black"></i>
                             </button>
                         </div>
                     ) : (

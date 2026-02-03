@@ -1,73 +1,104 @@
 {
   "kind": "build_request",
-  "title": "Remove Home promo card, add automatic geolocation, and apply glassmorphic card styling",
+  "title": "Vault UX polish: motion, square thumbnails, clear enlarged view, and pulsating buttons",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Remove the entire Home screen promotional card section shown in the provided screenshot (the orange card with the title “Plan Meaningful Moments”, the “Add Your Moment” button, and the character image). This removal must be implemented by deleting the corresponding promo-card block in `frontend/src/pages/HomeScreen.tsx` so that the section is no longer rendered on Home.",
+      "text": "Add subtle motion to the Vault list screen to reduce the static/bland feel: animate month sections and photo cards on initial render and when they enter the viewport (e.g., fade/slide-up + slight scale), and add a gentle pressed/tap micro-interaction on card click.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-4"
         ],
         "quotes": [
-          "remove what is shown in the screenshot",
-          "“go ahead and implement this”"
+          "thevault  is bland and has no motion"
         ]
       },
       "acceptanceCriteria": [
-        "On the Home screen, the orange promo card with the “Plan Meaningful Moments” heading and “Add Your Moment” button no longer appears.",
-        "No empty spacing or layout gap remains where the removed promo card previously rendered."
+        "When opening /vault, month headers and card grids animate in subtly (no jarring bounce).",
+        "Tapping a thumbnail provides immediate visual feedback (pressed/scale-down) before navigation."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Fetch the user’s location automatically via browser geolocation (permission-based) by default, and persist the result into the existing local-first user profile so it appears wherever `profile.location` is displayed (e.g., the Moments image card header). Ensure denial/unavailability is handled gracefully without breaking the UI.",
+      "text": "Redesign Vault month card thumbnails so they look consistent and intentional: apply the app’s glassmorphic card styling standard to the thumbnail tiles (or a clearly improved equivalent), refine spacing/radius/shadows, and ensure the grid reads cleanly on mobile.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-4"
         ],
         "quotes": [
-          "a) automatic browser geolocation (GPS-like, permission-based)"
+          "the cards look weird"
         ]
       },
       "acceptanceCriteria": [
-        "On a fresh session (or when location is not yet set), the app requests geolocation permission using the browser geolocation API.",
-        "If permission is granted and coordinates are returned, `profile.location` is automatically updated and persisted (survives reload) using the existing profile storage/update mechanism.",
-        "If permission is denied or geolocation fails/unavailable, the app continues functioning and shows the existing fallback behavior (e.g., “Location not set”) without crashes."
+        "Vault thumbnails have consistent corner radius, spacing, and a cohesive card surface (no mismatched/unstyled tiles).",
+        "The grid remains 3 columns and does not overflow or distort on a 390x844 viewport."
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Make glassmorphic styling the new visual standard for cards across the app (excluding buttons). Implement a reusable glass card style (CSS utility/class) and update existing card containers that currently render as solid white cards (e.g., `frontend/src/components/MomentsImageCard.tsx` outer card and the Home empty-state card in `frontend/src/pages/HomeScreen.tsx`) to use the glassmorphic style while keeping all button styles unchanged.",
+      "text": "Ensure Vault photos render as true square thumbnails across all supported browsers by removing reliance on Tailwind’s `aspect-square` class (which may not be enabled) and enforcing a square layout via explicit CSS/inline aspect-ratio fallback. Keep `object-fit: cover` for thumbnails so the square crop is consistent.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-4"
         ],
         "quotes": [
-          "then instead of using white cards make them glassmorphic..",
-          "apart from button but all cards.."
+          "photos should be square"
         ]
       },
       "acceptanceCriteria": [
-        "Cards that previously used a flat white background now render with a glassmorphic look (semi-transparent fill, backdrop blur, subtle border/highlight, soft shadow) on top of the beige app background.",
-        "Buttons retain their existing styling (e.g., `.yellow-button`, `.yellow-button-small`, `.yellow-button-footer`) and are not converted to glassmorphic styling.",
-        "The Moments image card and the Home “No moments captured yet” empty-state card both visibly reflect the glassmorphic style."
+        "All Vault thumbnails render as perfect squares (1:1) on mobile and desktop browsers.",
+        "Thumbnails use `object-fit: cover` and do not appear stretched."
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Improve the enlarged moment viewing experience from Vault thumbnails so the user always gets an enlarged, clear view: when a thumbnail is tapped, open a full-screen view that prioritizes the image (high contrast background, no unintended compression), and provide an obvious close/back control. Ensure the route `/vault/$momentId` (or an equivalent modal overlay) reliably shows the full image and feels “crisp”.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "when you click them you dont get an enlagred clear version"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Tapping a Vault thumbnail always results in a full-screen (or near full-screen) image view with a clear close/back action.",
+        "The enlarged view uses the original stored image data (not a smaller thumbnail variant).",
+        "The enlarged image is displayed without visible distortion; the user can see it clearly against the background."
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Apply the same subtle pulsating animation used for the camera icon/button (`cameraPulse` / `.camera-pulse`) to all buttons across the app (including icon-only buttons like back arrows), while ensuring disabled buttons do not pulse. Provide a safe opt-out mechanism (e.g., a `no-pulse` class) for any button where pulsing harms usability.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "lastly make all button pulsating like that camers icon"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All clickable buttons visibly pulse with the same rhythm as the camera button.",
+        "Disabled buttons do not pulse.",
+        "At least one opt-out mechanism exists and is documented in code (e.g., `className=\"no-pulse\"`)."
       ]
     }
   ],
   "constraints": [
-    "Do not edit files under `frontend/src/components/ui` (compose them instead).",
-    "Do not edit immutable hook entrypoints listed in SYSTEM_CONTEXT (e.g., `frontend/src/hooks/useInternetIdentity.ts(x)`, `frontend/src/hooks/useActor.ts`, `frontend/src/main.tsx`).",
-    "Keep backend as single-actor Motoko; no new backend canisters/services."
+    "Do not modify files under frontend/src/components/ui (read-only Shadcn components). Compose them instead.",
+    "Do not modify frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, or frontend/src/main.tsx (immutable paths).",
+    "Keep backend architecture single-actor; no backend changes are required for this request."
   ],
   "nonGoals": [
-    "Do not introduce GPS/maps UI or any map-based features.",
-    "Do not add third-party authentication providers (only Internet Identity remains).",
-    "Do not change button visual styling or global button behavior."
+    "Do not add new backend storage or schemas for Vault; use existing localStorage-based moments data.",
+    "Do not introduce new navigation tabs or a new feed-style Moments page as part of this Vault polish."
   ],
   "imageRequirements": {
     "required": [],

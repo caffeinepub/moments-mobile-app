@@ -1,27 +1,102 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-03T16:45:30.121Z",
-  "summary": "REQ-1 appears implemented (promo card removed from Home per repo summary). REQ-2 implemented via a new auto-geolocation hook wired into the existing local-first profile storage. REQ-3 implemented via a reusable `.glass-card` CSS utility and adoption in `MomentsImageCard`; Home empty-state glass styling is claimed in a modified summary file but the HomeScreen code snippet is truncated so it can’t be directly verified from the shown code.",
+  "generatedAt": "2026-02-03T21:49:31.936Z",
+  "summary": "Vault-specific changes appear to implement the requested motion, square thumbnail rendering, improved full-screen moment viewer, and global button pulsing with opt-out/disabled handling. However, the diff also includes substantial unrelated UI/route/auth changes that were not requested, and it appears to modify an explicitly immutable hook path.",
   "missing_requirements": [],
   "hallucinated_features": [
     {
-      "description": "Documentation claims multiple unrelated UI/feature changes (e.g., GSAP dependency, TikTok-style vertical scrolling with background music, splash/welcome/calendar animation enhancements, preloading media, hamburger menu morph animation, sign-in overlay behavior, etc.) that were not requested in the BuildRequest.",
-      "reason": "These items appear in the modified `frontend-file-summaries.txt` descriptions but are outside the requested scope (promo card removal, auto geolocation persisted to profile.location, and glassmorphic card styling). The diff summary does not provide corresponding code changes for these items, so at minimum they are unrequested additions to documentation.",
+      "description": "Modified Internet Identity hook behavior despite being listed as an immutable path in constraints.",
+      "reason": "BuildRequest explicitly forbids modifying `frontend/src/hooks/useInternetIdentity.ts`/`.tsx`, but the diff summary indicates it was changed.",
       "evidence": [
-        "frontend-file-summaries.txt"
+        "frontend-file-summaries.txt (entry for \"frontend/src/hooks/useInternetIdentity.ts\")"
+      ]
+    },
+    {
+      "description": "Significant splash screen/onboarding slideshow animation/theming changes (3D animations, premium zoom settle, per-slide button theming, bidirectional navigation).",
+      "reason": "Not requested by Vault UX polish requirements (REQ-1..REQ-5).",
+      "evidence": [
+        "frontend-file-summaries.txt (entry for \"frontend/src/pages/MobileSplashScreen.tsx\")"
+      ]
+    },
+    {
+      "description": "Welcome page redesign (purple gradient background, 3D entrance animation, button theming, sign-out removal).",
+      "reason": "Not requested by Vault UX polish requirements.",
+      "evidence": [
+        "frontend-file-summaries.txt (entry for \"frontend/src/pages/WelcomePage.tsx\")"
+      ]
+    },
+    {
+      "description": "Hamburger menu animation overhaul (morphing lines into circular X on hover).",
+      "reason": "Not requested by Vault UX polish requirements.",
+      "evidence": [
+        "frontend-file-summaries.txt (entry for \"frontend/src/components/HamburgerMenu.tsx\")"
+      ]
+    },
+    {
+      "description": "Sign-in overlay new animation and theming (slow slide-up/down, green theme, down arrow close).",
+      "reason": "Not requested by Vault UX polish requirements.",
+      "evidence": [
+        "frontend-file-summaries.txt (entry for \"frontend/src/components/SignInOverlay.tsx\")"
+      ]
+    },
+    {
+      "description": "Added GSAP dependency for sign-in overlay animations.",
+      "reason": "Not requested; introduces new dependency unrelated to stated Vault UX polish scope.",
+      "evidence": [
+        "frontend-file-summaries.txt (entry for \"frontend/package.json\")"
+      ]
+    },
+    {
+      "description": "Index.html asset preloading (sadboy.mp4 and images) and Font Awesome CDN link changes.",
+      "reason": "Not requested by Vault UX polish requirements.",
+      "evidence": [
+        "frontend-file-summaries.txt (entry for \"frontend/index.html\")"
+      ]
+    },
+    {
+      "description": "Removed standalone moments feed route / navigation changes beyond Vault polish.",
+      "reason": "Non-goals explicitly say not to introduce new navigation tabs or a new feed page; removing/altering existing routes is also not requested as part of this Vault polish.",
+      "evidence": [
+        "frontend-file-summaries.txt (entry for \"frontend/src/App.tsx\": \"removed standalone moments feed route\")"
+      ]
+    },
+    {
+      "description": "Settings page redesign (white background, compact grouped sections, typography/icon changes).",
+      "reason": "Not requested by Vault UX polish requirements.",
+      "evidence": [
+        "frontend-file-summaries.txt (entry for \"frontend/src/pages/SettingsPage.tsx\")"
+      ]
+    },
+    {
+      "description": "Calendar page styling updates to use glassmorphic card styling.",
+      "reason": "Not requested by Vault UX polish requirements.",
+      "evidence": [
+        "frontend-file-summaries.txt (entry for \"frontend/src/pages/CalendarPage.tsx\")"
+      ]
+    },
+    {
+      "description": "Added placeholder `useQueries.ts` React Query hooks file (empty).",
+      "reason": "Not requested by Vault UX polish requirements.",
+      "evidence": [
+        "frontend-file-summaries.txt (entry for \"frontend/src/hooks/useQueries.ts\")"
+      ]
+    },
+    {
+      "description": "Tailwind config extended with beige color token.",
+      "reason": "Not requested by Vault UX polish requirements.",
+      "evidence": [
+        "frontend-file-summaries.txt (entry for \"frontend/tailwind.config.js\")"
       ]
     }
   ],
-  "confidence": 0.64,
+  "confidence": 0.74,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/src/components/MomentsImageCard.tsx",
-    "frontend/src/hooks/useAutoGeolocation.ts",
-    "frontend/src/hooks/useProfile.ts",
+    "frontend/src/hooks/useInView.ts",
     "frontend/src/index.css",
-    "frontend/src/pages/HomeScreen.tsx",
-    "frontend/src/utils/profileStorage.ts",
+    "frontend/src/pages/VaultMomentPage.tsx",
+    "frontend/src/pages/VaultPage.tsx",
     "project_state.json"
   ]
 }
