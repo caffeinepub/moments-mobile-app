@@ -1,0 +1,56 @@
+{
+  "kind": "build_request",
+  "title": "Revert global button styling and restore splash slide card motion to pre-calendar state",
+  "priority": "high",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Revert ALL app buttons to the styling and interaction behavior that existed before the Calendar feature was implemented, without changing the overall visual design. This includes restoring prior sizes, border treatments, shadows, hover/active/disabled states, and typography across all pages (Splash/Onboarding, Welcome, Home, Camera, Moments, Calendar, Settings). Ensure any Calendar-specific button styles do not globally impact other buttons.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "the state before implementing the calender everything was fine..the buttons and the cards were working wevery well and i meann all buttons.."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Buttons on Splash/Onboarding (Prev/Next/Sign In), Welcome (Get Started/Sign Out), Home (navigation + promo CTA), Camera (capture/retake/save/upload/back), Moments (back/navigation), Calendar (month nav, date cells, back/menu), and Settings (back/logout) visually match the pre-calendar button styling.",
+        "No global CSS class or selector causes unintended button styling changes outside of its intended scope (e.g., Calendar-specific styles do not affect other pages).",
+        "All button hover/active/disabled interactions behave consistently and match the pre-calendar experience (including any prior scale/press effects and cursor/opacity behavior)."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Restore the Splash/Onboarding slide card motion/animations to the exact behavior that existed before the Calendar feature was implemented, without changing the visual design. This includes restoring the card transition motion (timing, easing, direction), card layering during transitions, and the per-card text/media entrance animations so they feel as they did previously.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "the state before implementing the calender everything was fine..the buttons and the cards were working wevery well and i meann all buttons.."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Slide transitions between cards (auto-play and Prev/Next) animate smoothly and match the pre-calendar timing/easing and directional behavior.",
+        "Card content entrance animations (number + heading lines + media) are visible and behave as they did pre-calendar (no missing animations or broken classes).",
+        "During transitions, the correct card is clickable (pointer events) and visually stacked (z-index/layering) as expected; there is no flicker or unexpected disappearance."
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not alter the overall app design; only revert UI regressions introduced during/after the Calendar implementation.",
+    "Do not edit files under frontend/immutablePaths (compose existing UI components instead).",
+    "Keep the single-actor backend architecture unchanged; no backend work is required for this request."
+  ],
+  "nonGoals": [
+    "Do not redesign the Calendar UI or add new Calendar features beyond preserving its existence.",
+    "Do not fix unrelated known issues (e.g., localStorage key mismatches, backend blob storage placeholders) unless they are directly required to restore the pre-calendar button/animation behavior."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

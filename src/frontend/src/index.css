@@ -1,0 +1,516 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Light mode colors using OKLCH */
+  --background: oklch(98% 0.01 106);
+  --foreground: oklch(15% 0.01 106);
+  --card: oklch(100% 0 0);
+  --card-foreground: oklch(15% 0.01 106);
+  --popover: oklch(100% 0 0);
+  --popover-foreground: oklch(15% 0.01 106);
+  --primary: oklch(47% 0.14 262);
+  --primary-foreground: oklch(98% 0.01 106);
+  --secondary: oklch(96% 0.01 106);
+  --secondary-foreground: oklch(15% 0.01 106);
+  --muted: oklch(96% 0.01 106);
+  --muted-foreground: oklch(45% 0.01 106);
+  --accent: oklch(96% 0.01 106);
+  --accent-foreground: oklch(15% 0.01 106);
+  --destructive: oklch(58% 0.23 25);
+  --destructive-foreground: oklch(98% 0.01 106);
+  --border: oklch(90% 0.01 106);
+  --input: oklch(90% 0.01 106);
+  --ring: oklch(47% 0.14 262);
+  --radius: 0.5rem;
+  --chart-1: oklch(62% 0.18 15);
+  --chart-2: oklch(72% 0.15 165);
+  --chart-3: oklch(65% 0.12 60);
+  --chart-4: oklch(68% 0.14 285);
+  --chart-5: oklch(75% 0.11 45);
+  --beige: oklch(92% 0.02 85);
+}
+
+.dark {
+  /* Dark mode colors using OKLCH */
+  --background: oklch(15% 0.01 106);
+  --foreground: oklch(98% 0.01 106);
+  --card: oklch(15% 0.01 106);
+  --card-foreground: oklch(98% 0.01 106);
+  --popover: oklch(15% 0.01 106);
+  --popover-foreground: oklch(98% 0.01 106);
+  --primary: oklch(98% 0.01 106);
+  --primary-foreground: oklch(15% 0.01 106);
+  --secondary: oklch(22% 0.01 106);
+  --secondary-foreground: oklch(98% 0.01 106);
+  --muted: oklch(22% 0.01 106);
+  --muted-foreground: oklch(65% 0.01 106);
+  --accent: oklch(22% 0.01 106);
+  --accent-foreground: oklch(98% 0.01 106);
+  --destructive: oklch(58% 0.23 25);
+  --destructive-foreground: oklch(98% 0.01 106);
+  --border: oklch(22% 0.01 106);
+  --input: oklch(22% 0.01 106);
+  --ring: oklch(68% 0.14 262);
+  --chart-1: oklch(72% 0.18 15);
+  --chart-2: oklch(82% 0.15 165);
+  --chart-3: oklch(75% 0.12 60);
+  --chart-4: oklch(78% 0.14 285);
+  --chart-5: oklch(85% 0.11 45);
+}
+
+* {
+  @apply border-border;
+}
+
+body {
+  @apply bg-background text-foreground;
+  font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+/* ============================================
+   SPLASH SCREEN ANIMATIONS
+   ============================================ */
+
+/* Text slide-in animation from left to right */
+@keyframes slideInFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-in-text {
+  animation: slideInFromLeft 0.6s ease-out forwards;
+}
+
+/* Per-card entrance animations for number and text lines */
+@keyframes slideInNumber {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLine1 {
+  0% {
+    opacity: 0;
+    transform: translateX(-25px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLine2 {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-1 {
+  animation: slideInNumber 0.5s ease-out forwards;
+}
+
+.animate-slide-in-2 {
+  animation: slideInLine1 0.6s ease-out 0.1s forwards;
+  opacity: 0;
+}
+
+.animate-slide-in-3 {
+  animation: slideInLine2 0.7s ease-out 0.2s forwards;
+  opacity: 0;
+}
+
+/* Wave-like bounce animation for progress dots */
+@keyframes waveBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-wave-bounce-1 {
+  animation: waveBounce 1.5s ease-in-out infinite;
+  animation-delay: 0s;
+}
+
+.animate-wave-bounce-2 {
+  animation: waveBounce 1.5s ease-in-out infinite;
+  animation-delay: 0.2s;
+}
+
+.animate-wave-bounce-3 {
+  animation: waveBounce 1.5s ease-in-out infinite;
+  animation-delay: 0.4s;
+}
+
+/* Card transition states - clockwise rotation for forward */
+.card-hidden-clockwise {
+  opacity: 0;
+  transform: translateX(-120%) translateZ(-200px) rotateY(-25deg);
+  pointer-events: none;
+}
+
+.card-entering-clockwise {
+  opacity: 0;
+  transform: translateX(120%) translateZ(-200px) rotateY(25deg);
+  animation: enterClockwise 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.card-active-clockwise {
+  opacity: 1;
+  transform: translateX(0) translateZ(0) rotateY(0deg);
+}
+
+.card-exiting-clockwise {
+  opacity: 1;
+  transform: translateX(0) translateZ(0) rotateY(0deg);
+  animation: exitClockwise 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes enterClockwise {
+  0% {
+    opacity: 0;
+    transform: translateX(120%) translateZ(-200px) rotateY(25deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) translateZ(0) rotateY(0deg);
+  }
+}
+
+@keyframes exitClockwise {
+  0% {
+    opacity: 1;
+    transform: translateX(0) translateZ(0) rotateY(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-120%) translateZ(-200px) rotateY(-25deg);
+  }
+}
+
+/* Card transition states - backward (counter-clockwise) */
+.card-hidden-backward {
+  opacity: 0;
+  transform: translateX(120%) translateZ(-200px) rotateY(25deg);
+  pointer-events: none;
+}
+
+.card-entering-backward {
+  opacity: 0;
+  transform: translateX(-120%) translateZ(-200px) rotateY(-25deg);
+  animation: enterBackward 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.card-exiting-backward {
+  opacity: 1;
+  transform: translateX(0) translateZ(0) rotateY(0deg);
+  animation: exitBackward 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes enterBackward {
+  0% {
+    opacity: 0;
+    transform: translateX(-120%) translateZ(-200px) rotateY(-25deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) translateZ(0) rotateY(0deg);
+  }
+}
+
+@keyframes exitBackward {
+  0% {
+    opacity: 1;
+    transform: translateX(0) translateZ(0) rotateY(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(120%) translateZ(-200px) rotateY(25deg);
+  }
+}
+
+/* ============================================
+   BUTTON STYLING - PRE-CALENDAR BASELINE
+   ============================================ */
+
+/* Primary yellow button - used on Splash (Sign In), Welcome (Get Started) */
+.yellow-button {
+  background-color: #fbbf24;
+  color: #000000;
+  font-weight: 600;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 16px;
+  padding: 14px 32px;
+  border-radius: 50px;
+  border: 2px solid #000000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.yellow-button:hover:not(:disabled) {
+  background-color: #f59e0b;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.yellow-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.yellow-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Small yellow button - used on Home promo card, Moments empty state */
+.yellow-button-small {
+  background-color: #fbbf24;
+  color: #000000;
+  font-weight: 600;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 13px;
+  padding: 8px 20px;
+  border-radius: 50px;
+  border: 2px solid #000000;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.yellow-button-small:hover:not(:disabled) {
+  background-color: #f59e0b;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.yellow-button-small:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+}
+
+.yellow-button-small:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Yellow camera button - used on Camera screen and Home footer */
+.yellow-button-camera {
+  background-color: #fbbf24;
+  color: #000000;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 3px solid #000000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.yellow-button-camera:hover:not(:disabled) {
+  background-color: #f59e0b;
+  transform: scale(1.05);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+.yellow-button-camera:active:not(:disabled) {
+  transform: scale(0.98);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.yellow-button-camera:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Yellow footer camera button - smaller version for Home footer */
+.yellow-button-footer {
+  background-color: #fbbf24;
+  color: #000000;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid #000000;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.yellow-button-footer:hover:not(:disabled) {
+  background-color: #f59e0b;
+  transform: scale(1.08);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18);
+}
+
+.yellow-button-footer:active:not(:disabled) {
+  transform: scale(0.95);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+.yellow-button-footer:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Navigation control text styling - Splash Prev/Next */
+.nav-control-text {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 0.875rem;
+  color: #000000;
+  background: transparent;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.nav-control-text:hover:not(:disabled) {
+  opacity: 0.7;
+}
+
+.nav-control-text:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Footer navigation button styling - Home footer icons */
+.footer-nav-button {
+  transition: color 0.3s ease;
+}
+
+.footer-nav-button:hover {
+  color: #ffa500;
+}
+
+/* ============================================
+   WELCOME PAGE ANIMATIONS
+   ============================================ */
+
+/* Welcome page number animation */
+@keyframes welcomeNumber {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.welcome-number {
+  animation: welcomeNumber 0.5s ease-out forwards;
+}
+
+/* Welcome page text animations */
+@keyframes welcomeWord1 {
+  0% {
+    opacity: 0;
+    transform: translateX(-25px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes welcomeWord2 {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.welcome-word-1 {
+  animation: welcomeWord1 0.6s ease-out 0.1s forwards;
+  opacity: 0;
+}
+
+.welcome-word-2 {
+  animation: welcomeWord2 0.7s ease-out 0.2s forwards;
+  opacity: 0;
+}
+
+/* ============================================
+   CALENDAR PAGE SPECIFIC
+   ============================================ */
+
+/* Thin mobile scrollbar styling for Settings, Calendar, and Moments pages */
+.calendar-scrollbar::-webkit-scrollbar,
+.settings-scrollbar::-webkit-scrollbar,
+.moments-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.calendar-scrollbar::-webkit-scrollbar-track,
+.settings-scrollbar::-webkit-scrollbar-track,
+.moments-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.calendar-scrollbar::-webkit-scrollbar-thumb,
+.settings-scrollbar::-webkit-scrollbar-thumb,
+.moments-scrollbar::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+}
+
+.calendar-scrollbar::-webkit-scrollbar-thumb:hover,
+.settings-scrollbar::-webkit-scrollbar-thumb:hover,
+.moments-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Fade in up animation for calendar selected date info */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.3s ease-out forwards;
+}

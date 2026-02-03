@@ -1,0 +1,45 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-revert-all-app-buttons-to-the-styling-and-interaction-behavior-that-existed-before-the-calendar-feature-was-implemented-without-changing-the-overall-visual-design-this-includes-restoring-prior-sizes-border-treatments-shadows-hover-active-disabled-states-and-typography-across-all-pages-splash-onboarding-welcome-home-camera-moments-calendar-settings-ensure-any-calendar-specific-button-styles-do-not-globally-impact-other-buttons",
+      "featureTitle": "Revert ALL app buttons to the styling and interaction behavior that existed before the Calendar feature was implemented, without changing the overall visual design. This includes restoring prior sizes, border treatments, shadows, hover/active/disabled states, and typography across all pages (Splash/Onboarding, Welcome, Home, Camera, Moments, Calendar, Settings). Ensure any Calendar-specific button styles do not globally impact other buttons.",
+      "files": [
+        "frontend/src/index.css"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "blob-storage@4.0.0",
+        "authorization@4.0.0",
+        "camera@1.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-restore-the-splash-onboarding-slide-card-motion-animations-to-the-exact-behavior-that-existed-before-the-calendar-feature-was-implemented-without-changing-the-visual-design-this-includes-restoring-the-card-transition-motion-timing-easing-direction-card-layering-during-transitions-and-the-per-card-text-media-entrance-animations-so-they-feel-as-they-did-previously",
+      "featureTitle": "Restore the Splash/Onboarding slide card motion/animations to the exact behavior that existed before the Calendar feature was implemented, without changing the visual design. This includes restoring the card transition motion (timing, easing, direction), card layering during transitions, and the per-card text/media entrance animations so they feel as they did previously.",
+      "files": [
+        "frontend/src/index.css"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "blob-storage@4.0.0",
+        "authorization@4.0.0",
+        "camera@1.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

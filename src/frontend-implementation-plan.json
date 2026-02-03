@@ -1,0 +1,79 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Revert global button regressions and restore pre-calendar splash card motion",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Restore pre-calendar button sizing, borders/shadows, typography, and hover/active/disabled interactions across all pages while preventing Calendar-specific styles from leaking globally.",
+      "acceptanceCriteria": [
+        "Buttons on Splash/Onboarding (Prev/Next/Sign In), Welcome (Get Started/Sign Out), Home (navigation + promo CTA), Camera (capture/retake/save/upload/back), Moments (back/navigation), Calendar (month nav, date cells, back/menu), and Settings (back/logout) visually match the pre-calendar button styling.",
+        "No global CSS class or selector causes unintended button styling changes outside of its intended scope (e.g., Calendar-specific styles do not affect other pages).",
+        "All button hover/active/disabled interactions behave consistently and match the pre-calendar experience (including any prior scale/press effects and cursor/opacity behavior)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Rework button-related CSS to match the pre-calendar baseline: define shared, non-leaky button utility classes (e.g., primary CTA, small CTA, circular icon button, footer camera button) with the prior sizes, border treatments, shadows, typography, and hover/active/disabled interaction behavior. Remove/avoid any overly broad styling that could accidentally affect all <button> elements, and ensure any Calendar-only styling remains explicitly scoped to Calendar-specific classes."
+        },
+        {
+          "path": "frontend/src/pages/MobileSplashScreen.tsx",
+          "operation": "modify",
+          "description": "Update Splash/Onboarding Prev/Next/Sign In button class usage to rely on the restored shared button utilities (and not any Calendar-introduced/global overrides), ensuring consistent hover/active/disabled behavior and matching pre-calendar sizing/typography."
+        },
+        {
+          "path": "frontend/src/pages/WelcomePage.tsx",
+          "operation": "modify",
+          "description": "Align Welcome page buttons (Get Started, Sign Out) to the restored shared button utilities to ensure pre-calendar sizing, typography, and interaction states."
+        },
+        {
+          "path": "frontend/src/pages/HomeScreen.tsx",
+          "operation": "modify",
+          "description": "Normalize Home page buttons (header icon buttons, promo CTA, footer navigation including camera button) to use the restored shared button utilities so borders/shadows, sizes, and hover/active states match pre-calendar behavior."
+        },
+        {
+          "path": "frontend/src/pages/CameraScreen.tsx",
+          "operation": "modify",
+          "description": "Update Camera screen controls (close/back, capture, retake, save, retry) to use the restored shared button utilities so interaction behavior (press/scale, disabled opacity/cursor) matches the pre-calendar experience."
+        },
+        {
+          "path": "frontend/src/pages/MomentsPage.tsx",
+          "operation": "modify",
+          "description": "Update Moments page header buttons and empty-state CTA to use the restored shared button utilities and ensure consistent hover/active behavior without altering the overall design."
+        },
+        {
+          "path": "frontend/src/pages/CalendarPage.tsx",
+          "operation": "modify",
+          "description": "Ensure Calendar page buttons (back/menu, month navigation, date cells) use Calendar-scoped styling only (no shared CTA styling leakage) and confirm their hover/active/disabled behavior remains consistent and does not affect other pages."
+        },
+        {
+          "path": "frontend/src/pages/SettingsPage.tsx",
+          "operation": "modify",
+          "description": "Update Settings page back and logout row/button interactions to use the restored shared button utilities (where applicable) so hover/active/disabled behavior matches pre-calendar."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Restore Splash/Onboarding slide card transitions, layering, and per-card entrance animations to the pre-calendar motion behavior.",
+      "acceptanceCriteria": [
+        "Slide transitions between cards (auto-play and Prev/Next) animate smoothly and match the pre-calendar timing/easing and directional behavior.",
+        "Card content entrance animations (number + heading lines + media) are visible and behave as they did pre-calendar (no missing animations or broken classes).",
+        "During transitions, the correct card is clickable (pointer events) and visually stacked (z-index/layering) as expected; there is no flicker or unexpected disappearance."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Restore/define the Splash/Onboarding motion CSS used pre-calendar: add back the missing card transition classes (for forward/back directions), ensure timing/easing matches the prior feel, and reinstate per-card entrance animation classes for the number, heading lines, and media. Ensure the animation classes used by MobileSplashScreen exist and are not overridden by unrelated styles."
+        },
+        {
+          "path": "frontend/src/pages/MobileSplashScreen.tsx",
+          "operation": "modify",
+          "description": "Refit the slideshow transition logic to the restored pre-calendar animation behavior: synchronize JS transition timing with the CSS animation duration/easing, ensure correct directionality for Prev/Next and autoplay, and adjust layering/pointer-events/visibility handling to prevent flicker while guaranteeing only the intended active card is interactive. Ensure per-card entrance animations reliably retrigger when the active card changes."
+        }
+      ]
+    }
+  ]
+}

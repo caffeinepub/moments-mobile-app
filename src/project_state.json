@@ -1,0 +1,283 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 5,
+  "summary": "Moments (\"Add Life To Your Days\") is a mobile-first React web app with a multi-slide animated splash/onboarding carousel (3 themed cards) that leads into Internet Identity sign-in, a Welcome screen, and then the main app (Home/Discover, Camera capture/upload saving to Moments, Moments vertical viewer with music, Calendar, Settings). The UI is tightly constrained to a fixed mobile-viewport frame with precise animations (GSAP/Framer Motion) and styling consistency across all buttons and slides.",
+  "existing_features": [
+    {
+      "id": "IF-1",
+      "title": "Client-side routing across core app pages",
+      "synonyms": [
+        "TanStack Router navigation",
+        "SPA routes"
+      ],
+      "description": "Defines and renders routes for '/', '/welcome', '/home', '/camera', '/settings', '/calendar', and '/moments' using TanStack Router with a root Outlet and per-page components.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-2",
+      "title": "Mobile splash/onboarding slideshow with animated cards",
+      "synonyms": [
+        "Onboarding carousel",
+        "Splash slideshow"
+      ],
+      "description": "Implements a 3-slide onboarding flow with card-style layouts (video on slide 1, images on slides 2–3), timed auto-advance (longer pause on slide 1), and manual Prev/Next navigation with directional transition state handling and synchronized background/progress dot colors.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-3",
+      "title": "Internet Identity authentication context and login lifecycle",
+      "synonyms": [
+        "II auth provider",
+        "AuthClient integration"
+      ],
+      "description": "Provides `InternetIdentityProvider` and `useInternetIdentity` to initialize an AuthClient, load persisted identity, login via Internet Identity with delegation TTL, expose status flags, and support logout via `clear()`.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-4",
+      "title": "Smart splash-to-welcome navigation based on auth state",
+      "synonyms": [
+        "Authenticated redirect behavior"
+      ],
+      "description": "On the splash screen, once the user reaches slide 3 and an identity is present, the app navigates to '/welcome'. The sign-in button adapts to auth status ('Loading…', 'Connecting…', 'Continue', 'Sign In') and avoids re-login if already authenticated.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-5",
+      "title": "ICP actor creation with identity-bound caching and access control initialization",
+      "synonyms": [
+        "useActor hook",
+        "React Query actor cache"
+      ],
+      "description": "Creates an authenticated or anonymous backend actor via `createActorWithConfig`, caches it in React Query keyed by principal, extracts an admin secret from URL hash/session (`caffeineAdminToken`) and calls `_initializeAccessControlWithSecret`, then invalidates/refetches other queries when actor changes.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-6",
+      "title": "Secure URL hash secret parameter handling",
+      "synonyms": [
+        "Admin token in hash",
+        "Secret param extraction"
+      ],
+      "description": "Implements utilities to read secrets from URL hash, persist them in sessionStorage, and remove them from the URL to reduce history/referrer leakage risk.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-7",
+      "title": "Welcome page with get-started and sign-out",
+      "synonyms": [
+        "Post-login landing"
+      ],
+      "description": "Displays a welcome card (04) and navigates to '/home' on 'Get Started'; supports signing out via `clear()` and returning to '/'.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-8",
+      "title": "Home screen with header, search UI, promo card, and footer navigation",
+      "synonyms": [
+        "Dashboard",
+        "Home UI"
+      ],
+      "description": "Renders a mobile home UI with profile/notification placeholders, a search bar, a promotional card, and a curved floating footer menu linking to camera, calendar, moments, and settings.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-9",
+      "title": "Camera capability abstraction hook (getUserMedia)",
+      "synonyms": [
+        "useCamera hook",
+        "MediaStream handling"
+      ],
+      "description": "Provides a reusable camera hook that checks support, starts/stops streams, switches facing mode, captures photos via canvas to a File, tracks loading/errors, and ensures cleanup on unmount.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-10",
+      "title": "Camera screen with capture, retake, save, and upload-from-gallery",
+      "synonyms": [
+        "Camera UI",
+        "Photo capture flow"
+      ],
+      "description": "Displays live camera preview with controls for capture and camera switching, allows manual image upload, supports photo review and saving, and persists images into localStorage as base64 with metadata before navigating back to home.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-11",
+      "title": "LocalStorage-based Moments collection persistence",
+      "synonyms": [
+        "Local photo library",
+        "Offline persistence"
+      ],
+      "description": "Stores captured/uploaded photos in localStorage (currently under `moments_photos`) with fields {id, data(base64), timestamp, type} and reads them back for display in the Moments viewer.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-12",
+      "title": "Moments viewer with vertical swipe/scroll navigation and background music",
+      "synonyms": [
+        "TikTok-style viewer",
+        "Vertical slideshow"
+      ],
+      "description": "Renders saved moments as a vertical full-screen slideshow with touch swipe detection, desktop wheel navigation, a photo counter, empty/loading states, and auto-play looping background audio.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-13",
+      "title": "Calendar view with month navigation and per-date moments preview grid",
+      "synonyms": [
+        "Moments calendar",
+        "Date browser"
+      ],
+      "description": "Implements a 6x7 grid calendar (restricted to year 2026) with today highlighting, date selection, month navigation, and loading/filtering of moment thumbnails for the selected date (currently wired to a localStorage key).",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-14",
+      "title": "Settings page UI with logout",
+      "synonyms": [
+        "Settings screen"
+      ],
+      "description": "Provides a settings layout with grouped list items (Account, Subscription, General, Privacy, Notifications, Appearance, Advanced, Help) and a functional 'Log out' action that clears identity and returns to splash.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-15",
+      "title": "Tailwind + custom CSS animation/styling system",
+      "synonyms": [
+        "Design system",
+        "CSS animations"
+      ],
+      "description": "Configures Tailwind with typography/container-queries/animate plugins and defines a custom OKLCH token-based theme, reusable button styles (yellow variants), thin mobile scrollbars, and key UI animations (slide-in, card transitions, fade-in).",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-16",
+      "title": "Backend role-based access control with admin bootstrap secret",
+      "synonyms": [
+        "RBAC",
+        "AccessControl"
+      ],
+      "description": "Motoko access control module supports roles (#admin/#user/#guest), initialization where the first valid secret holder becomes admin, role assignment (admin-only), permission checks, and helper queries (`getCallerUserRole`, `isCallerAdmin`).",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-17",
+      "title": "Backend user profile storage with authorization checks",
+      "synonyms": [
+        "UserProfile API"
+      ],
+      "description": "Stores and retrieves simple user profiles keyed by Principal, allowing authenticated users to save their own profile and allowing admin/self profile access enforcement.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-18",
+      "title": "Backend user settings storage with authorization checks",
+      "synonyms": [
+        "UserSettings API"
+      ],
+      "description": "Stores per-user settings (notifications, appearance, privacy) with authenticated user-only access for get/save operations.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-19",
+      "title": "Backend moments photo metadata registry (scaffold)",
+      "synonyms": [
+        "PhotoMetadata API",
+        "Moments backend scaffolding"
+      ],
+      "description": "Defines PhotoMetadata (id, owner, timestamp, blobId) and supports storing metadata references per user, listing caller/user photos (admin or owner), and deleting caller-owned metadata by id; blob storage integration is intended but not implemented in the provided code.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-20",
+      "title": "Backend blob storage maintenance and authorization mixin",
+      "synonyms": [
+        "Caffeine storage mixin",
+        "Dead blob pruning",
+        "Cycles refill"
+      ],
+      "description": "Includes a blob-storage mixin that can update authorized gateway principals from an external cashier canister, check liveness/dead blobs, confirm deletion and trigger GC, and refill cycles from a cashier; enforces authorization for sensitive maintenance endpoints.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "feature-revert-all-app-buttons-to-the-styling-and-interaction-behavior-that-existed-before-the-calendar-feature-was-implemented-without-changing-the-overall-visual-design-this-includes-restoring-prior-sizes-border-treatments-shadows-hover-active-disabled-states-and-typography-across-all-pages-splash-onboarding-welcome-home-camera-moments-calendar-settings-ensure-any-calendar-specific-button-styles-do-not-globally-impact-other-buttons",
+      "title": "Revert ALL app buttons to the styling and interaction behavior that existed before the Calendar feature was implemented, without changing the overall visual design. This includes restoring prior sizes, border treatments, shadows, hover/active/disabled states, and typography across all pages (Splash/Onboarding, Welcome, Home, Camera, Moments, Calendar, Settings). Ensure any Calendar-specific button styles do not globally impact other buttons.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-restore-the-splash-onboarding-slide-card-motion-animations-to-the-exact-behavior-that-existed-before-the-calendar-feature-was-implemented-without-changing-the-visual-design-this-includes-restoring-the-card-transition-motion-timing-easing-direction-card-layering-during-transitions-and-the-per-card-text-media-entrance-animations-so-they-feel-as-they-did-previously",
+      "title": "Restore the Splash/Onboarding slide card motion/animations to the exact behavior that existed before the Calendar feature was implemented, without changing the visual design. This includes restoring the card transition motion (timing, easing, direction), card layering during transitions, and the per-card text/media entrance animations so they feel as they did previously.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Revert all app buttons to the prior styling that existed before the calendar work (app-wide, no design changes otherwise).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Restore the splash/onboarding slide card animations/motion behavior to the state before the calendar implementation (timing/easing/behavior as previously working).",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "architecturalNotes": [
+    "Frontend uses React + TanStack Router for client-side routing and TanStack React Query for query caching; `useActor` creates and caches an authenticated/anonymous ICP actor instance keyed by the user principal.",
+    "Internet Identity auth is encapsulated in a React Context provider (`InternetIdentityProvider`) using `@dfinity/auth-client`, with delegation validity checks and a 30-day TTL.",
+    "Frontend UI is designed as a fixed-size mobile viewport (max 390x844) centered on screen, with Tailwind CSS utility classes and custom CSS animations (slide-in text, card transitions, dot bounces, etc.).",
+    "Local-first data model: camera-captured images are converted to base64 and stored in `localStorage` for the Moments experience; pages read from localStorage rather than backend.",
+    "Backend uses Motoko ‘mixin’ composition to include authorization and storage capabilities into the main canister actor.",
+    "Backend access control: first initializer can become admin by providing a matching secret token (from an environment variable); other principals default to user role on initialization.",
+    "Backend blob-storage helper uses environment variables to locate a ‘cashier’ canister and to fetch authorized gateway principals; includes maintenance methods for dead-blob pruning and cycles refill.",
+    "Regression fixes should be based on restoring UI/animation state from the last known-good build prior to the calendar implementation; treat that state as the visual/interaction baseline for app-wide button styling and onboarding slide motion."
+  ],
+  "knownIssues": [
+    "Frontend localStorage key inconsistency: Camera/Moments use `moments_photos`, but CalendarPage reads `momentsPhotos`, so calendar ‘has moments’ indicators and date filtering will not work with currently saved photos.",
+    "Backend `storePhoto` does not actually store the provided blob into storage (comment indicates missing MixinStorage put call) and sets `timestamp = 0`, so metadata is incomplete.",
+    "Backend `getBlob` is a placeholder that always returns `null` and references an unimplemented MixinStorage get interface.",
+    "Environment variable names appear inconsistent/typo-prone in blob storage: `CAFFFEINE_STORAGE_CASHIER_PRINCIPAL` (extra 'F') may not match intended deployment configuration.",
+    "Frontend `frontend/src/components/HamburgerMenu.tsx` and `frontend/src/components/SignInOverlay.tsx` files are empty in the provided code, despite summaries implying implementations.",
+    "Duplicate/competing global CSS files exist (`frontend/src/index.css` and `frontend/index.css`), which can cause confusion or styling inconsistencies depending on build configuration; the app imports `./index.css` from `src/main.tsx` (i.e., `frontend/src/index.css`).",
+    "Home screen 'Add Your Moment' promotional button has no click handler (non-functional call-to-action).",
+    "Splash screen comments mention GSAP, but the shown implementation uses CSS classes; dependency/intent may be mismatched.",
+    "UI regression: button styling changed globally after latest changes; user requests reverting all buttons to prior styling without altering overall design.",
+    "UI regression: splash slide card animations/motion no longer behave as previously implemented; needs restoration to prior motion behavior.",
+    "UI regression introduced after calendar implementation: button styling changed across the app and onboarding slide card motion no longer matches the previously working behavior."
+  ],
+  "isFixRequest": true,
+  "gameProjectType": "none",
+  "projectName": "Moments Mobile App",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0,
+  "requiresBackendChanges": false,
+  "requiresFrontendChanges": true
+}
