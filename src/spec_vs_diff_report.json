@@ -1,47 +1,27 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-03T09:43:27.319Z",
-  "summary": "The diff primarily adds/updates global CSS splash animation keyframes and updates the Internet Identity hook; it does not show concrete, app-wide button-style reversion across all pages nor the full restoration of the Splash/Onboarding card transition motion/layering behavior to a pre-Calendar baseline.",
-  "missing_requirements": [
-    {
-      "id": "REQ-1",
-      "requirement": "Revert ALL app buttons to the styling and interaction behavior that existed before the Calendar feature was implemented (sizes, borders, shadows, hover/active/disabled states, typography) across Splash/Onboarding, Welcome, Home, Camera, Moments, Calendar, and Settings; ensure Calendar-specific button styles do not leak globally.",
-      "reason": "Only a portion of global CSS is shown, and the diff does not provide evidence of specific button style/interaction changes across the listed pages/components or scoping fixes to prevent Calendar styles from impacting other buttons.",
-      "evidence": [
-        "frontend/src/index.css"
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "requirement": "Restore Splash/Onboarding slide card motion/animations to the exact pre-Calendar behavior (transition timing/easing/direction, layering/z-index, pointer-events correctness, and per-card content entrance animations).",
-      "reason": "The diff shows added/updated CSS keyframes/classes for some entrance/transition animations, but it does not show changes to the slideshow/card transition implementation (likely in the Splash/Onboarding component) needed to ensure timing/easing/direction, layering, and pointer-events behavior match the pre-Calendar state.",
-      "evidence": [
-        "frontend/src/index.css"
-      ]
-    }
-  ],
+  "generatedAt": "2026-02-03T16:45:30.121Z",
+  "summary": "REQ-1 appears implemented (promo card removed from Home per repo summary). REQ-2 implemented via a new auto-geolocation hook wired into the existing local-first profile storage. REQ-3 implemented via a reusable `.glass-card` CSS utility and adoption in `MomentsImageCard`; Home empty-state glass styling is claimed in a modified summary file but the HomeScreen code snippet is truncated so it can’t be directly verified from the shown code.",
+  "missing_requirements": [],
   "hallucinated_features": [
     {
-      "description": "Internet Identity hook behavior changes (e.g., delegation validity handling / cross-browser compatibility adjustments).",
-      "reason": "BuildRequest is strictly about reverting global button styling regressions and restoring splash slide card motion; it explicitly states no backend work and does not request auth-flow modifications.",
+      "description": "Documentation claims multiple unrelated UI/feature changes (e.g., GSAP dependency, TikTok-style vertical scrolling with background music, splash/welcome/calendar animation enhancements, preloading media, hamburger menu morph animation, sign-in overlay behavior, etc.) that were not requested in the BuildRequest.",
+      "reason": "These items appear in the modified `frontend-file-summaries.txt` descriptions but are outside the requested scope (promo card removal, auto geolocation persisted to profile.location, and glassmorphic card styling). The diff summary does not provide corresponding code changes for these items, so at minimum they are unrequested additions to documentation.",
       "evidence": [
-        "frontend/src/hooks/useInternetIdentity.ts"
-      ]
-    },
-    {
-      "description": "Addition of project state metadata file.",
-      "reason": "No requirement asks for adding project documentation/state files; request is limited to UI regression reverts.",
-      "evidence": [
-        "project_state.json"
+        "frontend-file-summaries.txt"
       ]
     }
   ],
-  "confidence": 0.62,
+  "confidence": 0.64,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/components/MomentsImageCard.tsx",
+    "frontend/src/hooks/useAutoGeolocation.ts",
+    "frontend/src/hooks/useProfile.ts",
     "frontend/src/index.css",
+    "frontend/src/pages/HomeScreen.tsx",
+    "frontend/src/utils/profileStorage.ts",
     "project_state.json"
   ]
 }

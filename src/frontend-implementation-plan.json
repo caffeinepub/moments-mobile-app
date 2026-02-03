@@ -1,77 +1,72 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Revert global button regressions and restore pre-calendar splash card motion",
+  "title": "Home promo removal, auto geolocation persistence, and glassmorphic card standard",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Restore pre-calendar button sizing, borders/shadows, typography, and hover/active/disabled interactions across all pages while preventing Calendar-specific styles from leaking globally.",
+      "summary": "Remove the Home promotional card block so it no longer renders and leaves no layout gap.",
       "acceptanceCriteria": [
-        "Buttons on Splash/Onboarding (Prev/Next/Sign In), Welcome (Get Started/Sign Out), Home (navigation + promo CTA), Camera (capture/retake/save/upload/back), Moments (back/navigation), Calendar (month nav, date cells, back/menu), and Settings (back/logout) visually match the pre-calendar button styling.",
-        "No global CSS class or selector causes unintended button styling changes outside of its intended scope (e.g., Calendar-specific styles do not affect other pages).",
-        "All button hover/active/disabled interactions behave consistently and match the pre-calendar experience (including any prior scale/press effects and cursor/opacity behavior)."
+        "On the Home screen, the orange promo card with the “Plan Meaningful Moments” heading and “Add Your Moment” button no longer appears.",
+        "No empty spacing or layout gap remains where the removed promo card previously rendered."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Rework button-related CSS to match the pre-calendar baseline: define shared, non-leaky button utility classes (e.g., primary CTA, small CTA, circular icon button, footer camera button) with the prior sizes, border treatments, shadows, typography, and hover/active/disabled interaction behavior. Remove/avoid any overly broad styling that could accidentally affect all <button> elements, and ensure any Calendar-only styling remains explicitly scoped to Calendar-specific classes."
-        },
-        {
-          "path": "frontend/src/pages/MobileSplashScreen.tsx",
-          "operation": "modify",
-          "description": "Update Splash/Onboarding Prev/Next/Sign In button class usage to rely on the restored shared button utilities (and not any Calendar-introduced/global overrides), ensuring consistent hover/active/disabled behavior and matching pre-calendar sizing/typography."
-        },
-        {
-          "path": "frontend/src/pages/WelcomePage.tsx",
-          "operation": "modify",
-          "description": "Align Welcome page buttons (Get Started, Sign Out) to the restored shared button utilities to ensure pre-calendar sizing, typography, and interaction states."
-        },
-        {
           "path": "frontend/src/pages/HomeScreen.tsx",
           "operation": "modify",
-          "description": "Normalize Home page buttons (header icon buttons, promo CTA, footer navigation including camera button) to use the restored shared button utilities so borders/shadows, sizes, and hover/active states match pre-calendar behavior."
-        },
-        {
-          "path": "frontend/src/pages/CameraScreen.tsx",
-          "operation": "modify",
-          "description": "Update Camera screen controls (close/back, capture, retake, save, retry) to use the restored shared button utilities so interaction behavior (press/scale, disabled opacity/cursor) matches the pre-calendar experience."
-        },
-        {
-          "path": "frontend/src/pages/MomentsPage.tsx",
-          "operation": "modify",
-          "description": "Update Moments page header buttons and empty-state CTA to use the restored shared button utilities and ensure consistent hover/active behavior without altering the overall design."
-        },
-        {
-          "path": "frontend/src/pages/CalendarPage.tsx",
-          "operation": "modify",
-          "description": "Ensure Calendar page buttons (back/menu, month navigation, date cells) use Calendar-scoped styling only (no shared CTA styling leakage) and confirm their hover/active/disabled behavior remains consistent and does not affect other pages."
-        },
-        {
-          "path": "frontend/src/pages/SettingsPage.tsx",
-          "operation": "modify",
-          "description": "Update Settings page back and logout row/button interactions to use the restored shared button utilities (where applicable) so hover/active/disabled behavior matches pre-calendar."
+          "description": "Delete the promotional card JSX block (the orange promo card section) so it is no longer rendered, and adjust surrounding spacing/margins so no visual gap remains."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Restore Splash/Onboarding slide card transitions, layering, and per-card entrance animations to the pre-calendar motion behavior.",
+      "summary": "Automatically request browser geolocation when profile.location is not set and persist the resulting coordinates into the existing local-first profile, while handling denial/unavailability gracefully.",
       "acceptanceCriteria": [
-        "Slide transitions between cards (auto-play and Prev/Next) animate smoothly and match the pre-calendar timing/easing and directional behavior.",
-        "Card content entrance animations (number + heading lines + media) are visible and behave as they did pre-calendar (no missing animations or broken classes).",
-        "During transitions, the correct card is clickable (pointer events) and visually stacked (z-index/layering) as expected; there is no flicker or unexpected disappearance."
+        "On a fresh session (or when location is not yet set), the app requests geolocation permission using the browser geolocation API.",
+        "If permission is granted and coordinates are returned, `profile.location` is automatically updated and persisted (survives reload) using the existing profile storage/update mechanism.",
+        "If permission is denied or geolocation fails/unavailable, the app continues functioning and shows the existing fallback behavior (e.g., “Location not set”) without crashes."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useAutoGeolocation.ts",
+          "operation": "create",
+          "description": "Create a reusable hook that uses the browser geolocation API to request permission and read coordinates when `profile.location` is missing; include a session-level guard (e.g., sessionStorage flag) to avoid repeated prompts within the same session and ensure failures/denials are caught and do not throw."
+        },
+        {
+          "path": "frontend/src/hooks/useProfile.ts",
+          "operation": "modify",
+          "description": "Integrate automatic geolocation: when the loaded local-first profile has no `location`, invoke the new geolocation hook and persist the returned coordinates by calling the existing `updateProfile` / `saveProfile` mechanism; ensure UI state updates without breaking if geolocation is unsupported/denied."
+        },
+        {
+          "path": "frontend/src/utils/profileStorage.ts",
+          "operation": "modify",
+          "description": "If needed for robustness, extend local-first profile persistence helpers to support any additional non-nullable fields used by the auto-geolocation flow (while keeping `location` as the display field) and ensure save/load remains backward-compatible with existing stored profiles."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Introduce a reusable glassmorphic card style and apply it to existing solid-white card containers (excluding buttons), including MomentsImageCard and Home empty-state card.",
+      "acceptanceCriteria": [
+        "Cards that previously used a flat white background now render with a glassmorphic look (semi-transparent fill, backdrop blur, subtle border/highlight, soft shadow) on top of the beige app background.",
+        "Buttons retain their existing styling (e.g., `.yellow-button`, `.yellow-button-small`, `.yellow-button-footer`) and are not converted to glassmorphic styling.",
+        "The Moments image card and the Home “No moments captured yet” empty-state card both visibly reflect the glassmorphic style."
       ],
       "file_operations": [
         {
           "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "Restore/define the Splash/Onboarding motion CSS used pre-calendar: add back the missing card transition classes (for forward/back directions), ensure timing/easing matches the prior feel, and reinstate per-card entrance animation classes for the number, heading lines, and media. Ensure the animation classes used by MobileSplashScreen exist and are not overridden by unrelated styles."
+          "description": "Add a reusable glassmorphic card utility/class (e.g., `.glass-card`) that provides semi-transparent background, backdrop blur, subtle border/highlight, and soft shadow suitable for the beige app background; do not alter existing button classes."
         },
         {
-          "path": "frontend/src/pages/MobileSplashScreen.tsx",
+          "path": "frontend/src/components/MomentsImageCard.tsx",
           "operation": "modify",
-          "description": "Refit the slideshow transition logic to the restored pre-calendar animation behavior: synchronize JS transition timing with the CSS animation duration/easing, ensure correct directionality for Prev/Next and autoplay, and adjust layering/pointer-events/visibility handling to prevent flicker while guaranteeing only the intended active card is interactive. Ensure per-card entrance animations reliably retrigger when the active card changes."
+          "description": "Update the outer card container that currently uses a solid white background to use the new reusable glassmorphic card class, keeping existing button/engagement controls unchanged."
+        },
+        {
+          "path": "frontend/src/pages/HomeScreen.tsx",
+          "operation": "modify",
+          "description": "Update the Home empty-state card container (shown when there is no most recent moment) to use the new reusable glassmorphic card class instead of a flat white background, without changing any button styling."
         }
       ]
     }

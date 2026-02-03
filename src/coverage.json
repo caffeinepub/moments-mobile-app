@@ -1,55 +1,69 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-03T09:43:27.358Z",
+  "generatedAt": "2026-02-03T16:45:30.192Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 2,
-    "implemented": 2,
+    "total": 3,
+    "implemented": 3,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Revert ALL app buttons to the styling and interaction behavior that existed before the Calendar feature was implemented, without changing the overall visual design. This includes restoring prior sizes, border treatments, shadows, hover/active/disabled states, and typography across all pages (Splash/Onboarding, Welcome, Home, Camera, Moments, Calendar, Settings). Ensure any Calendar-specific button styles do not globally impact other buttons.",
+        "summary": "Remove the entire Home screen promotional card section shown in the provided screenshot (the orange card with the title “Plan Meaningful Moments”, the “Add Your Moment” button, and the character image). This removal must be implemented by deleting the corresponding promo-card block in `frontend/src/pages/HomeScreen.tsx` so that the section is no longer rendered on Home.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/index.css",
-          "frontend/src/pages/MobileSplashScreen.tsx",
-          "frontend/src/pages/WelcomePage.tsx",
-          "frontend/src/pages/HomeScreen.tsx",
-          "frontend/src/pages/CameraScreen.tsx",
-          "frontend/src/pages/MomentsPage.tsx",
-          "frontend/src/pages/CalendarPage.tsx",
-          "frontend/src/pages/SettingsPage.tsx"
+          "frontend/src/pages/HomeScreen.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/index.css"
+          "frontend/src/pages/HomeScreen.tsx"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Restore the Splash/Onboarding slide card motion/animations to the exact behavior that existed before the Calendar feature was implemented, without changing the visual design. This includes restoring the card transition motion (timing, easing, direction), card layering during transitions, and the per-card text/media entrance animations so they feel as they did previously.",
+        "summary": "Fetch the user’s location automatically via browser geolocation (permission-based) by default, and persist the result into the existing local-first user profile so it appears wherever `profile.location` is displayed (e.g., the Moments image card header). Ensure denial/unavailability is handled gracefully without breaking the UI.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useAutoGeolocation.ts",
+          "frontend/src/hooks/useProfile.ts",
+          "frontend/src/utils/profileStorage.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useAutoGeolocation.ts",
+          "frontend/src/hooks/useProfile.ts",
+          "frontend/src/utils/profileStorage.ts"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Make glassmorphic styling the new visual standard for cards across the app (excluding buttons). Implement a reusable glass card style (CSS utility/class) and update existing card containers that currently render as solid white cards (e.g., `frontend/src/components/MomentsImageCard.tsx` outer card and the Home empty-state card in `frontend/src/pages/HomeScreen.tsx`) to use the glassmorphic style while keeping all button styles unchanged.",
         "status": "implemented",
         "plannedFiles": [
           "frontend/src/index.css",
-          "frontend/src/pages/MobileSplashScreen.tsx"
+          "frontend/src/components/MomentsImageCard.tsx",
+          "frontend/src/pages/HomeScreen.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/index.css"
+          "frontend/src/index.css",
+          "frontend/src/components/MomentsImageCard.tsx",
+          "frontend/src/pages/HomeScreen.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
     "build-request.json",
-    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/components/MomentsImageCard.tsx",
+    "frontend/src/hooks/useAutoGeolocation.ts",
+    "frontend/src/hooks/useProfile.ts",
     "frontend/src/index.css",
+    "frontend/src/pages/HomeScreen.tsx",
+    "frontend/src/utils/profileStorage.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

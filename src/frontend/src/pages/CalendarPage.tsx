@@ -1,396 +1,381 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from '@tanstack/react-router';
+import { usePlannedMoments } from '../hooks/usePlannedMoments';
+import PlannedMomentBottomSheet from '../components/PlannedMomentBottomSheet';
+import { ChevronLeft, ChevronRight, MoreVertical } from 'lucide-react';
 
 interface PhotoMetadata {
-    id: number;
-    timestamp: number;
-    dataUrl: string;
+  id: number;
+  timestamp: number;
+  dataUrl: string;
 }
 
 interface CalendarDate {
-    date: number;
-    month: number;
-    year: number;
-    isCurrentMonth: boolean;
-    isToday: boolean;
-    isSelected: boolean;
-    hasMoments: boolean;
+  date: number;
+  month: number;
+  year: number;
+  isToday: boolean;
+  isSelected: boolean;
+  hasPhotoMoments: boolean;
+  hasPlannedMoments: boolean;
+  plannedMomentColor?: string;
 }
 
 function CalendarPage() {
-    const navigate = useNavigate();
-    const [currentDate] = useState(new Date());
-    const [viewDate, setViewDate] = useState(new Date(2026, 0, 1)); // Start at January 2026
-    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-    const [calendarDates, setCalendarDates] = useState<CalendarDate[]>([]);
-    const [selectedDateMoments, setSelectedDateMoments] = useState<PhotoMetadata[]>([]);
-    const [menuOpen, setMenuOpen] = useState(false);
-    const [isAnimating, setIsAnimating] = useState(false);
+  const navigate = useNavigate();
+  const [currentDate] = useState(new Date());
+  const [weekStartDate, setWeekStartDate] = useState(() => {
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    const start = new Date(today);
+    start.setDate(today.getDate() - dayOfWeek);
+    return start;
+  });
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [weekDates, setWeekDates] = useState<CalendarDate[]>([]);
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-    const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const { moments: plannedMoments, datesWithMoments, dateColorMap, addMoment } = usePlannedMoments(selectedDate);
 
-    // Generate calendar dates for the current view
-    useEffect(() => {
-        generateCalendarDates();
-    }, [viewDate]);
+  const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-    // Load moments for selected date
-    useEffect(() => {
-        if (selectedDate) {
-            loadMomentsForDate(selectedDate);
-        }
-    }, [selectedDate]);
+  useEffect(() => {
+    generateWeekDates();
+  }, [weekStartDate, datesWithMoments, dateColorMap]);
 
-    const generateCalendarDates = () => {
-        const year = viewDate.getFullYear();
-        const month = viewDate.getMonth();
-        
-        // Get first day of month and last day of month
-        const firstDay = new Date(year, month, 1);
-        const lastDay = new Date(year, month + 1, 0);
-        
-        // Get the day of week for first day (0 = Sunday)
-        const firstDayOfWeek = firstDay.getDay();
-        
-        // Get days in month
-        const daysInMonth = lastDay.getDate();
-        
-        // Get previous month's last days
-        const prevMonthLastDay = new Date(year, month, 0).getDate();
-        
-        const dates: CalendarDate[] = [];
-        
-        // Add previous month's trailing days
-        for (let i = firstDayOfWeek - 1; i >= 0; i--) {
-            const date = prevMonthLastDay - i;
-            dates.push({
-                date,
-                month: month - 1,
-                year: month === 0 ? year - 1 : year,
-                isCurrentMonth: false,
-                isToday: false,
-                isSelected: false,
-                hasMoments: false
-            });
-        }
-        
-        // Add current month's days
-        for (let date = 1; date <= daysInMonth; date++) {
-            const dateObj = new Date(year, month, date);
-            const isToday = isSameDay(dateObj, currentDate);
-            const isSelected = selectedDate ? isSameDay(dateObj, selectedDate) : false;
-            const hasMoments = checkIfDateHasMoments(dateObj);
-            
-            dates.push({
-                date,
-                month,
-                year,
-                isCurrentMonth: true,
-                isToday,
-                isSelected,
-                hasMoments
-            });
-        }
-        
-        // Add next month's leading days to complete the grid
-        const remainingDays = 42 - dates.length; // 6 rows * 7 days
-        for (let date = 1; date <= remainingDays; date++) {
-            dates.push({
-                date,
-                month: month + 1,
-                year: month === 11 ? year + 1 : year,
-                isCurrentMonth: false,
-                isToday: false,
-                isSelected: false,
-                hasMoments: false
-            });
-        }
-        
-        setCalendarDates(dates);
-        setIsAnimating(true);
-        setTimeout(() => setIsAnimating(false), 500);
-    };
+  const generateWeekDates = () => {
+    const dates: CalendarDate[] = [];
+    
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(weekStartDate);
+      date.setDate(weekStartDate.getDate() + i);
+      
+      const isToday = isSameDay(date, currentDate);
+      const isSelected = selectedDate ? isSameDay(date, selectedDate) : false;
+      const hasPhotoMoments = checkIfDateHasPhotoMoments(date);
+      const hasPlannedMoments = checkIfDateHasPlannedMoments(date);
+      const dateStr = formatDateToISO(date);
+      const plannedMomentColor = dateColorMap.get(dateStr);
 
-    const isSameDay = (date1: Date, date2: Date): boolean => {
-        return date1.getFullYear() === date2.getFullYear() &&
-               date1.getMonth() === date2.getMonth() &&
-               date1.getDate() === date2.getDate();
-    };
+      dates.push({
+        date: date.getDate(),
+        month: date.getMonth(),
+        year: date.getFullYear(),
+        isToday,
+        isSelected,
+        hasPhotoMoments,
+        hasPlannedMoments,
+        plannedMomentColor,
+      });
+    }
 
-    const checkIfDateHasMoments = (date: Date): boolean => {
-        try {
-            const momentsData = localStorage.getItem('momentsPhotos');
-            if (!momentsData) return false;
-            
-            const photos: PhotoMetadata[] = JSON.parse(momentsData);
-            return photos.some(photo => {
-                const photoDate = new Date(photo.timestamp);
-                return isSameDay(photoDate, date);
-            });
-        } catch (error) {
-            console.error('Error checking moments:', error);
-            return false;
-        }
-    };
+    setWeekDates(dates);
+  };
 
-    const loadMomentsForDate = (date: Date) => {
-        try {
-            const momentsData = localStorage.getItem('momentsPhotos');
-            if (!momentsData) {
-                setSelectedDateMoments([]);
-                return;
-            }
-            
-            const photos: PhotoMetadata[] = JSON.parse(momentsData);
-            const filteredPhotos = photos.filter(photo => {
-                const photoDate = new Date(photo.timestamp);
-                return isSameDay(photoDate, date);
-            });
-            
-            setSelectedDateMoments(filteredPhotos);
-        } catch (error) {
-            console.error('Error loading moments:', error);
-            setSelectedDateMoments([]);
-        }
-    };
-
-    const handleDateClick = (dateInfo: CalendarDate) => {
-        const clickedDate = new Date(dateInfo.year, dateInfo.month, dateInfo.date);
-        setSelectedDate(clickedDate);
-        
-        // Update calendar to reflect selection
-        generateCalendarDates();
-    };
-
-    const handlePrevMonth = () => {
-        const newDate = new Date(viewDate);
-        newDate.setMonth(newDate.getMonth() - 1);
-        
-        // Keep within 2026
-        if (newDate.getFullYear() >= 2026) {
-            setViewDate(newDate);
-        }
-    };
-
-    const handleNextMonth = () => {
-        const newDate = new Date(viewDate);
-        newDate.setMonth(newDate.getMonth() + 1);
-        
-        // Keep within 2026
-        if (newDate.getFullYear() <= 2026) {
-            setViewDate(newDate);
-        }
-    };
-
-    const handleBack = () => {
-        navigate({ to: '/home' });
-    };
-
-    const toggleMenu = () => {
-        setMenuOpen(!menuOpen);
-    };
-
-    const formatSelectedDate = (): string => {
-        if (!selectedDate) return '';
-        return selectedDate.toLocaleDateString('en-US', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-        });
-    };
-
+  const isSameDay = (date1: Date, date2: Date): boolean => {
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black overflow-hidden">
-            {/* Mobile viewport container with white background */}
-            <div 
-                className="relative w-full h-full max-w-[390px] max-h-[844px] overflow-hidden flex flex-col"
-                style={{ background: '#ffffff' }}
-            >
-                {/* Header */}
-                <header className="relative w-full px-5 pt-5 pb-3 flex items-center justify-center border-b border-gray-200">
-                    {/* Back arrow - left aligned */}
-                    <button
-                        onClick={handleBack}
-                        className="absolute left-5 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center text-black hover:opacity-70 transition-opacity"
-                        aria-label="Back"
-                    >
-                        <i className="fa fa-arrow-left text-lg"></i>
-                    </button>
-
-                    {/* Month title - centered */}
-                    <h1 
-                        className="text-xl font-bold text-black"
-                        style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
-                    >
-                        {monthNames[viewDate.getMonth()]} {viewDate.getFullYear()}
-                    </h1>
-
-                    {/* Menu icon - right aligned */}
-                    <button
-                        onClick={toggleMenu}
-                        className="absolute right-5 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center text-black hover:opacity-70 transition-opacity"
-                        aria-label="Menu"
-                    >
-                        <i className="fa fa-bars text-lg"></i>
-                    </button>
-                </header>
-
-                {/* Month Navigation */}
-                <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
-                    <button
-                        onClick={handlePrevMonth}
-                        disabled={viewDate.getFullYear() === 2026 && viewDate.getMonth() === 0}
-                        className="w-8 h-8 flex items-center justify-center text-black hover:bg-gray-100 rounded-full transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
-                        aria-label="Previous month"
-                    >
-                        <i className="fa fa-chevron-left text-sm"></i>
-                    </button>
-
-                    <span 
-                        className="text-sm font-medium text-gray-600"
-                        style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
-                    >
-                        Swipe to navigate
-                    </span>
-
-                    <button
-                        onClick={handleNextMonth}
-                        disabled={viewDate.getFullYear() === 2026 && viewDate.getMonth() === 11}
-                        className="w-8 h-8 flex items-center justify-center text-black hover:bg-gray-100 rounded-full transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
-                        aria-label="Next month"
-                    >
-                        <i className="fa fa-chevron-right text-sm"></i>
-                    </button>
-                </div>
-
-                {/* Scrollable content with thin mobile scrollbar */}
-                <div className="flex-1 overflow-y-auto calendar-scrollbar px-5 py-4">
-                    {/* Calendar Grid */}
-                    <div className="mb-5">
-                        {/* Week headers */}
-                        <div className="grid grid-cols-7 gap-2 mb-3">
-                            {weekDays.map((day) => (
-                                <div 
-                                    key={day}
-                                    className="text-center text-gray-500 text-xs font-medium"
-                                    style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
-                                >
-                                    {day}
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* Date grid */}
-                        <div 
-                            className={`grid grid-cols-7 gap-2 transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}
-                        >
-                            {calendarDates.map((dateInfo, index) => (
-                                <button
-                                    key={`${dateInfo.year}-${dateInfo.month}-${dateInfo.date}-${index}`}
-                                    onClick={() => handleDateClick(dateInfo)}
-                                    className="flex flex-col items-center justify-center py-2 rounded-lg hover:bg-gray-50 transition-all active:scale-95 cursor-pointer"
-                                    style={{
-                                        animationDelay: `${index * 10}ms`
-                                    }}
-                                >
-                                    <div 
-                                        className={`text-sm font-medium transition-all ${
-                                            dateInfo.isToday 
-                                                ? 'bg-orange-500 text-white rounded-full w-7 h-7 flex items-center justify-center' 
-                                                : dateInfo.isSelected
-                                                    ? 'bg-black text-white rounded-full w-7 h-7 flex items-center justify-center'
-                                                    : dateInfo.isCurrentMonth 
-                                                        ? 'text-black' 
-                                                        : 'text-gray-400'
-                                        }`}
-                                        style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
-                                    >
-                                        {dateInfo.date}
-                                    </div>
-                                    {dateInfo.hasMoments && (
-                                        <div className="flex gap-0.5 mt-1">
-                                            <div className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                                                dateInfo.isToday || dateInfo.isSelected ? 'bg-white' : 'bg-orange-500'
-                                            }`}></div>
-                                        </div>
-                                    )}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Selected Date Info */}
-                    {selectedDate ? (
-                        <div className="mb-5 animate-fade-in-up">
-                            <h2 
-                                className="text-base font-semibold text-black mb-3"
-                                style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
-                            >
-                                {formatSelectedDate()}
-                            </h2>
-
-                            {/* Moments for selected date */}
-                            {selectedDateMoments.length > 0 ? (
-                                <div className="space-y-3">
-                                    <h3 
-                                        className="text-sm font-medium text-gray-600"
-                                        style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
-                                    >
-                                        Moments ({selectedDateMoments.length})
-                                    </h3>
-                                    <div className="grid grid-cols-3 gap-2">
-                                        {selectedDateMoments.map((moment, idx) => (
-                                            <div
-                                                key={moment.id}
-                                                className="aspect-square rounded-lg overflow-hidden bg-gray-100 hover:opacity-90 transition-all hover:scale-105 cursor-pointer"
-                                                style={{
-                                                    animationDelay: `${idx * 50}ms`
-                                                }}
-                                            >
-                                                <img 
-                                                    src={moment.dataUrl} 
-                                                    alt={`Moment ${moment.id}`}
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="bg-gray-50 rounded-xl p-4 text-center">
-                                    <i className="fa fa-calendar-o text-2xl text-gray-400 mb-2"></i>
-                                    <p 
-                                        className="text-sm text-gray-500"
-                                        style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
-                                    >
-                                        No moments for this date
-                                    </p>
-                                </div>
-                            )}
-                        </div>
-                    ) : (
-                        <div className="bg-gray-50 rounded-xl p-6 text-center">
-                            <i className="fa fa-hand-pointer-o text-3xl text-gray-400 mb-3"></i>
-                            <p 
-                                className="text-sm text-gray-600 font-medium mb-1"
-                                style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
-                            >
-                                Select a date
-                            </p>
-                            <p 
-                                className="text-xs text-gray-500"
-                                style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
-                            >
-                                Tap any date to view your moments
-                            </p>
-                        </div>
-                    )}
-                </div>
-            </div>
-        </div>
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
     );
+  };
+
+  const checkIfDateHasPhotoMoments = (date: Date): boolean => {
+    try {
+      const momentsData = localStorage.getItem('momentsPhotos');
+      if (!momentsData) return false;
+
+      const photos: PhotoMetadata[] = JSON.parse(momentsData);
+      return photos.some((photo) => {
+        const photoDate = new Date(photo.timestamp);
+        return isSameDay(photoDate, date);
+      });
+    } catch (error) {
+      console.error('Error checking photo moments:', error);
+      return false;
+    }
+  };
+
+  const checkIfDateHasPlannedMoments = (date: Date): boolean => {
+    const dateStr = formatDateToISO(date);
+    return datesWithMoments.has(dateStr);
+  };
+
+  const formatDateToISO = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const handleDateClick = (dateInfo: CalendarDate) => {
+    const clickedDate = new Date(dateInfo.year, dateInfo.month, dateInfo.date);
+    setSelectedDate(clickedDate);
+    setIsBottomSheetOpen(true);
+  };
+
+  const handlePrevWeek = () => {
+    const newStart = new Date(weekStartDate);
+    newStart.setDate(weekStartDate.getDate() - 7);
+    setWeekStartDate(newStart);
+  };
+
+  const handleNextWeek = () => {
+    const newStart = new Date(weekStartDate);
+    newStart.setDate(weekStartDate.getDate() + 7);
+    setWeekStartDate(newStart);
+  };
+
+  const handlePrevMonth = () => {
+    const newStart = new Date(weekStartDate);
+    newStart.setMonth(weekStartDate.getMonth() - 1);
+    setWeekStartDate(newStart);
+  };
+
+  const handleNextMonth = () => {
+    const newStart = new Date(weekStartDate);
+    newStart.setMonth(weekStartDate.getMonth() + 1);
+    setWeekStartDate(newStart);
+  };
+
+  const handleBack = () => {
+    navigate({ to: '/home' });
+  };
+
+  const formatTime = (time: string): string => {
+    const [hours, minutes] = time.split(':');
+    const hour = parseInt(hours, 10);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const displayHour = hour % 12 || 12;
+    return `${displayHour}:${minutes}${ampm}`;
+  };
+
+  const getRelativeDay = (date: Date): string => {
+    if (isSameDay(date, currentDate)) return 'Today';
+    const tomorrow = new Date(currentDate);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    if (isSameDay(date, tomorrow)) return 'Tomorrow';
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
+  const getCurrentMonthLabel = (): string => {
+    const midWeek = new Date(weekStartDate);
+    midWeek.setDate(weekStartDate.getDate() + 3);
+    return monthNames[midWeek.getMonth()];
+  };
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black overflow-hidden">
+      <div
+        className="relative w-full h-full max-w-[390px] max-h-[844px] overflow-hidden flex flex-col"
+        style={{ background: '#ffffff' }}
+      >
+        {/* Header */}
+        <header className="relative w-full px-4 pt-4 pb-2 flex items-center justify-between border-b border-gray-200">
+          <button
+            onClick={handleBack}
+            className="w-8 h-8 flex items-center justify-center text-black hover:opacity-70 transition-opacity"
+            aria-label="Back"
+          >
+            <i className="fa fa-arrow-left text-base"></i>
+          </button>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handlePrevMonth}
+              className="calendar-nav-button"
+              aria-label="Previous month"
+            >
+              <ChevronLeft size={16} />
+            </button>
+            <h1
+              className="text-lg font-bold text-black min-w-[100px] text-center"
+              style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
+            >
+              {getCurrentMonthLabel()}
+            </h1>
+            <button
+              onClick={handleNextMonth}
+              className="calendar-nav-button"
+              aria-label="Next month"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
+
+          <button
+            className="w-8 h-8 flex items-center justify-center text-black hover:opacity-70 transition-opacity"
+            aria-label="Menu"
+          >
+            <i className="fa fa-bars text-base"></i>
+          </button>
+        </header>
+
+        {/* Scrollable content */}
+        <div className="flex-1 overflow-y-auto calendar-scrollbar px-4 py-3">
+          {/* Weekly Calendar Strip */}
+          <div className="mb-4">
+            {/* Week headers */}
+            <div className="grid grid-cols-7 gap-1 mb-2">
+              {weekDays.map((day) => (
+                <div
+                  key={day}
+                  className="text-center text-gray-500 text-[10px] font-medium"
+                  style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
+                >
+                  {day}
+                </div>
+              ))}
+            </div>
+
+            {/* Week dates strip with horizontal scroll */}
+            <div
+              ref={scrollContainerRef}
+              className="relative overflow-x-auto scrollbar-hide"
+              style={{ scrollSnapType: 'x mandatory' }}
+            >
+              <div className="grid grid-cols-7 gap-1">
+                {weekDates.map((dateInfo, index) => (
+                  <button
+                    key={`${dateInfo.year}-${dateInfo.month}-${dateInfo.date}-${index}`}
+                    onClick={() => handleDateClick(dateInfo)}
+                    className="flex flex-col items-center justify-center py-2 rounded-lg hover:bg-gray-50 transition-all active:scale-95 cursor-pointer min-h-[50px]"
+                    style={{ scrollSnapAlign: 'start' }}
+                  >
+                    <div
+                      className={`text-sm font-medium transition-all relative ${
+                        dateInfo.isSelected
+                          ? 'bg-black text-white rounded-full w-8 h-8 flex items-center justify-center'
+                          : dateInfo.isToday
+                          ? 'bg-black text-white w-8 h-8 flex items-center justify-center'
+                          : 'text-black'
+                      }`}
+                      style={{
+                        fontFamily: "'Bricolage Grotesque', sans-serif",
+                        borderRadius: dateInfo.isToday && !dateInfo.isSelected ? '12px' : dateInfo.isSelected ? '50%' : '0',
+                      }}
+                    >
+                      {dateInfo.hasPlannedMoments && dateInfo.plannedMomentColor && !dateInfo.isSelected && !dateInfo.isToday && (
+                        <div
+                          className="absolute inset-0 rounded-full"
+                          style={{
+                            border: `2px solid ${dateInfo.plannedMomentColor}`,
+                            width: '32px',
+                            height: '32px',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                          }}
+                        />
+                      )}
+                      {dateInfo.date}
+                    </div>
+                    {(dateInfo.hasPhotoMoments || dateInfo.hasPlannedMoments) && (
+                      <div className="flex gap-0.5 mt-1">
+                        {dateInfo.hasPlannedMoments && (
+                          <div
+                            className={`w-1 h-1 rounded-full transition-colors ${
+                              dateInfo.isToday || dateInfo.isSelected ? 'bg-white' : 'bg-orange-500'
+                            }`}
+                          ></div>
+                        )}
+                        {dateInfo.hasPhotoMoments && (
+                          <div
+                            className={`w-1 h-1 rounded-full transition-colors ${
+                              dateInfo.isToday || dateInfo.isSelected ? 'bg-white' : 'bg-gray-400'
+                            }`}
+                          ></div>
+                        )}
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Week navigation arrows - circular icon buttons */}
+            <div className="flex justify-between items-center mt-2">
+              <button
+                onClick={handlePrevWeek}
+                className="calendar-week-nav-button"
+                aria-label="Previous week"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <button
+                onClick={handleNextWeek}
+                className="calendar-week-nav-button"
+                aria-label="Next week"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+
+          {/* Planned Moments List */}
+          {selectedDate && plannedMoments.length > 0 && (
+            <div className="space-y-2 mb-4">
+              {plannedMoments.map((moment) => (
+                <div
+                  key={moment.id}
+                  className="bg-gray-50 rounded-xl p-3 flex items-start gap-2 hover:bg-gray-100 transition-colors"
+                >
+                  <div className="flex-shrink-0 w-8 h-8 bg-white rounded-full flex items-center justify-center border border-gray-200">
+                    <span className="text-xs text-gray-600" style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}>
+                      {moment.withWho.charAt(0)}
+                    </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    {moment.title && (
+                      <h3
+                        className="text-sm font-semibold text-black mb-0.5"
+                        style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
+                      >
+                        {moment.title}
+                      </h3>
+                    )}
+                    <p
+                      className="text-xs text-gray-600"
+                      style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
+                    >
+                      {moment.withWho}
+                    </p>
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <i className="fa fa-flag text-[10px] text-gray-400"></i>
+                      <p
+                        className="text-[10px] text-gray-500"
+                        style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
+                      >
+                        {getRelativeDay(selectedDate)}, {formatTime(moment.time)}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-gray-400 hover:text-black transition-colors rounded-full hover:bg-gray-200"
+                    aria-label="More options"
+                  >
+                    <MoreVertical size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Bottom Sheet */}
+      {selectedDate && (
+        <PlannedMomentBottomSheet
+          isOpen={isBottomSheetOpen}
+          onClose={() => setIsBottomSheetOpen(false)}
+          selectedDate={selectedDate}
+          onSave={addMoment}
+        />
+      )}
+    </div>
+  );
 }
 
 export default CalendarPage;

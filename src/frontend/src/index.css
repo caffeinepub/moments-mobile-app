@@ -72,6 +72,18 @@ body {
 }
 
 /* ============================================
+   GLASSMORPHIC CARD STYLE
+   ============================================ */
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* ============================================
    SPLASH SCREEN ANIMATIONS
    ============================================ */
 
@@ -164,90 +176,90 @@ body {
   animation-delay: 0.4s;
 }
 
-/* Card transition states - clockwise rotation for forward */
+/* Card transition states - clockwise rotation for forward with premium zoom settle */
 .card-hidden-clockwise {
   opacity: 0;
-  transform: translateX(-120%) translateZ(-200px) rotateY(-25deg);
+  transform: translateX(-120%) translateZ(-200px) rotateY(-25deg) scale(0.92);
   pointer-events: none;
 }
 
 .card-entering-clockwise {
   opacity: 0;
-  transform: translateX(120%) translateZ(-200px) rotateY(25deg);
+  transform: translateX(120%) translateZ(-200px) rotateY(25deg) scale(0.92);
   animation: enterClockwise 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .card-active-clockwise {
   opacity: 1;
-  transform: translateX(0) translateZ(0) rotateY(0deg);
+  transform: translateX(0) translateZ(0) rotateY(0deg) scale(1.04);
 }
 
 .card-exiting-clockwise {
   opacity: 1;
-  transform: translateX(0) translateZ(0) rotateY(0deg);
+  transform: translateX(0) translateZ(0) rotateY(0deg) scale(1.04);
   animation: exitClockwise 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 @keyframes enterClockwise {
   0% {
     opacity: 0;
-    transform: translateX(120%) translateZ(-200px) rotateY(25deg);
+    transform: translateX(120%) translateZ(-200px) rotateY(25deg) scale(0.92);
   }
   100% {
     opacity: 1;
-    transform: translateX(0) translateZ(0) rotateY(0deg);
+    transform: translateX(0) translateZ(0) rotateY(0deg) scale(1.04);
   }
 }
 
 @keyframes exitClockwise {
   0% {
     opacity: 1;
-    transform: translateX(0) translateZ(0) rotateY(0deg);
+    transform: translateX(0) translateZ(0) rotateY(0deg) scale(1.04);
   }
   100% {
     opacity: 0;
-    transform: translateX(-120%) translateZ(-200px) rotateY(-25deg);
+    transform: translateX(-120%) translateZ(-200px) rotateY(-25deg) scale(0.92);
   }
 }
 
-/* Card transition states - backward (counter-clockwise) */
+/* Card transition states - backward (counter-clockwise) with premium zoom settle */
 .card-hidden-backward {
   opacity: 0;
-  transform: translateX(120%) translateZ(-200px) rotateY(25deg);
+  transform: translateX(120%) translateZ(-200px) rotateY(25deg) scale(0.92);
   pointer-events: none;
 }
 
 .card-entering-backward {
   opacity: 0;
-  transform: translateX(-120%) translateZ(-200px) rotateY(-25deg);
+  transform: translateX(-120%) translateZ(-200px) rotateY(-25deg) scale(0.92);
   animation: enterBackward 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .card-exiting-backward {
   opacity: 1;
-  transform: translateX(0) translateZ(0) rotateY(0deg);
+  transform: translateX(0) translateZ(0) rotateY(0deg) scale(1.04);
   animation: exitBackward 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 @keyframes enterBackward {
   0% {
     opacity: 0;
-    transform: translateX(-120%) translateZ(-200px) rotateY(-25deg);
+    transform: translateX(-120%) translateZ(-200px) rotateY(-25deg) scale(0.92);
   }
   100% {
     opacity: 1;
-    transform: translateX(0) translateZ(0) rotateY(0deg);
+    transform: translateX(0) translateZ(0) rotateY(0deg) scale(1.04);
   }
 }
 
 @keyframes exitBackward {
   0% {
     opacity: 1;
-    transform: translateX(0) translateZ(0) rotateY(0deg);
+    transform: translateX(0) translateZ(0) rotateY(0deg) scale(1.04);
   }
   100% {
     opacity: 0;
-    transform: translateX(120%) translateZ(-200px) rotateY(25deg);
+    transform: translateX(120%) translateZ(-200px) rotateY(25deg) scale(0.92);
   }
 }
 
@@ -385,16 +397,48 @@ body {
   transform: none;
 }
 
-/* Navigation control text styling - Splash Prev/Next */
+/* Contextual CTA button - themed per slide/page */
+.contextual-cta-button {
+  font-weight: 600;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 16px;
+  padding: 14px 32px;
+  border-radius: 50px;
+  border: 2px solid #000000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background-color: var(--cta-bg, #fbbf24);
+  color: var(--cta-text, #000000);
+}
+
+.contextual-cta-button:hover:not(:disabled) {
+  background-color: var(--cta-bg-hover, #f59e0b);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.contextual-cta-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.contextual-cta-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Navigation control text styling - Splash Prev/Next with contextual theming */
 .nav-control-text {
   font-family: 'Bricolage Grotesque', sans-serif;
   font-size: 0.875rem;
-  color: #000000;
   background: transparent;
   border: none;
   padding: 8px 12px;
   cursor: pointer;
   transition: opacity 0.2s ease;
+  color: var(--nav-text, #000000);
 }
 
 .nav-control-text:hover:not(:disabled) {
@@ -418,6 +462,28 @@ body {
 /* ============================================
    WELCOME PAGE ANIMATIONS
    ============================================ */
+
+/* Welcome page card entrance - matching onboarding 3D motion */
+.welcome-card-container {
+  perspective: 1400px;
+}
+
+.welcome-card-entering {
+  opacity: 0;
+  transform: translateX(120%) translateZ(-200px) rotateY(25deg) scale(0.92);
+  animation: welcomeCardEnter 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes welcomeCardEnter {
+  0% {
+    opacity: 0;
+    transform: translateX(120%) translateZ(-200px) rotateY(25deg) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) translateZ(0) rotateY(0deg) scale(1.04);
+  }
+}
 
 /* Welcome page number animation */
 @keyframes welcomeNumber {
@@ -499,6 +565,16 @@ body {
   background: #9ca3af;
 }
 
+/* Hide scrollbar for horizontal week strip */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* Fade in up animation for calendar selected date info */
 @keyframes fadeInUp {
   from {
@@ -513,4 +589,291 @@ body {
 
 .animate-fade-in-up {
   animation: fadeInUp 0.3s ease-out forwards;
+}
+
+/* Calendar navigation buttons - small circular style matching camera button */
+.calendar-nav-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #000000;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000000;
+  transition: all 0.25s ease;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.calendar-nav-button:hover {
+  background-color: #f3f4f6;
+  transform: scale(1.05);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+}
+
+.calendar-nav-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+/* Calendar week navigation buttons - small circular style */
+.calendar-week-nav-button {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #000000;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000000;
+  transition: all 0.25s ease;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.calendar-week-nav-button:hover {
+  background-color: #f3f4f6;
+  transform: scale(1.08);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+}
+
+.calendar-week-nav-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+/* ============================================
+   BOTTOM SHEET ANIMATIONS & STYLES
+   ============================================ */
+
+/* Bottom sheet backdrop fade-in - clean eased */
+.bottom-sheet-backdrop {
+  animation: backdropFadeIn 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes backdropFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Bottom sheet backdrop fade-out */
+.bottom-sheet-backdrop-close {
+  animation: backdropFadeOut 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes backdropFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Bottom sheet slide-up animation - clean eased translate */
+.bottom-sheet-container {
+  animation: sheetSlideUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes sheetSlideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Bottom sheet slide-down animation - clean eased translate */
+.bottom-sheet-container-close {
+  animation: sheetSlideDown 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes sheetSlideDown {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+/* Bottom sheet content subtle scale */
+.bottom-sheet-content {
+  animation: sheetContentScale 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes sheetContentScale {
+  from {
+    opacity: 0.95;
+    transform: scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Bottom sheet pill input styling - matching search bar theme */
+.bottom-sheet-pill-input {
+  width: 100%;
+  padding: 10px 16px;
+  border: 1px solid oklch(88% 0.01 106);
+  border-radius: 9999px;
+  background: oklch(100% 0 0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  font-size: 14px;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.bottom-sheet-pill-input:focus {
+  border-color: oklch(75% 0.02 106);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.bottom-sheet-pill-input::placeholder {
+  color: oklch(60% 0.01 106);
+}
+
+/* Bottom sheet action buttons - Get Started style pills */
+.bottom-sheet-action-button {
+  font-weight: 600;
+  font-size: 14px;
+  padding: 10px 24px;
+  border-radius: 9999px;
+  border: 2px solid #000000;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.25s ease;
+  cursor: pointer;
+  min-width: 100px;
+}
+
+.bottom-sheet-action-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.bottom-sheet-action-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+}
+
+.bottom-sheet-action-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Cancel button - red theme */
+.bottom-sheet-action-button-cancel {
+  background-color: oklch(65% 0.20 25);
+  color: #ffffff;
+}
+
+.bottom-sheet-action-button-cancel:hover:not(:disabled) {
+  background-color: oklch(60% 0.22 25);
+}
+
+/* Save button - green theme */
+.bottom-sheet-action-button-save {
+  background-color: oklch(65% 0.18 145);
+  color: #ffffff;
+}
+
+.bottom-sheet-action-button-save:hover:not(:disabled) {
+  background-color: oklch(60% 0.20 145);
+}
+
+/* Time stepper UI - boxed inputs with +/- controls */
+.time-input-box {
+  width: 64px;
+  height: 64px;
+  border: 2px solid oklch(88% 0.01 106);
+  border-radius: 12px;
+  background: oklch(100% 0 0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.time-input-box:focus {
+  border-color: oklch(47% 0.14 262);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.time-input-box::placeholder {
+  color: oklch(75% 0.01 106);
+}
+
+.time-stepper-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid oklch(88% 0.01 106);
+  background: oklch(100% 0 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: oklch(45% 0.01 106);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.time-stepper-button:hover {
+  border-color: oklch(47% 0.14 262);
+  background: oklch(98% 0.02 262);
+  color: oklch(47% 0.14 262);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.time-stepper-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+/* With Who pills - segmented/pill style */
+.with-who-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  border: 1.5px solid oklch(88% 0.01 106);
+  background: oklch(100% 0 0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: all 0.25s ease;
+  cursor: pointer;
+  color: oklch(45% 0.01 106);
+}
+
+.with-who-pill:hover {
+  border-color: oklch(80% 0.02 106);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.with-who-pill:active {
+  transform: scale(0.98);
+}
+
+/* Selected state - filled with color */
+.with-who-pill-selected {
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.with-who-pill-selected:hover {
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }

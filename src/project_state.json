@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 5,
-  "summary": "Moments (\"Add Life To Your Days\") is a mobile-first React web app with a multi-slide animated splash/onboarding carousel (3 themed cards) that leads into Internet Identity sign-in, a Welcome screen, and then the main app (Home/Discover, Camera capture/upload saving to Moments, Moments vertical viewer with music, Calendar, Settings). The UI is tightly constrained to a fixed mobile-viewport frame with precise animations (GSAP/Framer Motion) and styling consistency across all buttons and slides.",
+  "projectStateVersion": 56,
+  "summary": "Moments remains a mobile-first React web app with an onboarding slideshow into auth and core screens. The UI direction now includes making glassmorphic cards the default styling standard across the app (excluding buttons), and adding automatic (permission-based) browser geolocation to fetch a user’s location by default. The previously added Home 'completed/verified' section referenced in the screenshot is to be removed.",
   "existing_features": [
     {
       "id": "IF-1",
@@ -220,18 +220,123 @@
       "version": 1
     },
     {
-      "id": "feature-revert-all-app-buttons-to-the-styling-and-interaction-behavior-that-existed-before-the-calendar-feature-was-implemented-without-changing-the-overall-visual-design-this-includes-restoring-prior-sizes-border-treatments-shadows-hover-active-disabled-states-and-typography-across-all-pages-splash-onboarding-welcome-home-camera-moments-calendar-settings-ensure-any-calendar-specific-button-styles-do-not-globally-impact-other-buttons",
-      "title": "Revert ALL app buttons to the styling and interaction behavior that existed before the Calendar feature was implemented, without changing the overall visual design. This includes restoring prior sizes, border treatments, shadows, hover/active/disabled states, and typography across all pages (Splash/Onboarding, Welcome, Home, Camera, Moments, Calendar, Settings). Ensure any Calendar-specific button styles do not globally impact other buttons.",
+      "id": "IF-21",
+      "title": "Centralized localStorage persistence via StorageClient utility",
+      "synonyms": [
+        "StorageClient",
+        "Local storage abstraction",
+        "Unified storage keys"
+      ],
+      "description": "Introduces a shared `StorageClient` utility for reading/writing locally persisted app data (including moments/photos), reducing duplication across pages and preventing key mismatches between features like Camera, Moments, and Calendar.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-22",
+      "title": "Calendar planned-moment creation flow (bottom sheet + relationship cards + time) with local persistence",
+      "synonyms": [
+        "Planned moments",
+        "Calendar planning surface",
+        "PlannedMomentBottomSheet"
+      ],
+      "description": "Extends the Calendar experience into a planning surface: selecting a date can open a planned-moment creation UI (bottom sheet) that captures planned time and \"who\" via relationship-category cards, persists planned moments locally (planned moments storage utilities/hooks), and surfaces saved/planned items for the selected date below the calendar in the same visual style as the app.",
+      "reqIds": [
+        "AR-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "IF-23",
+      "title": "Backend photo blob storage integration for Moments (store + retrieve)",
+      "synonyms": [
+        "storePhoto blob put",
+        "getBlob implementation",
+        "Photo blob persistence"
+      ],
+      "description": "Implements actual blob persistence and retrieval in the Motoko backend: `storePhoto` writes the provided photo blob into storage (instead of metadata-only scaffolding) and records a real timestamp; `getBlob` is implemented to fetch and return stored blobs via the storage interface/mixin rather than always returning null.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-24",
+      "title": "Hamburger menu overlay component",
+      "synonyms": [
+        "HamburgerMenu",
+        "Side menu"
+      ],
+      "description": "Adds a reusable HamburgerMenu UI component for exposing additional navigation/actions via a compact menu affordance in the mobile UI.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-25",
+      "title": "Sign-in overlay component for authentication prompts",
+      "synonyms": [
+        "SignInOverlay",
+        "Auth prompt overlay"
+      ],
+      "description": "Adds a dedicated SignInOverlay component to present a focused authentication prompt/CTA overlay when sign-in is required or beneficial within the app flow.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-26",
+      "title": "Profile management UI with local-first persistence (name + profile picture)",
+      "synonyms": [
+        "Profile page",
+        "useProfile hook",
+        "profileStorage"
+      ],
+      "description": "Adds a Profile page and supporting hook/storage utilities to let users set/update a display name and profile picture, persisted locally (local-first) and loaded back into the UI; designed to integrate with Internet Identity when available without changing other page designs.",
+      "reqIds": [
+        "AR-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "IF-27",
+      "title": "Home screen 'Moments image' section component integrated below header/search",
+      "synonyms": [
+        "MomentsImageCard",
+        "Home content extension"
+      ],
+      "description": "Extends the existing Home screen by adding the referenced 'Moments image' section/content below the existing header/search area (via a dedicated MomentsImageCard component) while keeping the rest of the layout/design unchanged.",
+      "reqIds": [
+        "AR-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "IF-28",
+      "title": "Inline toast/notification component for lightweight in-app feedback",
+      "synonyms": [
+        "InlineToast"
+      ],
+      "description": "Introduces an InlineToast UI component to display compact, inline feedback messages in the mobile UI where needed.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-the-entire-home-screen-promotional-card-section-shown-in-the-provided-screenshot-the-orange-card-with-the-title-plan-meaningful-moments-the-add-your-moment-button-and-the-character-image-this-removal-must-be-implemented-by-deleting-the-corresponding-promo-card-block-in-frontend-src-pages-homescreen-tsx-so-that-the-section-is-no-longer-rendered-on-home",
+      "title": "Remove the entire Home screen promotional card section shown in the provided screenshot (the orange card with the title “Plan Meaningful Moments”, the “Add Your Moment” button, and the character image). This removal must be implemented by deleting the corresponding promo-card block in `frontend/src/pages/HomeScreen.tsx` so that the section is no longer rendered on Home.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-restore-the-splash-onboarding-slide-card-motion-animations-to-the-exact-behavior-that-existed-before-the-calendar-feature-was-implemented-without-changing-the-visual-design-this-includes-restoring-the-card-transition-motion-timing-easing-direction-card-layering-during-transitions-and-the-per-card-text-media-entrance-animations-so-they-feel-as-they-did-previously",
-      "title": "Restore the Splash/Onboarding slide card motion/animations to the exact behavior that existed before the Calendar feature was implemented, without changing the visual design. This includes restoring the card transition motion (timing, easing, direction), card layering during transitions, and the per-card text/media entrance animations so they feel as they did previously.",
+      "id": "feature-fetch-the-user-s-location-automatically-via-browser-geolocation-permission-based-by-default-and-persist-the-result-into-the-existing-local-first-user-profile-so-it-appears-wherever-profile-location-is-displayed-e-g-the-moments-image-card-header-ensure-denial-unavailability-is-handled-gracefully-without-breaking-the-ui",
+      "title": "Fetch the user’s location automatically via browser geolocation (permission-based) by default, and persist the result into the existing local-first user profile so it appears wherever `profile.location` is displayed (e.g., the Moments image card header). Ensure denial/unavailability is handled gracefully without breaking the UI.",
       "reqIds": [
         "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-make-glassmorphic-styling-the-new-visual-standard-for-cards-across-the-app-excluding-buttons-implement-a-reusable-glass-card-style-css-utility-class-and-update-existing-card-containers-that-currently-render-as-solid-white-cards-e-g-frontend-src-components-momentsimagecard-tsx-outer-card-and-the-home-empty-state-card-in-frontend-src-pages-homescreen-tsx-to-use-the-glassmorphic-style-while-keeping-all-button-styles-unchanged",
+      "title": "Make glassmorphic styling the new visual standard for cards across the app (excluding buttons). Implement a reusable glass card style (CSS utility/class) and update existing card containers that currently render as solid white cards (e.g., `frontend/src/components/MomentsImageCard.tsx` outer card and the Home empty-state card in `frontend/src/pages/HomeScreen.tsx`) to use the glassmorphic style while keeping all button styles unchanged.",
+      "reqIds": [
+        "REQ-3"
       ],
       "version": 1
     }
@@ -239,13 +344,121 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Revert all app buttons to the prior styling that existed before the calendar work (app-wide, no design changes otherwise).",
+      "summary": "Calendar UI: single-row weekly view with horizontal scroll (days slide left/right), changeable month, and refined current-day indicator styling to match design",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Restore the splash/onboarding slide card animations/motion behavior to the state before the calendar implementation (timing/easing/behavior as previously working).",
+      "summary": "Calendar visual cleanup: reduce overall UI sizing, remove emojis, and eliminate unwanted blue elements to keep design clean and consistent",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Moment planning UX polish: keep bottom-sheet/scroll-up creation motion smooth while creating/planning a moment",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Planned-moment creation sheet: make Cancel/Save buttons smaller and color-coded (distinct per action) while keeping design clean",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Planned-moment bottom sheet: half-height (50% viewport), smooth eased translate in/out (no bounce), smaller less-wide Get Started–style Cancel/Save buttons (Cancel=red, Save=green), pill-style Time/Title inputs, and 'With who' cards styled like the reference (vacuum cleaner/wifi card style)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Calendar plan-creation bottom sheet adjustments: increase to ~75% viewport height, match 'With who' card styling to reference, and update Time input/picker UI to match reference (or close)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Calendar navigation controls: replace Prev/Next with small circular arrow buttons styled like the camera button",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Planned moments color-coding: saved moments should be color-coded by selected 'who' category and the corresponding date indicator/circle should reflect the same color to show plans exist",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Planned-moment bottom sheet: increase height to ~75% viewport; redesign Time input as hour/minute boxes with +/- controls (and optional typing); apply 'who' color-coding using existing app palette and reflect it on the calendar date indicator",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Add a curved floating bottom navbar styled like the search bar (pill outline, minimal padding) with small Font Awesome icons and active/hover color states",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Home screen header refinements: use uploaded Moments logo image (larger), profile picture placeholder, notification icon in a circle, narrower search pill, and a compact promo card with framed image + arrow + 'Add Your Moment' button",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Post-capture completion/verification flow: after snapping/uploading a photo for a planned moment, allow user to verify it happened and show a dedicated minimalistic home/confirmation screen",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Profile management UI: let users set/update profile picture and display name within the profile section (without affecting other page designs)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Invites via codes: allow users to invite others to their memories/moments using shareable invite codes and an acceptance/join flow",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Product scope decision: evaluate removing/deprioritizing the standalone Moments section/feed to keep the app minimalistic, relying instead on calendar + verification views",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Home screen (post-capture verification): after user snaps evidence for a planned moment, show a dedicated minimal home/confirmation screen (exact UI clone of provided reference) and wire it into the planned→capture→verify flow without removing existing sections yet",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Invites via codes: generate/store shareable invite codes tied to user identity (local-first for now, backend-ready later) and provide UI to invite others to memories",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "Home screen: remove the entire newly added section that was marked as completed",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "Profile/Home: fetch and use user location by default (automatic location retrieval)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-23",
+      "summary": "UI restyle: replace white cards with a glassmorphic card style",
       "reqIds": [],
       "status": "pending"
     }
@@ -258,25 +471,40 @@
     "Backend uses Motoko ‘mixin’ composition to include authorization and storage capabilities into the main canister actor.",
     "Backend access control: first initializer can become admin by providing a matching secret token (from an environment variable); other principals default to user role on initialization.",
     "Backend blob-storage helper uses environment variables to locate a ‘cashier’ canister and to fetch authorized gateway principals; includes maintenance methods for dead-blob pruning and cycles refill.",
-    "Regression fixes should be based on restoring UI/animation state from the last known-good build prior to the calendar implementation; treat that state as the visual/interaction baseline for app-wide button styling and onboarding slide motion."
+    "Introduced a frontend `StorageClient` utility to centralize localStorage access and standardize storage keys/serialization used across pages (e.g., camera capture, moments viewer, calendar).",
+    "Build template updated to include shadcn/ui component implementations (e.g., button, dialog, sheet, etc.) and related tooling/config (eslint rules, utils, hooks), expanding the UI component infrastructure available to the app.",
+    "Added planned-moments local persistence layer (plannedMomentsStorage + usePlannedMoments hook) and a dedicated PlannedMomentBottomSheet component to support calendar-based planned moment creation and retrieval by date.",
+    "Calendar planned-moment creation bottom sheet should be half-height (reaches ~50% screen), with smooth slide-up on open and smooth slide-down on close; inputs (time/title/etc.) should use pill-style containers consistent with the search bar theme; action buttons should be smaller and color-coded (Cancel=red, Save=green) while matching the app’s overall styling.",
+    "Planned-moment creation bottom sheet should use a clean eased translate (no bounce) and open to ~50% viewport height; inputs (time/title/etc.) should use pill-style containers like the search bar theme; action buttons should be narrower/smaller in the Get Started button style and color-coded (Cancel=red, Save=green); relationship selection cards should match the reference card style (e.g., vacuum cleaner/wifi styling).",
+    "Backend Moments photo APIs now integrate with blob storage: `storePhoto` persists the provided blob and records a real timestamp, and `getBlob` is implemented to retrieve stored blobs via the storage module/mixin (no longer a placeholder).",
+    "Calendar planned-moment creation bottom sheet should be ~75% viewport height (not 50%).",
+    "Planned-moment Time input UI should be custom: separate hour/minute boxes with +/- steppers and optional direct typing, styled to match reference.",
+    "Added shared UI overlay components (e.g., HamburgerMenu, SignInOverlay) to centralize menu/auth prompt presentation across pages rather than duplicating page-level UI patterns.",
+    "Decision: do not remove the Moments tab yet; proceed by building the new Home (post-capture verification) screen and Profile logic/storage alongside the existing app flow.",
+    "Scope clarification: Keep the Moments tab/section for now (do not remove yet); build the new Home screen additions and Profile logic/storage alongside existing navigation.",
+    "Added local-first profile persistence utilities (`profileStorage`) and a `useProfile` hook to load/save profile name + image without requiring backend connectivity.",
+    "Introduced a reusable `MomentsImageCard` component and integrated it into the Home screen to render the new 'Moments image' section while preserving the existing Home layout.",
+    "UI direction: adopt glassmorphic styling as the new default for card components app-wide (excluding buttons).",
+    "Location behavior: use automatic browser geolocation (permission-based) to fetch user location by default; must handle denial/unavailable states gracefully."
   ],
   "knownIssues": [
-    "Frontend localStorage key inconsistency: Camera/Moments use `moments_photos`, but CalendarPage reads `momentsPhotos`, so calendar ‘has moments’ indicators and date filtering will not work with currently saved photos.",
-    "Backend `storePhoto` does not actually store the provided blob into storage (comment indicates missing MixinStorage put call) and sets `timestamp = 0`, so metadata is incomplete.",
-    "Backend `getBlob` is a placeholder that always returns `null` and references an unimplemented MixinStorage get interface.",
     "Environment variable names appear inconsistent/typo-prone in blob storage: `CAFFFEINE_STORAGE_CASHIER_PRINCIPAL` (extra 'F') may not match intended deployment configuration.",
-    "Frontend `frontend/src/components/HamburgerMenu.tsx` and `frontend/src/components/SignInOverlay.tsx` files are empty in the provided code, despite summaries implying implementations.",
     "Duplicate/competing global CSS files exist (`frontend/src/index.css` and `frontend/index.css`), which can cause confusion or styling inconsistencies depending on build configuration; the app imports `./index.css` from `src/main.tsx` (i.e., `frontend/src/index.css`).",
     "Home screen 'Add Your Moment' promotional button has no click handler (non-functional call-to-action).",
     "Splash screen comments mention GSAP, but the shown implementation uses CSS classes; dependency/intent may be mismatched.",
     "UI regression: button styling changed globally after latest changes; user requests reverting all buttons to prior styling without altering overall design.",
     "UI regression: splash slide card animations/motion no longer behave as previously implemented; needs restoration to prior motion behavior.",
-    "UI regression introduced after calendar implementation: button styling changed across the app and onboarding slide card motion no longer matches the previously working behavior."
+    "Calendar UI currently not matching desired design: needs single-row week view, smaller/cleaner styling (no emojis/blue), and smoother plan-creation sheet motion",
+    "Camera capture/upload does not reliably persist photos to the Moments feed; users report Moments not updating after snapping a photo.",
+    "Calendar behavior/functionality has been reported as 'dummy'/non-functional by the user; needs to be backed by real 2026 dates and user data rather than placeholder UI.",
+    "Deployments are failing intermittently; user requests redeploy but build/deploy pipeline returns 'Deployment failed'.",
+    "Deployment failures persist intermittently (redeploy attempts continue to fail), blocking rapid iteration/testing.",
+    "Internet Identity sign-in reliability issue: sign-in/redirect does not work consistently across all browsers and may not handle already-signed-in users (reauth/continue) correctly."
   ],
-  "isFixRequest": true,
+  "isFixRequest": false,
   "gameProjectType": "none",
   "projectName": "Moments Mobile App",
-  "clarification_mode": "instant",
+  "clarification_mode": "pro",
   "clarification_rounds": 0,
   "requiresBackendChanges": false,
   "requiresFrontendChanges": true

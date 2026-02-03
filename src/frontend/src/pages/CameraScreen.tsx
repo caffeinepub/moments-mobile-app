@@ -72,6 +72,9 @@ function CameraScreen() {
                 // Save back to localStorage
                 localStorage.setItem('moments_photos', JSON.stringify(savedPhotos));
                 
+                // Dispatch custom event for same-tab updates
+                window.dispatchEvent(new Event('moments_photos_updated'));
+                
                 // Navigate back to home
                 navigate({ to: '/home' });
             };

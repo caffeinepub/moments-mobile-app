@@ -6,6 +6,7 @@ import CameraScreen from './pages/CameraScreen';
 import SettingsPage from './pages/SettingsPage';
 import CalendarPage from './pages/CalendarPage';
 import MomentsPage from './pages/MomentsPage';
+import ProfilePage from './pages/ProfilePage';
 
 // Root component without forced redirects
 function RootComponent() {
@@ -58,7 +59,13 @@ const momentsRoute = createRoute({
     component: MomentsPage
 });
 
-const routeTree = rootRoute.addChildren([indexRoute, welcomeRoute, homeRoute, cameraRoute, settingsRoute, calendarRoute, momentsRoute]);
+const profileRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/profile',
+    component: ProfilePage
+});
+
+const routeTree = rootRoute.addChildren([indexRoute, welcomeRoute, homeRoute, cameraRoute, settingsRoute, calendarRoute, momentsRoute, profileRoute]);
 
 const router = createRouter({ routeTree });
 

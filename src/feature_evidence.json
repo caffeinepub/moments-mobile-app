@@ -2,10 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-revert-all-app-buttons-to-the-styling-and-interaction-behavior-that-existed-before-the-calendar-feature-was-implemented-without-changing-the-overall-visual-design-this-includes-restoring-prior-sizes-border-treatments-shadows-hover-active-disabled-states-and-typography-across-all-pages-splash-onboarding-welcome-home-camera-moments-calendar-settings-ensure-any-calendar-specific-button-styles-do-not-globally-impact-other-buttons",
-      "featureTitle": "Revert ALL app buttons to the styling and interaction behavior that existed before the Calendar feature was implemented, without changing the overall visual design. This includes restoring prior sizes, border treatments, shadows, hover/active/disabled states, and typography across all pages (Splash/Onboarding, Welcome, Home, Camera, Moments, Calendar, Settings). Ensure any Calendar-specific button styles do not globally impact other buttons.",
+      "featureId": "feature-remove-the-entire-home-screen-promotional-card-section-shown-in-the-provided-screenshot-the-orange-card-with-the-title-plan-meaningful-moments-the-add-your-moment-button-and-the-character-image-this-removal-must-be-implemented-by-deleting-the-corresponding-promo-card-block-in-frontend-src-pages-homescreen-tsx-so-that-the-section-is-no-longer-rendered-on-home",
+      "featureTitle": "Remove the entire Home screen promotional card section shown in the provided screenshot (the orange card with the title “Plan Meaningful Moments”, the “Add Your Moment” button, and the character image). This removal must be implemented by deleting the corresponding promo-card block in `frontend/src/pages/HomeScreen.tsx` so that the section is no longer rendered on Home.",
       "files": [
-        "frontend/src/index.css"
+        "frontend/src/pages/HomeScreen.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -14,7 +14,8 @@
         "initial-app@1.0.0",
         "blob-storage@4.0.0",
         "authorization@4.0.0",
-        "camera@1.0.0"
+        "camera@1.0.0",
+        "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
         "REQ-1"
@@ -22,10 +23,12 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-restore-the-splash-onboarding-slide-card-motion-animations-to-the-exact-behavior-that-existed-before-the-calendar-feature-was-implemented-without-changing-the-visual-design-this-includes-restoring-the-card-transition-motion-timing-easing-direction-card-layering-during-transitions-and-the-per-card-text-media-entrance-animations-so-they-feel-as-they-did-previously",
-      "featureTitle": "Restore the Splash/Onboarding slide card motion/animations to the exact behavior that existed before the Calendar feature was implemented, without changing the visual design. This includes restoring the card transition motion (timing, easing, direction), card layering during transitions, and the per-card text/media entrance animations so they feel as they did previously.",
+      "featureId": "feature-fetch-the-user-s-location-automatically-via-browser-geolocation-permission-based-by-default-and-persist-the-result-into-the-existing-local-first-user-profile-so-it-appears-wherever-profile-location-is-displayed-e-g-the-moments-image-card-header-ensure-denial-unavailability-is-handled-gracefully-without-breaking-the-ui",
+      "featureTitle": "Fetch the user’s location automatically via browser geolocation (permission-based) by default, and persist the result into the existing local-first user profile so it appears wherever `profile.location` is displayed (e.g., the Moments image card header). Ensure denial/unavailability is handled gracefully without breaking the UI.",
       "files": [
-        "frontend/src/index.css"
+        "frontend/src/hooks/useAutoGeolocation.ts",
+        "frontend/src/hooks/useProfile.ts",
+        "frontend/src/utils/profileStorage.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -34,10 +37,34 @@
         "initial-app@1.0.0",
         "blob-storage@4.0.0",
         "authorization@4.0.0",
-        "camera@1.0.0"
+        "camera@1.0.0",
+        "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
         "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-make-glassmorphic-styling-the-new-visual-standard-for-cards-across-the-app-excluding-buttons-implement-a-reusable-glass-card-style-css-utility-class-and-update-existing-card-containers-that-currently-render-as-solid-white-cards-e-g-frontend-src-components-momentsimagecard-tsx-outer-card-and-the-home-empty-state-card-in-frontend-src-pages-homescreen-tsx-to-use-the-glassmorphic-style-while-keeping-all-button-styles-unchanged",
+      "featureTitle": "Make glassmorphic styling the new visual standard for cards across the app (excluding buttons). Implement a reusable glass card style (CSS utility/class) and update existing card containers that currently render as solid white cards (e.g., `frontend/src/components/MomentsImageCard.tsx` outer card and the Home empty-state card in `frontend/src/pages/HomeScreen.tsx`) to use the glassmorphic style while keeping all button styles unchanged.",
+      "files": [
+        "frontend/src/components/MomentsImageCard.tsx",
+        "frontend/src/index.css",
+        "frontend/src/pages/HomeScreen.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "blob-storage@4.0.0",
+        "authorization@4.0.0",
+        "camera@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
       ],
       "confidence": "high"
     }

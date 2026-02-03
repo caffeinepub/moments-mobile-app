@@ -1,9 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
+import { useMomentsPhotos } from '../hooks/useMomentsPhotos';
+import { useProfile } from '../hooks/useProfile';
+import { formatRelativeTime } from '../utils/timeFormat';
+import MomentsImageCard from '../components/MomentsImageCard';
 
 function HomeScreen() {
     const navigate = useNavigate();
     const [hoveredNav, setHoveredNav] = useState<string | null>(null);
+    const { mostRecent } = useMomentsPhotos();
+    const { profile } = useProfile();
 
     const handleCameraClick = () => {
         navigate({ to: '/camera' });
@@ -21,6 +27,10 @@ function HomeScreen() {
         navigate({ to: '/moments' });
     };
 
+    const handleProfileClick = () => {
+        navigate({ to: '/profile' });
+    };
+
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black overflow-hidden">
             {/* Mobile viewport container with beige background */}
@@ -35,12 +45,21 @@ function HomeScreen() {
                     {/* Header Navigation */}
                     <header className="relative w-full px-8 pt-8 pb-4">
                         <div className="flex items-center justify-between">
-                            {/* Left: Profile Placeholder */}
+                            {/* Left: Profile Button */}
                             <button 
-                                className="flex items-center justify-center w-12 h-12 rounded-full border-2 border-gray-300 bg-gray-100 hover:opacity-70 transition-opacity"
+                                onClick={handleProfileClick}
+                                className="flex items-center justify-center w-12 h-12 rounded-full border-2 border-gray-300 bg-gray-100 hover:opacity-70 transition-opacity overflow-hidden"
                                 aria-label="Profile"
                             >
-                                <i className="fa fa-user text-gray-400 text-xl"></i>
+                                {profile.profilePicture ? (
+                                    <img
+                                        src={profile.profilePicture}
+                                        alt="Profile"
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <i className="fa fa-user text-gray-400 text-xl"></i>
+                                )}
                             </button>
                             
                             {/* Center: Logo Image - significantly enlarged */}
@@ -89,63 +108,43 @@ function HomeScreen() {
                         </div>
                     </div>
 
-                    {/* Promotional Card Section - smaller and less tall */}
-                    <div className="px-10 mt-6">
-                        <div 
-                            className="relative w-full overflow-hidden flex flex-col"
-                            style={{
-                                backgroundColor: '#E87A3E',
-                                borderRadius: '20px',
-                                height: '140px',
-                                padding: '16px'
-                            }}
-                        >
-                            {/* Text Content with Enhanced Arrow */}
-                            <div className="relative z-10">
-                                <h3 
-                                    className="text-white font-bold leading-tight"
+                    {/* Moments Image Card Section */}
+                    <div className="mt-8 mb-6">
+                        {mostRecent ? (
+                            <MomentsImageCard
+                                imageUrl={mostRecent.data}
+                                profilePicture={profile.profilePicture}
+                                displayName={profile.displayName}
+                                location={profile.location}
+                                timestamp={formatRelativeTime(mostRecent.timestamp)}
+                            />
+                        ) : (
+                            <div className="px-10">
+                                <div
+                                    className="glass-card w-full p-8 text-center"
                                     style={{
-                                        fontFamily: "'Bricolage Grotesque', sans-serif",
-                                        fontSize: '18px',
-                                        letterSpacing: '-0.02em'
+                                        borderRadius: '20px',
                                     }}
                                 >
-                                    Plan Meaningful Moments{' '}
-                                    <span 
-                                        className="inline-block"
+                                    <i className="fa fa-camera text-gray-300 text-5xl mb-4"></i>
+                                    <p
+                                        className="text-gray-500 mb-4"
                                         style={{
-                                            fontSize: '26px',
-                                            fontWeight: '900',
-                                            transform: 'scaleX(1.3)',
-                                            display: 'inline-block',
-                                            marginLeft: '4px'
+                                            fontFamily: "'Bricolage Grotesque', sans-serif",
+                                            fontSize: '15px',
                                         }}
                                     >
-                                        →
-                                    </span>
-                                </h3>
+                                        No moments captured yet
+                                    </p>
+                                    <button
+                                        onClick={handleCameraClick}
+                                        className="yellow-button-small"
+                                    >
+                                        Capture Your First Moment
+                                    </button>
+                                </div>
                             </div>
-
-                            {/* Add Your Moment Button - yellow with new styling */}
-                            <div className="relative z-10 mt-3">
-                                <button className="yellow-button-small">
-                                    Add Your Moment
-                                </button>
-                            </div>
-
-                            {/* Character Image - sad girl perfectly framed within card */}
-                            <div className="absolute right-0 bottom-0 h-full flex items-end overflow-hidden">
-                                <img 
-                                    src="/assets/Untitled design (2)-1.png"
-                                    alt="Character"
-                                    className="h-full w-auto object-contain object-bottom"
-                                    style={{
-                                        maxHeight: '140px',
-                                        maxWidth: '130px'
-                                    }}
-                                />
-                            </div>
-                        </div>
+                        )}
                     </div>
                 </div>
 

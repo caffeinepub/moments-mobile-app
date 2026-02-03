@@ -1,10 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Revert UI regressions introduced during/after the Calendar feature by restoring the previous global button styling/behaviors and the original Splash/Onboarding slide card motion/animations, without changing the app’s visual design.
+**Goal:** Simplify the Home screen by removing the promo card, automatically set/persist user location via browser geolocation, and standardize a glassmorphic look for app cards (excluding buttons).
 
 **Planned changes:**
-- Restore pre-Calendar button styling and interaction behaviors (sizes, borders, shadows, typography, hover/active/disabled states) across all pages, ensuring Calendar-specific button styles are scoped and do not affect other screens.
-- Restore Splash/Onboarding slide card transitions and per-card entrance animations to match the pre-Calendar timing/easing, direction, layering/z-index behavior, and clickability/pointer-events during transitions.
+- Remove the Home screen promotional card section (“Plan Meaningful Moments” / “Add Your Moment”) by deleting the corresponding promo-card block in `frontend/src/pages/HomeScreen.tsx`, ensuring no leftover layout gap.
+- Add automatic, permission-based browser geolocation on fresh sessions (or when `profile.location` is unset) and persist the resulting location into the existing local-first profile storage so it appears wherever `profile.location` is displayed; handle denial/unavailability gracefully.
+- Implement a reusable glassmorphic card style (CSS utility/class) and update existing solid white card containers (including `frontend/src/components/MomentsImageCard.tsx` outer card and the Home empty-state card in `frontend/src/pages/HomeScreen.tsx`) to use it while leaving all button styles unchanged.
 
-**User-visible outcome:** Buttons across the app look and behave as they did before the Calendar was implemented, and the Splash/Onboarding cards animate and transition smoothly with the original motion and content entrance effects.
+**User-visible outcome:** The Home promo card is gone, cards across the app appear glassmorphic on the beige background, and the app can automatically populate and remember the user’s location (when permission is granted) without disrupting the UI if permission is denied.

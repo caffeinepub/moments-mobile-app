@@ -88,7 +88,11 @@ function MobileSplashScreen() {
             isThirdCard: false,
             isVideo: true,
             bgColor: '#f4e8d8',
-            dotColor: '#523926'
+            dotColor: '#523926',
+            ctaBg: '#F8DC75',
+            ctaBgHover: '#d4b85f',
+            ctaText: '#000000',
+            navText: '#523926'
         },
         { 
             backgroundColor: '#416894', 
@@ -100,7 +104,11 @@ function MobileSplashScreen() {
             isThirdCard: false,
             isVideo: false,
             bgColor: '#d4e4f7',
-            dotColor: '#416894'
+            dotColor: '#416894',
+            ctaBg: '#6b9fd9',
+            ctaBgHover: '#5a8bc4',
+            ctaText: '#ffffff',
+            navText: '#416894'
         },
         { 
             backgroundColor: '#4e985d', 
@@ -112,7 +120,11 @@ function MobileSplashScreen() {
             isThirdCard: true,
             isVideo: false,
             bgColor: '#c8e6d0',
-            dotColor: '#4e985d'
+            dotColor: '#4e985d',
+            ctaBg: '#6bb87a',
+            ctaBgHover: '#5aa569',
+            ctaText: '#ffffff',
+            navText: '#4e985d'
         },
     ];
 
@@ -213,6 +225,18 @@ function MobileSplashScreen() {
         return cards[activeIndex].bgColor;
     };
 
+    // Get contextual theme variables for buttons
+    const getThemeVariables = () => {
+        const activeIndex = isTransitioning ? targetIndex : currentIndex;
+        const card = cards[activeIndex];
+        return {
+            '--cta-bg': card.ctaBg,
+            '--cta-bg-hover': card.ctaBgHover,
+            '--cta-text': card.ctaText,
+            '--nav-text': card.navText,
+        } as React.CSSProperties;
+    };
+
     // Get card animation state
     const getCardState = (cardIndex: number) => {
         if (isTransitioning) {
@@ -258,11 +282,6 @@ function MobileSplashScreen() {
         login();
     };
 
-    // Determine button background color based on login status
-    const getButtonColor = () => {
-        return loginStatus === 'logging-in' ? '#d4b85f' : '#F8DC75';
-    };
-
     // Determine button text based on authentication state
     const getButtonText = () => {
         if (isInitializing) return 'Loading...';
@@ -279,7 +298,7 @@ function MobileSplashScreen() {
                 style={{ backgroundColor: getBackgroundColor() }}
             >
                 {/* Main content container - centered vertically with space for elements below */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center px-6 gap-4">
+                <div className="absolute inset-0 flex flex-col items-center justify-center px-6 gap-4" style={getThemeVariables()}>
                     {/* Slideshow container with perspective for 3D effect */}
                     <div 
                         className="relative w-full max-w-[280px] aspect-[280/480]"
@@ -372,10 +391,7 @@ function MobileSplashScreen() {
                         <button 
                             onClick={handleSignInClick}
                             disabled={isInitializing || loginStatus === 'logging-in'}
-                            className="yellow-button z-50"
-                            style={{ 
-                                backgroundColor: getButtonColor()
-                            }}
+                            className="contextual-cta-button z-50"
                         >
                             {getButtonText()}
                         </button>
