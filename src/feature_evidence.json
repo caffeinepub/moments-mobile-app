@@ -2,10 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-adjust-the-planned-moment-pill-card-styling-so-the-card-appears-significantly-narrower-reduced-height-thickness-and-more-elongated-horizontally-while-preserving-the-existing-border-only-pill-look-left-color-dot-and-right-side-action-icons-implement-this-by-updating-the-css-for-the-planned-moment-card-classes-used-by-frontend-src-components-plannedmomentcard-tsx-e-g-planned-moment-card-clear-planned-moment-card-color-dot-and-related-action-icon-sizing-spacing-in-frontend-src-index-css",
-      "featureTitle": "Adjust the planned-moment pill card styling so the card appears significantly narrower (reduced height/thickness) and more elongated horizontally, while preserving the existing border-only pill look, left color dot, and right-side action icons. Implement this by updating the CSS for the planned-moment card classes used by `frontend/src/components/PlannedMomentCard.tsx` (e.g., `.planned-moment-card-clear`, `.planned-moment-card-color-dot`, and related action/icon sizing/spacing) in `frontend/src/index.css`.",
+      "featureId": "feature-redesign-the-vault-overview-gallery-vaultpage-so-photo-cards-thumbnails-are-significantly-larger-on-mobile-and-no-longer-feel-cramped-e-g-fewer-columns-larger-tile-sizes-improved-spacing-and-clearer-hierarchy-between-month-header-and-grid",
+      "featureTitle": "Redesign the Vault overview gallery (VaultPage) so photo cards/thumbnails are significantly larger on mobile and no longer feel cramped (e.g., fewer columns, larger tile sizes, improved spacing, and clearer hierarchy between month header and grid).",
       "files": [
-        "frontend/src/index.css"
+        "frontend/src/index.css",
+        "frontend/src/pages/VaultPage.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -18,7 +19,52 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-1"
+        "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-improve-the-visual-styling-of-vault-overview-cards-tiles-to-feel-more-premium-and-intentional-refine-surface-treatment-borders-shadows-corner-radius-and-typography-consistency-while-keeping-the-current-app-s-warm-beige-baseline-background",
+      "featureTitle": "Improve the visual styling of Vault overview cards/tiles to feel more premium and intentional (refine surface treatment, borders/shadows, corner radius, and typography consistency) while keeping the current app’s warm/beige baseline background.",
+      "files": [
+        "frontend/src/index.css",
+        "frontend/src/pages/VaultPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "blob-storage@4.0.0",
+        "authorization@4.0.0",
+        "camera@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-richer-motion-to-the-vault-experience-smoother-entrance-animations-for-month-sections-and-tiles-improved-tap-press-feedback-on-tiles-and-a-more-polished-transition-feel-when-navigating-into-and-out-of-the-moment-viewer-vaultmomentpage",
+      "featureTitle": "Add richer motion to the Vault experience: smoother entrance animations for month sections and tiles, improved tap/press feedback on tiles, and a more polished transition feel when navigating into and out of the moment viewer (VaultMomentPage).",
+      "files": [
+        "frontend/src/index.css",
+        "frontend/src/pages/VaultMomentPage.tsx",
+        "frontend/src/pages/VaultPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "blob-storage@4.0.0",
+        "authorization@4.0.0",
+        "camera@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
       ],
       "confidence": "high"
     }

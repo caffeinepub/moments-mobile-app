@@ -128,7 +128,9 @@ export default function HomeWeeklyCalendarStrip({
                   : 'home-calendar-day-inactive'
               }`}
               style={
-                !isSelected && hasMoment && momentColor
+                isSelected && hasMoment && momentColor
+                  ? { backgroundColor: momentColor }
+                  : !isSelected && hasMoment && momentColor
                   ? { backgroundColor: momentColor }
                   : undefined
               }

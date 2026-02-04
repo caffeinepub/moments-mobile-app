@@ -1,35 +1,71 @@
 {
   "kind": "build_request",
-  "title": "Make planned-moment pill cards slimmer and more elongated",
+  "title": "Revamp Vault gallery: larger cards, improved styling, richer motion",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-1",
-      "text": "Adjust the planned-moment pill card styling so the card appears significantly narrower (reduced height/thickness) and more elongated horizontally, while preserving the existing border-only pill look, left color dot, and right-side action icons. Implement this by updating the CSS for the planned-moment card classes used by `frontend/src/components/PlannedMomentCard.tsx` (e.g., `.planned-moment-card-clear`, `.planned-moment-card-color-dot`, and related action/icon sizing/spacing) in `frontend/src/index.css`.",
+      "id": "REQ-4",
+      "text": "Redesign the Vault overview gallery (VaultPage) so photo cards/thumbnails are significantly larger on mobile and no longer feel cramped (e.g., fewer columns, larger tile sizes, improved spacing, and clearer hierarchy between month header and grid).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-3"
         ],
         "quotes": [
-          "make the card pill way more narrower and then longer.."
+          "the vault is really lacking and the cards are way to smalll..and not styled visually well.. also not motion.."
         ]
       },
       "acceptanceCriteria": [
-        "Planned-moment cards render with noticeably less vertical thickness than before (reduced overall height).",
-        "Cards read as more elongated capsules (higher width-to-height ratio) without changing the overall layout structure (left dot, center text stack, right stacked icons).",
-        "No regressions to functionality: share and delete actions still work, and text remains readable/truncated appropriately (no overflow outside the pill).",
-        "The pill remains border-only with transparent interior and border color still matches `moment.color`."
+        "Vault overview thumbnails render at a noticeably larger size than the current 3-column grid (current code uses `grid grid-cols-3 gap-2`).",
+        "The Vault overview remains mobile-first and fits within the existing fixed viewport frame (max 390x844) without horizontal overflow.",
+        "Month grouping remains intact and still supports navigating to an individual moment by tapping a thumbnail."
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Improve the visual styling of Vault overview cards/tiles to feel more premium and intentional (refine surface treatment, borders/shadows, corner radius, and typography consistency) while keeping the current app’s warm/beige baseline background.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-3"
+        ],
+        "quotes": [
+          "not styled visually well"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Vault thumbnail tiles have updated styling that is visually distinct from the current `.vault-thumbnail-tile` look and reads as a cohesive card system.",
+        "Typography for Vault headers/labels is consistent and uses the existing app font family (Bricolage Grotesque).",
+        "Styling changes are implemented via Vault-specific classes/components (no requirement to change backend behavior)."
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Add richer motion to the Vault experience: smoother entrance animations for month sections and tiles, improved tap/press feedback on tiles, and a more polished transition feel when navigating into and out of the moment viewer (VaultMomentPage).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-3"
+        ],
+        "quotes": [
+          "also not motion.."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Month sections animate in smoothly as they enter the viewport (building on the existing `useInView` usage and `.vault-month-section` / `.vault-month-visible`).",
+        "Vault tiles provide clear tap/press feedback (scale/opacity/shadow changes) that feels responsive on mobile.",
+        "Entering the moment viewer and returning to the Vault feels intentionally animated (e.g., backdrop/image/overlay animations) and does not introduce navigation glitches."
       ]
     }
   ],
   "constraints": [
-    "Do not modify any files under `frontend/src/components/ui`.",
-    "Keep the card border-only/transparent style and continue using `moment.color` for the border color via `--card-border-color`."
+    "Do not edit files under frontend immutable paths (frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui).",
+    "Keep backend architecture unchanged (single Motoko actor); this Vault revamp should be frontend-only unless strictly necessary."
   ],
   "nonGoals": [
-    "No changes to planned-moment data models, storage, or backend APIs.",
-    "No redesign of icon set or card content layout beyond size/spacing adjustments needed to achieve a slimmer/longer pill."
+    "Do not add new backend storage, indexing, or syncing for Vault moments as part of this request.",
+    "Do not introduce third-party animation libraries; use existing CSS/Tailwind/React patterns already in the codebase.",
+    "Do not change the camera capture flow or photo storage schema as part of the Vault styling/motion upgrade."
   ],
   "imageRequirements": {
     "required": [],

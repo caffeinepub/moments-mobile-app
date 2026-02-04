@@ -1,24 +1,54 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-04T11:39:04.300Z",
+  "generatedAt": "2026-02-04T12:13:02.269Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 1,
-    "implemented": 1,
+    "total": 3,
+    "implemented": 3,
     "items": [
       {
-        "id": "REQ-1",
-        "summary": "Adjust the planned-moment pill card styling so the card appears significantly narrower (reduced height/thickness) and more elongated horizontally, while preserving the existing border-only pill look, left color dot, and right-side action icons. Implement this by updating the CSS for the planned-moment card classes used by `frontend/src/components/PlannedMomentCard.tsx` (e.g., `.planned-moment-card-clear`, `.planned-moment-card-color-dot`, and related action/icon sizing/spacing) in `frontend/src/index.css`.",
+        "id": "REQ-4",
+        "summary": "Redesign the Vault overview gallery (VaultPage) so photo cards/thumbnails are significantly larger on mobile and no longer feel cramped (e.g., fewer columns, larger tile sizes, improved spacing, and clearer hierarchy between month header and grid).",
         "status": "implemented",
         "plannedFiles": [
+          "frontend/src/pages/VaultPage.tsx",
           "frontend/src/index.css"
         ],
         "matchedFiles": [
+          "frontend/src/pages/VaultPage.tsx",
           "frontend/src/index.css"
+        ]
+      },
+      {
+        "id": "REQ-5",
+        "summary": "Improve the visual styling of Vault overview cards/tiles to feel more premium and intentional (refine surface treatment, borders/shadows, corner radius, and typography consistency) while keeping the current app’s warm/beige baseline background.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/index.css",
+          "frontend/src/pages/VaultPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/index.css",
+          "frontend/src/pages/VaultPage.tsx"
+        ]
+      },
+      {
+        "id": "REQ-6",
+        "summary": "Add richer motion to the Vault experience: smoother entrance animations for month sections and tiles, improved tap/press feedback on tiles, and a more polished transition feel when navigating into and out of the moment viewer (VaultMomentPage).",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/VaultPage.tsx",
+          "frontend/src/index.css",
+          "frontend/src/pages/VaultMomentPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/VaultPage.tsx",
+          "frontend/src/index.css",
+          "frontend/src/pages/VaultMomentPage.tsx"
         ]
       }
     ]
@@ -29,6 +59,8 @@
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
     "frontend/src/index.css",
+    "frontend/src/pages/VaultMomentPage.tsx",
+    "frontend/src/pages/VaultPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

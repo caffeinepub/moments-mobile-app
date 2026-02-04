@@ -9,53 +9,49 @@ interface MonthGroup {
 }
 
 function MonthSection({ group, onMomentClick }: { group: MonthGroup; onMomentClick: (id: number) => void }) {
-  const { ref, isInView } = useInView({ threshold: 0.15, triggerOnce: true });
+  const { ref, isInView } = useInView({ threshold: 0.1, rootMargin: '50px', triggerOnce: true });
 
   return (
     <div ref={ref} className={`vault-month-section ${isInView ? 'vault-month-visible' : ''}`}>
-      {/* Month header */}
-      <h2
-        className="text-lg font-bold text-gray-900 mb-4"
-        style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
-      >
-        {group.monthYear}
-      </h2>
+      {/* Month header with enhanced typography */}
+      <div className="vault-month-header">
+        <h2 className="vault-month-title">
+          {group.monthYear}
+        </h2>
+        <p className="vault-month-count">
+          {group.moments.length} moment{group.moments.length !== 1 ? 's' : ''}
+        </p>
+      </div>
 
-      {/* Photo grid - 3 columns with square tiles */}
-      <div className="grid grid-cols-3 gap-2">
+      {/* Photo grid - 2 columns with larger tiles */}
+      <div className="vault-grid">
         {group.moments.map((moment, index) => (
           <button
             key={moment.id}
             onClick={() => onMomentClick(moment.id)}
-            className="vault-thumbnail-tile"
-            style={{ animationDelay: `${index * 0.05}s` }}
+            className="vault-tile"
+            style={{ animationDelay: `${index * 0.08}s` }}
           >
-            <div className="vault-thumbnail-wrapper">
+            <div className="vault-tile-wrapper">
               <img
                 src={moment.data}
                 alt="Moment"
-                className="vault-thumbnail-image"
+                className="vault-tile-image"
               />
-              {/* Optional feeling indicator */}
+              {/* Feeling indicator with enhanced styling */}
               {moment.feeling && (
-                <div className="absolute top-1 right-1 w-6 h-6 rounded-full bg-white/90 flex items-center justify-center text-xs">
+                <div className="vault-tile-feeling">
                   {moment.feeling === 'Meaningful' && '❤️'}
                   {moment.feeling === 'Good' && '🙂'}
                   {moment.feeling === 'Okay' && '😐'}
                 </div>
               )}
+              {/* Subtle gradient overlay for depth */}
+              <div className="vault-tile-overlay"></div>
             </div>
           </button>
         ))}
       </div>
-
-      {/* Month summary */}
-      <p
-        className="text-sm text-gray-500 mt-3"
-        style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
-      >
-        This month had {group.moments.length} moment{group.moments.length !== 1 ? 's' : ''}
-      </p>
     </div>
   );
 }
@@ -123,43 +119,34 @@ function VaultPage() {
         style={{ background: '#f5f0e8' }}
       >
         {/* Header */}
-        <header className="relative w-full px-8 pt-8 pb-4 flex items-center justify-between">
+        <header className="vault-header">
           <button
             onClick={handleBack}
-            className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-200 transition-colors"
+            className="vault-back-button"
             aria-label="Back"
           >
             <i className="fa fa-arrow-left text-gray-700 text-xl"></i>
           </button>
-          <h1
-            className="text-xl font-bold text-gray-900"
-            style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
-          >
+          <h1 className="vault-page-title">
             Vault
           </h1>
           <div className="w-10"></div>
         </header>
 
         {/* Scrollable content */}
-        <div className="flex-1 overflow-y-auto px-8 pb-24">
+        <div className="flex-1 overflow-y-auto vault-scrollbar px-6 pb-24">
           {monthGroups.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center">
+            <div className="vault-empty-state">
               <i className="fa fa-camera text-gray-300 text-6xl mb-4"></i>
-              <p
-                className="text-gray-500 text-lg"
-                style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
-              >
+              <p className="vault-empty-title">
                 No moments yet
               </p>
-              <p
-                className="text-gray-400 text-sm mt-2"
-                style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
-              >
+              <p className="vault-empty-subtitle">
                 Capture your first moment to see it here
               </p>
             </div>
           ) : (
-            <div className="space-y-8">
+            <div className="vault-content">
               {monthGroups.map((group) => (
                 <MonthSection
                   key={group.monthYear}

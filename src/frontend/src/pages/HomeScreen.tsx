@@ -129,7 +129,7 @@ function HomeScreen() {
                 {/* Scrollable content area - hide scrollbar */}
                 <div className="flex-1 overflow-y-auto pb-24 home-scrollbar">
                     {/* Header Navigation */}
-                    <header className="relative w-full px-8 pt-6 pb-3">
+                    <header className="relative w-full px-8 pt-4 pb-2">
                         <div className="flex items-center justify-center">
                             {/* Center: Logo Image */}
                             <img 
@@ -141,7 +141,7 @@ function HomeScreen() {
                     </header>
 
                     {/* Search Bar */}
-                    <div className="px-12 mt-3">
+                    <div className="px-12 mt-2">
                         <div 
                             className="relative w-full flex items-center gap-2.5 px-4 py-2.5"
                             style={{
@@ -165,7 +165,7 @@ function HomeScreen() {
                     </div>
 
                     {/* Weekly Calendar Strip - Planning First */}
-                    <div className="mt-8 px-6">
+                    <div className="mt-5 px-6">
                         <HomeWeeklyCalendarStrip 
                             selectedDate={selectedDate}
                             onDateSelect={handleDateSelect}
@@ -175,7 +175,7 @@ function HomeScreen() {
                     </div>
 
                     {/* Planning Content Area */}
-                    <div className="mt-8 px-10">
+                    <div className="mt-6 px-10">
                         <div
                             className="home-planning-container"
                             style={{

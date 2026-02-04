@@ -1,22 +1,73 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Slimmer, more elongated planned-moment pill cards",
+  "title": "Vault gallery revamp: larger tiles, premium styling, richer motion",
   "requirements": [
     {
-      "id": "REQ-1",
-      "summary": "Make planned-moment pill cards significantly slimmer (reduced vertical thickness) and more horizontally elongated while preserving the border-only pill look, left color dot, and right-side stacked action icons.",
+      "id": "REQ-4",
+      "summary": "Redesign Vault overview gallery layout so thumbnails are significantly larger on mobile with improved spacing and clearer month hierarchy, while preserving month grouping and tap-to-open behavior.",
       "acceptanceCriteria": [
-        "Planned-moment cards render with noticeably less vertical thickness than before (reduced overall height).",
-        "Cards read as more elongated capsules (higher width-to-height ratio) without changing the overall layout structure (left dot, center text stack, right stacked icons).",
-        "No regressions to functionality: share and delete actions still work, and text remains readable/truncated appropriately (no overflow outside the pill).",
-        "The pill remains border-only with transparent interior and border color still matches `moment.color`."
+        "Vault overview thumbnails render at a noticeably larger size than the current 3-column grid (current code uses `grid grid-cols-3 gap-2`).",
+        "The Vault overview remains mobile-first and fits within the existing fixed viewport frame (max 390x844) without horizontal overflow.",
+        "Month grouping remains intact and still supports navigating to an individual moment by tapping a thumbnail."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/VaultPage.tsx",
+          "operation": "modify",
+          "description": "Update the Vault overview grid from a cramped 3-column layout to a mobile-first larger-tile layout (e.g., fewer columns, increased gaps, improved padding) and refine the month section structure to create clearer hierarchy between the month header and its grid while keeping month grouping and tile navigation intact."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Adjust Vault-specific CSS (e.g., month section spacing, grid/tile sizing helpers, and wrapper behavior) to support larger mobile tiles without introducing horizontal overflow inside the fixed 390x844 viewport frame."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Improve Vault overview tile/card styling to feel more premium and consistent with the warm/beige baseline and existing typography.",
+      "acceptanceCriteria": [
+        "Vault thumbnail tiles have updated styling that is visually distinct from the current `.vault-thumbnail-tile` look and reads as a cohesive card system.",
+        "Typography for Vault headers/labels is consistent and uses the existing app font family (Bricolage Grotesque).",
+        "Styling changes are implemented via Vault-specific classes/components (no requirement to change backend behavior)."
       ],
       "file_operations": [
         {
           "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "Adjust `.planned-moment-card-clear` to be slimmer by reducing vertical padding and tightening internal gap while keeping width: 100%, transparent background, and the border using `--card-border-color`. Update `.planned-moment-card-color-dot` size/position to stay vertically centered within the slimmer pill. Reduce typography size/line-height for `.planned-moment-card-date` and `.planned-moment-card-secondary-line` as needed to fit without overflow. Tighten `.planned-moment-card-actions-column` gap and reduce `.planned-moment-card-action-icon` dimensions/font-size so the right-side stacked icons remain aligned and fully clickable within the reduced height."
+          "description": "Revise Vault-specific classes (notably `.vault-thumbnail-tile`, thumbnail wrapper/image, and month header/summary styling) to create a more intentional premium card system (surface treatment, border/shadow, corner radius, and typographic consistency) that still sits comfortably on the app’s warm/beige baseline."
+        },
+        {
+          "path": "frontend/src/pages/VaultPage.tsx",
+          "operation": "modify",
+          "description": "Align Vault month header and supporting labels to a consistent typographic system using the existing Bricolage Grotesque baseline (reduce inline style duplication where possible and apply Vault-specific classes for consistency)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Add richer motion: smoother month/tiles entrances, clearer press feedback on tiles, and more polished transitions when entering/exiting VaultMomentPage.",
+      "acceptanceCriteria": [
+        "Month sections animate in smoothly as they enter the viewport (building on the existing `useInView` usage and `.vault-month-section` / `.vault-month-visible`).",
+        "Vault tiles provide clear tap/press feedback (scale/opacity/shadow changes) that feels responsive on mobile.",
+        "Entering the moment viewer and returning to the Vault feels intentionally animated (e.g., backdrop/image/overlay animations) and does not introduce navigation glitches."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/VaultPage.tsx",
+          "operation": "modify",
+          "description": "Enhance month section entrance behavior using the existing `useInView` pattern (e.g., tuning thresholds/root margins and applying a more polished visible state), and refine tile interaction handling so press/tap feedback is immediate and consistent on mobile."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Upgrade Vault motion styles: improve `.vault-month-section` -> `.vault-month-visible` transitions; refine tile hover/active/pressed states for mobile (scale/opacity/shadow) with reduced-jank timing; and add Vault viewer enter/exit animation classes for the backdrop, image, and metadata overlay to create a more intentional transition feel."
+        },
+        {
+          "path": "frontend/src/pages/VaultMomentPage.tsx",
+          "operation": "modify",
+          "description": "Implement a polished enter/exit transition for the moment viewer: apply viewer animation classes on mount, and on back navigation trigger an exit animation state before navigating back to the Vault to avoid visual glitches (ensure the transition remains within the fixed viewport frame)."
         }
       ]
     }
