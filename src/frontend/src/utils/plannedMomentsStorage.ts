@@ -1,5 +1,7 @@
 // Local-first storage for planned moments (separate from photo moments)
 
+import { addNotification } from './localNotificationsStorage';
+
 export interface PlannedMoment {
   id: string;
   date: string; // ISO date string (YYYY-MM-DD)
@@ -80,6 +82,8 @@ export function savePlannedMoment(moment: Omit<PlannedMoment, 'id' | 'createdAt'
   }
 
   const moments = loadPlannedMoments();
+  const isFirstMoment = moments.length === 0;
+  
   const newMoment: PlannedMoment = {
     ...moment,
     id: `moment_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -90,6 +94,11 @@ export function savePlannedMoment(moment: Omit<PlannedMoment, 'id' | 'createdAt'
   
   // Emit change event for immediate UI updates
   emitStorageChange();
+  
+  // Trigger notification for first planned moment
+  if (isFirstMoment) {
+    addNotification('first-planned-moment');
+  }
   
   return {
     success: true,

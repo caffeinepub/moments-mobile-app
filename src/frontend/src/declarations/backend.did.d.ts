@@ -10,6 +10,15 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export type BuildStatus = { 'production' : null } |
+  { 'draft' : null } |
+  { 'archived' : null };
+export interface BuildVersion {
+  'promotedBy' : [] | [Principal],
+  'status' : BuildStatus,
+  'version' : bigint,
+  'timestamp' : bigint,
+}
 export interface PhotoMetadata {
   'id' : bigint,
   'owner' : Principal,
@@ -54,15 +63,21 @@ export interface _SERVICE {
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'createDraftBuild' : ActorMethod<[bigint], undefined>,
   'deletePhoto' : ActorMethod<[bigint], boolean>,
   'getBlob' : ActorMethod<[string], [] | [Uint8Array]>,
+  'getBuildVersion' : ActorMethod<[bigint], [] | [BuildVersion]>,
   'getCallerMomentsPhotos' : ActorMethod<[], Array<PhotoMetadata>>,
   'getCallerSettings' : ActorMethod<[], [] | [UserSettings]>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getCurrentDraftVersion' : ActorMethod<[], [] | [BuildVersion]>,
+  'getCurrentProductionVersion' : ActorMethod<[], [] | [BuildVersion]>,
   'getUserMomentsPhotos' : ActorMethod<[Principal], Array<PhotoMetadata>>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'listAllBuilds' : ActorMethod<[], Array<BuildVersion>>,
+  'promoteBuildToProduction' : ActorMethod<[bigint], undefined>,
   'saveCallerSettings' : ActorMethod<[UserSettings], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'storePhoto' : ActorMethod<[Uint8Array], string>,

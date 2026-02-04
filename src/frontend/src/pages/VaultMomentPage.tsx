@@ -1,26 +1,21 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from '@tanstack/react-router';
-import { Trash2 } from 'lucide-react';
 import { 
   getMomentById, 
   MomentsPhoto, 
   getPreviousMomentId, 
-  getNextMomentId,
-  deleteMoment
+  getNextMomentId
 } from '../utils/momentsPhotosStorage';
 import { formatRelativeTime } from '../utils/timeFormat';
 import { getFeelingEmoji } from '../utils/momentFeelings';
 import EmojiFloatOverlay from '../components/EmojiFloatOverlay';
 import { useSwipeGesture } from '../hooks/useSwipeGesture';
-import { useBackSlideNavigation } from '../hooks/useBackSlideNavigation';
-import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
 
 function VaultMomentPage() {
   const navigate = useNavigate();
   const params = useParams({ from: '/vault/$momentId' });
   const [moment, setMoment] = useState<MomentsPhoto | null>(null);
   const [isExiting, setIsExiting] = useState(false);
-  const [momentToDelete, setMomentToDelete] = useState<MomentsPhoto | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Load moment
@@ -81,25 +76,6 @@ function VaultMomentPage() {
     }
   }, [attachListeners]);
 
-  const handleDeleteRequest = () => {
-    if (moment) {
-      setMomentToDelete(moment);
-    }
-  };
-
-  const handleConfirmDelete = () => {
-    if (momentToDelete) {
-      deleteMoment(momentToDelete.id);
-      setMomentToDelete(null);
-      // Navigate back to vault after deletion
-      handleBack();
-    }
-  };
-
-  const handleCancelDelete = () => {
-    setMomentToDelete(null);
-  };
-
   if (!moment) {
     return null;
   }
@@ -118,15 +94,6 @@ function VaultMomentPage() {
           aria-label="Back to moments"
         >
           <i className="fa fa-arrow-left text-xl"></i>
-        </button>
-
-        {/* Delete button */}
-        <button
-          onClick={handleDeleteRequest}
-          className="absolute top-6 right-6 z-50 w-12 h-12 flex items-center justify-center rounded-full bg-red-500/90 hover:bg-red-600/90 text-white transition-all"
-          aria-label="Delete moment"
-        >
-          <Trash2 size={18} />
         </button>
 
         {/* Full-screen media container */}
@@ -187,15 +154,6 @@ function VaultMomentPage() {
           </div>
         </div>
       </div>
-
-      {/* Delete confirmation modal */}
-      <ConfirmDeleteModal
-        isOpen={!!momentToDelete}
-        onConfirm={handleConfirmDelete}
-        onCancel={handleCancelDelete}
-        title="Delete Moment?"
-        message="This moment will be permanently removed."
-      />
     </div>
   );
 }

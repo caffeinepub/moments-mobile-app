@@ -1,6 +1,7 @@
 // Local-first storage utilities for moments photos
 
 import { MomentFeeling } from './momentFeelings';
+import { addNotification } from './localNotificationsStorage';
 
 export type { MomentFeeling };
 
@@ -50,6 +51,7 @@ export function getMostRecentPhoto(): MomentsPhoto | null {
 export function saveMomentsPhoto(photo: MomentsPhoto): SaveResult {
   try {
     const photos = loadMomentsPhotos();
+    const isFirstMoment = photos.length === 0;
     
     // Enforce 10-item cap
     if (photos.length >= MAX_MOMENTS) {
@@ -76,6 +78,11 @@ export function saveMomentsPhoto(photo: MomentsPhoto): SaveResult {
     
     // Dispatch custom event for same-tab updates only on success
     window.dispatchEvent(new Event('moments_photos_updated'));
+    
+    // Trigger notification for first photo moment
+    if (isFirstMoment) {
+      addNotification('first-photo-moment');
+    }
     
     return { success: true };
   } catch (error: any) {

@@ -3,6 +3,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useProfile } from '../hooks/useProfile';
 import InlineToast from '../components/InlineToast';
 import { useBackSlideNavigation } from '../hooks/useBackSlideNavigation';
+import { addNotification } from '../utils/localNotificationsStorage';
 
 function ProfilePage() {
   const navigate = useNavigate();
@@ -16,6 +17,8 @@ function ProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSave = () => {
+    const isFirstSave = !profile.displayName && displayName.trim();
+    
     updateProfile({
       displayName: displayName.trim() || undefined,
       location: location.trim() || undefined,
@@ -23,6 +26,12 @@ function ProfilePage() {
     });
     setToastMessage('Profile saved successfully');
     setShowToast(true);
+    
+    // Trigger notification for first profile save
+    if (isFirstSave) {
+      addNotification('first-profile-save');
+    }
+    
     setTimeout(() => {
       navigate({ to: '/home' });
     }, 1500);

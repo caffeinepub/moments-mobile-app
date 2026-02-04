@@ -10,11 +10,10 @@ interface CardProps {
     textLine2: string;
     isSecondCard?: boolean;
     isThirdCard?: boolean;
-    isFourthCard?: boolean;
     isVideo?: boolean;
 }
 
-function SplashCard({ backgroundColor, number, mediaSrc, textLine1, textLine2, isSecondCard = false, isThirdCard = false, isFourthCard = false, isVideo = false }: CardProps) {
+function SplashCard({ backgroundColor, number, mediaSrc, textLine1, textLine2, isSecondCard = false, isThirdCard = false, isVideo = false }: CardProps) {
     return (
         <div 
             className="w-full aspect-[280/480] max-w-[280px] rounded-[28px] border-[1.5px] border-white p-6 flex flex-col items-start justify-start text-white overflow-hidden shrink-0"
@@ -40,7 +39,7 @@ function SplashCard({ backgroundColor, number, mediaSrc, textLine1, textLine2, i
                 {isVideo ? (
                     <video 
                         src={mediaSrc}
-                        className="w-full h-auto object-contain object-bottom"
+                        className={`w-full h-auto object-contain object-bottom ${isThirdCard ? 'scale-110' : ''}`}
                         autoPlay
                         loop
                         muted
@@ -54,7 +53,7 @@ function SplashCard({ backgroundColor, number, mediaSrc, textLine1, textLine2, i
                     <img 
                         src={mediaSrc}
                         alt="Character" 
-                        className={`w-full h-auto object-contain ${isSecondCard ? 'object-bottom scale-[1.15] translate-y-[8%]' : isThirdCard || isFourthCard ? 'object-bottom' : 'object-bottom'}`}
+                        className={`w-full h-auto object-contain ${isSecondCard ? 'object-bottom scale-[1.15] translate-y-[8%]' : 'object-bottom'}`}
                         loading="eager"
                         decoding="async"
                         fetchPriority="high"
@@ -87,7 +86,6 @@ function MobileSplashScreen() {
             textLine2: 'Build Moments',
             isSecondCard: false,
             isThirdCard: false,
-            isFourthCard: false,
             isVideo: true,
             bgColor: '#f4e8d8',
             dotColor: '#523926',
@@ -104,7 +102,6 @@ function MobileSplashScreen() {
             textLine2: 'Your Days',
             isSecondCard: true,
             isThirdCard: false,
-            isFourthCard: false,
             isVideo: false,
             bgColor: '#d4e4f7',
             dotColor: '#416894',
@@ -116,12 +113,11 @@ function MobileSplashScreen() {
         { 
             backgroundColor: '#4e985d', 
             number: '03', 
-            mediaSrc: '/assets/Untitled design (2).png',
+            mediaSrc: '/assets/image-51.png',
             textLine1: 'Create Memories',
             textLine2: 'Not doom scrolling',
             isSecondCard: false,
-            isThirdCard: true,
-            isFourthCard: false,
+            isThirdCard: false,
             isVideo: false,
             bgColor: '#c8e6d0',
             dotColor: '#4e985d',
@@ -129,23 +125,6 @@ function MobileSplashScreen() {
             ctaBgHover: '#5aa569',
             ctaText: '#ffffff',
             navText: '#4e985d'
-        },
-        { 
-            backgroundColor: '#d4a5a5', 
-            number: '04', 
-            mediaSrc: '/assets/Gel Polish Manicure (1).mp4',
-            textLine1: 'Capture Every',
-            textLine2: 'Beautiful Moment',
-            isSecondCard: false,
-            isThirdCard: false,
-            isFourthCard: true,
-            isVideo: true,
-            bgColor: '#f5e6e6',
-            dotColor: '#d4a5a5',
-            ctaBg: '#e8b4b4',
-            ctaBgHover: '#d4a5a5',
-            ctaText: '#000000',
-            navText: '#d4a5a5'
         },
     ];
 
@@ -162,12 +141,12 @@ function MobileSplashScreen() {
             return;
         }
 
-        // If user is authenticated and on slide 4 (last slide), navigate to welcome
-        if (identity && currentIndex === 3) {
+        // If user is authenticated and on last slide, navigate to welcome
+        if (identity && currentIndex === cards.length - 1) {
             hasNavigatedRef.current = true;
             navigate({ to: '/welcome' });
         }
-    }, [identity, currentIndex, navigate, isInitializing]);
+    }, [identity, currentIndex, navigate, isInitializing, cards.length]);
 
     // Cleanup function for all timeouts
     const clearAllTimeouts = useCallback(() => {
@@ -183,8 +162,8 @@ function MobileSplashScreen() {
 
     // Core transition function - handles all slide transitions
     const transitionToSlide = useCallback((newIndex: number, direction: 'forward' | 'backward') => {
-        // Prevent invalid transitions (now 4 slides: 0-3)
-        if (newIndex < 0 || newIndex > 3 || newIndex === currentIndex || isTransitioning) {
+        // Prevent invalid transitions (now 3 slides: 0-2)
+        if (newIndex < 0 || newIndex >= cards.length || newIndex === currentIndex || isTransitioning) {
             return;
         }
 
@@ -203,12 +182,12 @@ function MobileSplashScreen() {
             setIsTransitioning(false);
             transitionTimeoutRef.current = null;
         }, animationDuration);
-    }, [currentIndex, isTransitioning, clearAllTimeouts]);
+    }, [currentIndex, isTransitioning, clearAllTimeouts, cards.length]);
 
-    // Auto-play functionality with extended first slide duration and stopping on fourth card
+    // Auto-play functionality with extended first slide duration and stopping on last card
     useEffect(() => {
-        // Don't auto-play if on last slide (index 3) or currently transitioning
-        if (currentIndex >= 3 || isTransitioning) {
+        // Don't auto-play if on last slide or currently transitioning
+        if (currentIndex >= cards.length - 1 || isTransitioning) {
             return;
         }
 
@@ -225,7 +204,7 @@ function MobileSplashScreen() {
                 autoPlayTimeoutRef.current = null;
             }
         };
-    }, [currentIndex, isTransitioning, transitionToSlide]);
+    }, [currentIndex, isTransitioning, transitionToSlide, cards.length]);
 
     // Cleanup on unmount
     useEffect(() => {
@@ -281,7 +260,7 @@ function MobileSplashScreen() {
 
     // Handle forward navigation
     const handleNextClick = () => {
-        if (currentIndex >= 3 || isTransitioning) return;
+        if (currentIndex >= cards.length - 1 || isTransitioning) return;
         transitionToSlide(currentIndex + 1, 'forward');
     };
 
@@ -362,7 +341,6 @@ function MobileSplashScreen() {
                                         textLine2={card.textLine2}
                                         isSecondCard={card.isSecondCard}
                                         isThirdCard={card.isThirdCard}
-                                        isFourthCard={card.isFourthCard}
                                         isVideo={card.isVideo}
                                     />
                                 </div>
@@ -385,7 +363,7 @@ function MobileSplashScreen() {
                         {/* Next text - bottom-right corner */}
                         <button
                             onClick={handleNextClick}
-                            disabled={currentIndex >= 3 || isTransitioning}
+                            disabled={currentIndex >= cards.length - 1 || isTransitioning}
                             className="nav-control-text"
                             style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
                         >
@@ -393,8 +371,8 @@ function MobileSplashScreen() {
                         </button>
                     </div>
 
-                    {/* Progress Dots (Slides 1-3) or Sign In Button (Slide 4) - with higher z-index */}
-                    {currentIndex < 3 ? (
+                    {/* Progress Dots (Slides 1-2) or Sign In Button (Slide 3) - with higher z-index */}
+                    {currentIndex < cards.length - 1 ? (
                         <div className="flex gap-2 items-center justify-center z-50">
                             <div 
                                 className="w-2 h-2 rounded-full animate-wave-bounce-1 transition-colors duration-500"

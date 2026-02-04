@@ -4,12 +4,14 @@ import { loadSavedMomentId, clearDraft } from '../utils/pendingMomentDraftStorag
 import { updateMomentsPhoto } from '../utils/momentsPhotosStorage';
 import { FEELING_OPTIONS, MomentFeeling } from '../utils/momentFeelings';
 import { useGentleAutoScroll } from '../hooks/useGentleAutoScroll';
+import { addNotification } from '../utils/localNotificationsStorage';
 
 function MomentFeelingCheckPage() {
   const navigate = useNavigate();
   const [momentId, setMomentId] = useState<number | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState<string>('');
+  const [isFirstFeeling, setIsFirstFeeling] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Enable gentle auto-scroll
@@ -27,6 +29,11 @@ function MomentFeelingCheckPage() {
       return;
     }
     setMomentId(id);
+    
+    // Check if this is the first feeling check
+    const triggersData = localStorage.getItem('notification_triggers');
+    const triggers = triggersData ? JSON.parse(triggersData) : {};
+    setIsFirstFeeling(!triggers['first-feeling-check']);
   }, [navigate]);
 
   const handleSelectFeeling = async (feeling: MomentFeeling) => {
@@ -43,6 +50,11 @@ function MomentFeelingCheckPage() {
         setError(result.error || 'Failed to save feeling. Please try again.');
         setIsUpdating(false);
         return;
+      }
+
+      // Trigger notification for first feeling check
+      if (isFirstFeeling) {
+        addNotification('first-feeling-check');
       }
 
       // Clear draft data

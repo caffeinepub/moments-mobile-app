@@ -1,84 +1,85 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-04T13:48:01.172Z",
-  "summary": "Diff implements local moments storage 10-item cap with clear error messaging, adds deletion UI in Moments grid/detail, adds a Notifications page/route and back-slide hook used by multiple pages. Video moments rendering appears added to the Moments grid and detail viewer. However, several requested UI copy/asset and navbar wiring changes are not fully verifiable from the truncated diff, and the back-slide transition is not consistently applied (VaultMomentPage uses a custom exit path instead of the shared hook).",
+  "generatedAt": "2026-02-04T15:01:58.657Z",
+  "summary": "BuildRequest is promotion-only with an explicit constraint of no code changes. The diff introduces multiple code and documentation changes, adds backend build-management logic, and updates/notes many frontend/UI behaviors. It does not provide confirmation that production now serves Draft Version 140 nor a live URL/environment identifier proving the promotion completed.",
   "missing_requirements": [
     {
       "id": "REQ-4",
-      "requirement": "Add a 4th splash screen slide using `Gel Polish Manicure (1).mp4` with image-like, non-interactive video behavior; update splash logic to assume 4 slides.",
-      "reason": "MobileSplashScreen changes are truncated; the diff shows video support and a cards array but does not show the 4th slide using the specific asset name `Gel Polish Manicure (1).mp4`, nor the updated bounds/progress/CTA logic for 4 slides.",
+      "requirement": "Promote the currently deployed draft build (Draft Version 140) to the live production deployment so end users receive the latest version.",
+      "reason": "The diff shows added documentation and backend helper methods, but no evidence of an actual production promotion having been executed or production being updated to serve version 140.",
       "evidence": [
-        "frontend/src/pages/MobileSplashScreen.tsx (truncated)"
+        "frontend/DEPLOYMENT_PROMOTION.md",
+        "frontend/DEPLOYMENT_STATUS.md",
+        "backend/main.mo"
       ]
     },
     {
-      "id": "REQ-5",
-      "requirement": "Rename all user-facing “Vault” labels to “Moments” everywhere in the UI (headers, navbar labels, empty states, aria labels, etc.) without changing routes.",
-      "reason": "Some aria-label copy suggests “Moments” (e.g., back label), but the diff does not provide enough untruncated UI text to confirm that all user-visible occurrences of “Vault” have been removed (especially the VaultPage header, navbar label, and empty states).",
+      "id": "REQ-4",
+      "requirement": "Live/production environment serves the same app version as Draft Version 140.",
+      "reason": "No diff evidence demonstrates that production is now serving v140; the status doc explicitly says promotion is pending and production version is 'Awaiting promotion of v140'.",
       "evidence": [
-        "frontend/src/pages/VaultPage.tsx (truncated)",
-        "frontend/src/pages/HomeScreen.tsx (truncated)"
+        "frontend/DEPLOYMENT_STATUS.md"
       ]
     },
     {
-      "id": "REQ-6",
-      "requirement": "Replace the Home bottom navbar Calendar item with a notifications bell item wired to the notifications inbox screen; calendar removed from navbar.",
-      "reason": "A Notifications route/page and a `handleNotificationsClick` function exist, but the HomeScreen bottom navbar rendering is truncated, so removal of the Calendar nav item and addition/wiring of the bell item cannot be confirmed.",
+      "id": "REQ-4",
+      "requirement": "Provide a live URL (or environment identifier) confirming the production deployment completed successfully.",
+      "reason": "The deployment status doc leaves the live URL as 'To be provided after promotion' and does not include an environment identifier confirming completion.",
       "evidence": [
-        "frontend/src/pages/HomeScreen.tsx (truncated)",
-        "frontend/src/pages/NotificationsPage.tsx",
-        "frontend/src/App.tsx"
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "requirement": "Remove music toggle control and disable any background music initialization/auto-play in `VaultMomentPage.tsx`.",
-      "reason": "The provided `VaultMomentPage.tsx` excerpt does not show any music toggle or audio init, but the file is truncated so it’s not provable that all music-related logic was removed/disabled.",
-      "evidence": [
-        "frontend/src/pages/VaultMomentPage.tsx (truncated)"
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "requirement": "Allow selecting video files in the gallery upload flow and persist them to the existing local-first moments storage with correct MIME type.",
-      "reason": "CameraScreen shows a `handleFileUpload` that reads `file.type`, and SaveMomentConfirmPage handles `video/` types, but the file input accept configuration and the full gallery upload flow are truncated, so explicit support for selecting videos from the gallery UI cannot be confirmed from the diff summary alone.",
-      "evidence": [
-        "frontend/src/pages/CameraScreen.tsx (truncated)",
-        "frontend/src/pages/SaveMomentConfirmPage.tsx (truncated)"
-      ]
-    },
-    {
-      "id": "REQ-10",
-      "requirement": "Add a consistent slide-back transition for any back-arrow (and equivalent back actions) across the app before navigation completes.",
-      "reason": "A shared hook (`useBackSlideNavigation`) is added and used by Calendar/Profile/Settings/Vault/Notifications, but `VaultMomentPage` uses its own local `isExiting` + `setTimeout` and does not use the shared hook. Also other back actions/pages are not evidenced due to truncation.",
-      "evidence": [
-        "frontend/src/hooks/useBackSlideNavigation.ts",
-        "frontend/src/pages/CalendarPage.tsx (truncated)",
-        "frontend/src/pages/ProfilePage.tsx (truncated)",
-        "frontend/src/pages/SettingsPage.tsx (truncated)",
-        "frontend/src/pages/VaultPage.tsx (truncated)",
-        "frontend/src/pages/NotificationsPage.tsx",
-        "frontend/src/pages/VaultMomentPage.tsx (truncated)"
+        "frontend/DEPLOYMENT_STATUS.md"
       ]
     }
   ],
-  "hallucinated_features": [],
-  "confidence": 0.62,
+  "hallucinated_features": [
+    {
+      "description": "Backend 'Build Deployment Management' system added/modified (build version types/state, admin-only promoteBuildToProduction, queries for production/draft version, build listing, initialization of draft v140).",
+      "reason": "The BuildRequest explicitly states no code changes are requested; only a deployment/promotion is requested.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "Added deployment process documentation and a release record document with a long list of product features and verification checklist.",
+      "reason": "Not requested; BuildRequest asks to promote an already-deployed draft to production and provide confirmation, not to add new documentation or feature inventories.",
+      "evidence": [
+        "frontend/DEPLOYMENT_PROMOTION.md",
+        "frontend/DEPLOYMENT_STATUS.md"
+      ]
+    },
+    {
+      "description": "Frontend/UI behavior changes described across many files (splash slideshow changes, styling tokens, new components/animations, dependency changes, route/page behavior updates).",
+      "reason": "Non-goal explicitly forbids implementing new features or UI changes; diff summary indicates many such changes were made.",
+      "evidence": [
+        "frontend-file-summaries.txt",
+        "frontend/package.json",
+        "frontend/src/App.tsx",
+        "frontend/src/pages/MobileSplashScreen.tsx",
+        "frontend/src/index.css",
+        "frontend/index.html",
+        "frontend/src/components/HamburgerMenu.tsx",
+        "frontend/src/components/SignInOverlay.tsx",
+        "frontend/src/pages/WelcomePage.tsx",
+        "frontend/src/pages/HomeScreen.tsx",
+        "frontend/src/pages/CameraScreen.tsx",
+        "frontend/src/pages/SettingsPage.tsx",
+        "frontend/src/pages/CalendarPage.tsx"
+      ]
+    },
+    {
+      "description": "Project metadata/state update describing broader system features and backend wiring.",
+      "reason": "Not requested as part of a promotion-only request; also conflicts with 'no code changes' constraint if it reflects additional implementation work.",
+      "evidence": [
+        "project_state.json"
+      ]
+    }
+  ],
+  "confidence": 0.74,
   "changed_files": [
-    "frontend/src/App.tsx",
-    "frontend/src/hooks/useBackSlideNavigation.ts",
-    "frontend/src/pages/CalendarPage.tsx",
-    "frontend/src/pages/CameraScreen.tsx",
-    "frontend/src/pages/HomeScreen.tsx",
-    "frontend/src/pages/MobileSplashScreen.tsx",
-    "frontend/src/pages/NotificationsPage.tsx",
-    "frontend/src/pages/ProfilePage.tsx",
-    "frontend/src/pages/SaveMomentConfirmPage.tsx",
-    "frontend/src/pages/SettingsPage.tsx",
-    "frontend/src/pages/VaultMomentPage.tsx",
-    "frontend/src/pages/VaultPage.tsx",
-    "frontend/src/utils/momentsPhotosStorage.ts",
+    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/DEPLOYMENT_PROMOTION.md",
+    "frontend/DEPLOYMENT_STATUS.md",
     "project_state.json"
   ]
 }

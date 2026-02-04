@@ -1,42 +1,51 @@
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { Plus, Bell } from 'lucide-react';
+import { Plus } from 'lucide-react';
+import { BsFillBellFill } from 'react-icons/bs';
 import HomeWeeklyCalendarStrip from '../components/HomeWeeklyCalendarStrip';
 import PlannedMomentBottomSheet from '../components/PlannedMomentBottomSheet';
 import PlannedMomentCard from '../components/PlannedMomentCard';
 import InlineToast from '../components/InlineToast';
 import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
+import NotificationPopupBubble from '../components/NotificationPopupBubble';
 import { usePlannedMoments } from '../hooks/usePlannedMoments';
 import { useProfile } from '../hooks/useProfile';
+import { useNotificationPopups } from '../hooks/useNotificationPopups';
 import { PlannedMoment } from '../utils/plannedMomentsStorage';
 import { generatePlannedMomentShareText } from '../utils/plannedMomentShareText';
 
 function HomeScreen() {
     const navigate = useNavigate();
     const [hoveredNav, setHoveredNav] = useState<string | null>(null);
+    const [selectedNav, setSelectedNav] = useState<string>('home');
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
     const [isNavbarVisible, setIsNavbarVisible] = useState(true);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [toastPlacement, setToastPlacement] = useState<'bottom' | 'side'>('bottom');
+    const [toastVariant, setToastVariant] = useState<'success' | 'warning'>('success');
     const [momentToDelete, setMomentToDelete] = useState<PlannedMoment | null>(null);
 
     const { allMoments, datesWithMoments, dateColorMap, addMoment, deleteMoment } = usePlannedMoments(null);
     const { profile } = useProfile();
+    const { popups, dismissPopup } = useNotificationPopups();
 
     const handleCameraClick = () => {
         navigate({ to: '/camera' });
     };
 
     const handleNotificationsClick = () => {
+        setSelectedNav('notifications');
         navigate({ to: '/notifications' });
     };
 
     const handleVaultClick = () => {
+        setSelectedNav('moments');
         navigate({ to: '/vault' });
     };
 
     const handleProfileClick = () => {
+        setSelectedNav('profile');
         navigate({ to: '/profile' });
     };
 
@@ -60,6 +69,7 @@ function HomeScreen() {
 
     const handleDuplicateDate = () => {
         setToastPlacement('side');
+        setToastVariant('warning');
         setToastMessage('You can only have one moment per day');
     };
 
@@ -71,6 +81,7 @@ function HomeScreen() {
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 await navigator.clipboard.writeText(shareText);
                 setToastPlacement('bottom');
+                setToastVariant('success');
                 setToastMessage('Copied to clipboard');
             } else {
                 // Fallback for browsers without Clipboard API
@@ -85,10 +96,12 @@ function HomeScreen() {
                 try {
                     document.execCommand('copy');
                     setToastPlacement('bottom');
+                    setToastVariant('success');
                     setToastMessage('Copied to clipboard');
                 } catch (err) {
                     console.error('Fallback copy failed:', err);
                     setToastPlacement('bottom');
+                    setToastVariant('warning');
                     setToastMessage('Failed to copy');
                 }
                 document.body.removeChild(textArea);
@@ -96,6 +109,7 @@ function HomeScreen() {
         } catch (error) {
             console.error('Copy failed:', error);
             setToastPlacement('bottom');
+            setToastVariant('warning');
             setToastMessage('Failed to copy');
         }
     };
@@ -139,6 +153,19 @@ function HomeScreen() {
                             />
                         </div>
                     </header>
+
+                    {/* Notification popups - positioned near logo */}
+                    {popups.length > 0 && (
+                        <div className="notification-popup-container">
+                            {popups.map((popup) => (
+                                <NotificationPopupBubble
+                                    key={popup.id}
+                                    message={popup.message}
+                                    onDismiss={() => dismissPopup(popup.id)}
+                                />
+                            ))}
+                        </div>
+                    )}
 
                     {/* Search Bar */}
                     <div className="px-12 mt-2">
@@ -252,14 +279,14 @@ function HomeScreen() {
                                 <i 
                                     className="fa-solid fa-house transition-colors duration-300 ease-in-out"
                                     style={{ 
-                                        color: hoveredNav === 'home' ? '#ffa500' : '#000000',
+                                        color: selectedNav === 'home' ? '#ffa500' : hoveredNav === 'home' ? '#ffa500' : '#000000',
                                         fontSize: '15px'
                                     }}
                                 ></i>
                                 <span 
                                     className="text-xs font-medium transition-colors duration-300 ease-in-out"
                                     style={{ 
-                                        color: hoveredNav === 'home' ? '#ffa500' : '#000000',
+                                        color: selectedNav === 'home' ? '#ffa500' : hoveredNav === 'home' ? '#ffa500' : '#000000',
                                         fontFamily: "'Bricolage Grotesque', sans-serif",
                                         fontSize: '9px'
                                     }}
@@ -276,10 +303,10 @@ function HomeScreen() {
                                 onMouseEnter={() => setHoveredNav('notifications')}
                                 onMouseLeave={() => setHoveredNav(null)}
                             >
-                                <Bell 
+                                <BsFillBellFill 
                                     className="transition-colors duration-300 ease-in-out"
                                     style={{ 
-                                        color: hoveredNav === 'notifications' ? '#ffa500' : '#000000',
+                                        color: selectedNav === 'notifications' ? '#ffa500' : hoveredNav === 'notifications' ? '#ffa500' : '#000000',
                                         width: '15px',
                                         height: '15px'
                                     }}
@@ -287,7 +314,7 @@ function HomeScreen() {
                                 <span 
                                     className="text-xs font-medium transition-colors duration-300 ease-in-out"
                                     style={{ 
-                                        color: hoveredNav === 'notifications' ? '#ffa500' : '#000000',
+                                        color: selectedNav === 'notifications' ? '#ffa500' : hoveredNav === 'notifications' ? '#ffa500' : '#000000',
                                         fontFamily: "'Bricolage Grotesque', sans-serif",
                                         fontSize: '9px'
                                     }}
@@ -316,14 +343,14 @@ function HomeScreen() {
                                 <i 
                                     className="fa-solid fa-box-archive transition-colors duration-300 ease-in-out"
                                     style={{ 
-                                        color: hoveredNav === 'moments' ? '#ffa500' : '#000000',
+                                        color: selectedNav === 'moments' ? '#ffa500' : hoveredNav === 'moments' ? '#ffa500' : '#000000',
                                         fontSize: '15px'
                                     }}
                                 ></i>
                                 <span 
                                     className="text-xs font-medium transition-colors duration-300 ease-in-out"
                                     style={{ 
-                                        color: hoveredNav === 'moments' ? '#ffa500' : '#000000',
+                                        color: selectedNav === 'moments' ? '#ffa500' : hoveredNav === 'moments' ? '#ffa500' : '#000000',
                                         fontFamily: "'Bricolage Grotesque', sans-serif",
                                         fontSize: '9px'
                                     }}
@@ -343,14 +370,14 @@ function HomeScreen() {
                                 <i 
                                     className="fa-solid fa-user transition-colors duration-300 ease-in-out"
                                     style={{ 
-                                        color: hoveredNav === 'profile' ? '#ffa500' : '#000000',
+                                        color: selectedNav === 'profile' ? '#ffa500' : hoveredNav === 'profile' ? '#ffa500' : '#000000',
                                         fontSize: '15px'
                                     }}
                                 ></i>
                                 <span 
                                     className="text-xs font-medium transition-colors duration-300 ease-in-out"
                                     style={{ 
-                                        color: hoveredNav === 'profile' ? '#ffa500' : '#000000',
+                                        color: selectedNav === 'profile' ? '#ffa500' : hoveredNav === 'profile' ? '#ffa500' : '#000000',
                                         fontFamily: "'Bricolage Grotesque', sans-serif",
                                         fontSize: '9px'
                                     }}
@@ -379,6 +406,7 @@ function HomeScreen() {
                 <InlineToast
                     message={toastMessage}
                     placement={toastPlacement}
+                    variant={toastVariant}
                     onClose={() => setToastMessage(null)}
                 />
             )}

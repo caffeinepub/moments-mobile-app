@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 37,
+  "projectStateVersion": 60,
   "summary": "Moments is a mobile-first React + TypeScript single-page app for planning small real-world moments (via a weekly calendar strip and “Plan a Moment” bottom sheet) and capturing private photo memories (camera → save confirmation → feeling check). The app is primarily local-first (planned moments, photo moments, user profile, and notifications stored in browser storage) with reactive UI updates via storage listeners and custom DOM events. It integrates Dfinity Internet Identity for authentication and includes a Motoko backend canister with role-based access control (admin bootstrap via environment token) plus profile/settings and photo APIs with blob storage wiring.",
   "existing_features": [
     {
@@ -582,69 +582,84 @@
       "version": 1
     },
     {
-      "id": "feature-add-a-4th-splash-screen-slide-in-frontend-src-pages-mobilesplashscreen-tsx-that-uses-the-provided-video-asset-gel-polish-manicure-1-mp4-replacing-the-prior-image-used-for-that-slide-the-video-must-appear-indistinguishable-from-an-image-no-visible-controls-or-hover-affordances-no-user-interaction-pointer-events-muted-looping-inline",
-      "title": "Add a 4th splash screen slide in `frontend/src/pages/MobileSplashScreen.tsx` that uses the provided video asset `Gel Polish Manicure (1).mp4`, replacing the prior image used for that slide; the video must appear indistinguishable from an image (no visible controls or hover affordances, no user interaction/pointer events, muted, looping, inline).",
+      "id": "IF-52",
+      "title": "Consistent back-navigation slide transition across routes",
+      "synonyms": [
+        "back slide navigation",
+        "useBackSlideNavigation",
+        "pop transition animation"
+      ],
+      "description": "Implements a consistent slide transition animation when navigating back (history pop / back action) to smooth route changes across the app.",
+      "reqIds": [
+        "AR-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "IF-53",
+      "title": "Onboarding splash updates (slide removal + updated Get Started video media)",
+      "synonyms": [
+        "MobileSplashScreen updates",
+        "onboarding slide sequence"
+      ],
+      "description": "Updates the onboarding/splash sequence to remove the “capture every moment” slide and updates the Get Started slide media to use the provided video with intended scaling/fit behavior.",
+      "reqIds": [
+        "AR-16",
+        "AR-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "IF-54",
+      "title": "Navbar cleanup and notifications icon styling update",
+      "synonyms": [
+        "remove calendar icon",
+        "bell icon",
+        "BsFillBellFill"
+      ],
+      "description": "Updates the bottom navbar to remove/replace the calendar icon and uses react-icons BsFillBellFill for notifications with default black styling and yellow hover/active styling to match the app’s icon style; aligns notifications navigation/UI behavior with intended usage.",
+      "reqIds": [
+        "AR-8",
+        "AR-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "IF-55",
+      "title": "Duplicate-date error toast rendered within phone frame and styled as compact red warning",
+      "synonyms": [
+        "duplicate-date toast fix",
+        "InlineToast styling"
+      ],
+      "description": "Ensures the duplicate-date warning toast appears within the mobile phone frame viewport (not off-screen) and is styled as a small red in-app warning.",
+      "reqIds": [
+        "AR-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "IF-56",
+      "title": "Moment viewer no longer exposes delete controls",
+      "synonyms": [
+        "Vault/Moments viewer delete removed",
+        "no delete option"
+      ],
+      "description": "Removes the delete option entirely from the moment/image viewer UI so no delete controls are shown while viewing a moment.",
+      "reqIds": [
+        "AR-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-promote-the-currently-deployed-draft-build-draft-version-140-to-the-live-production-deployment-so-end-users-receive-the-latest-version",
+      "title": "Promote the currently deployed draft build (Draft Version 140) to the live production deployment so end users receive the latest version.",
       "reqIds": [
         "REQ-4"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-rename-the-user-facing-feature-label-vault-to-moments-everywhere-it-appears-in-the-ui-page-headers-navbar-labels-empty-states-aria-labels-and-any-other-visible-copy-without-changing-the-existing-route-paths-e-g-keep-vault-and-vault-momentid-unless-required-by-existing-routing-constraints",
-      "title": "Rename the user-facing feature label “Vault” to “Moments” everywhere it appears in the UI (page headers, navbar labels, empty states, aria labels, and any other visible copy), without changing the existing route paths (e.g., keep `/vault` and `/vault/$momentId` unless required by existing routing constraints).",
-      "reqIds": [
-        "REQ-5"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-replace-the-home-bottom-navbar-calendar-icon-label-with-a-notifications-bell-icon-label-and-wire-it-to-the-app-s-notifications-inbox-screen-so-notifications-navigation-works-and-the-calendar-item-is-removed-from-the-navbar",
-      "title": "Replace the Home bottom navbar Calendar icon/label with a notifications bell icon/label and wire it to the app’s notifications inbox screen so notifications navigation works (and the calendar item is removed from the navbar).",
-      "reqIds": [
-        "REQ-6"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-remove-the-music-option-from-the-moments-formerly-vault-moment-viewer-ui-by-removing-the-music-toggle-control-and-disabling-any-background-music-initialization-auto-play-behavior-in-frontend-src-pages-vaultmomentpage-tsx",
-      "title": "Remove the music option from the Moments (formerly Vault) moment viewer UI by removing the music toggle control and disabling any background music initialization/auto-play behavior in `frontend/src/pages/VaultMomentPage.tsx`.",
-      "reqIds": [
-        "REQ-7"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-support-saving-and-viewing-video-moments-in-addition-to-image-moments-allow-selecting-video-files-from-the-gallery-upload-flow-persist-them-in-the-existing-local-first-moments-storage-and-render-videos-correctly-in-the-moments-grid-and-the-moment-detail-viewer",
-      "title": "Support saving and viewing video moments in addition to image moments: allow selecting video files from the gallery upload flow, persist them in the existing local-first moments storage, and render videos correctly in the Moments grid and the moment detail viewer.",
-      "reqIds": [
-        "REQ-8"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-enforce-a-maximum-of-10-stored-moments-combined-images-videos-in-local-moments-storage-and-provide-an-in-app-way-for-users-to-delete-existing-moments-to-free-space-including-when-a-storage-full-error-occurs",
-      "title": "Enforce a maximum of 10 stored moments (combined images + videos) in local moments storage, and provide an in-app way for users to delete existing moments to free space (including when a storage-full error occurs).",
-      "reqIds": [
-        "REQ-9"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-a-consistent-slide-transition-animation-when-navigating-back-via-any-screen-s-back-arrow-and-equivalent-back-actions-so-that-returning-to-the-previous-screen-uses-a-smooth-slide-transition-across-the-app",
-      "title": "Add a consistent slide transition animation when navigating back via any screen’s back arrow (and equivalent back actions) so that returning to the previous screen uses a smooth slide transition across the app.",
-      "reqIds": [
-        "REQ-10"
       ],
       "version": 1
     }
   ],
   "new_feature_requests": [
-    {
-      "id": "AR-4",
-      "summary": "Add 4th splashscreen slide that uses a provided video but appears indistinguishable from an image (no obvious video affordances; hover should not reveal it)",
-      "reqIds": [],
-      "status": "pending"
-    },
     {
       "id": "AR-5",
       "summary": "Vault: remove the music option from the UI",
@@ -664,20 +679,50 @@
       "status": "pending"
     },
     {
-      "id": "AR-8",
-      "summary": "Navbar: replace/remove calendar icon and ensure notifications UI works as intended (calendar still present)",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-9",
-      "summary": "Add consistent slide transition animation when navigating back (using back arrow / back action) across the app for smoother appearance",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
       "id": "AR-10",
       "summary": "Rename the Vault feature/labeling to “Moments” (user-facing rename)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Personalized local notifications: create notification types/templates (e.g., first moment created, prompt to set up profile, calendar full) and trigger them on specific in-app actions; show as chat-bubble popups with customized message text",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Notifications UI: use the provided avatar image \"Cheerful boy with headphones waving.png\" for the floating chat-bubble notification popups",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Onboarding splash: Slide 3 should use its original/old correct image (revert Slide 3 only; no video changes requested)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "Personalized notifications: implement ~5 notification types/templates triggered by specific in-app conditions; show as chat-bubble popups that auto-disappear after a few seconds and are saved locally for the Notifications tab/inbox",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "Home planning UX: single-row weekly calendar on Home with slide-up planner; planned-moment cards list below; per-date deterministic pastel color coding (calendar pill matches card); enforce one planned moment per day with in-frame warning; share (copy-to-clipboard) + delete (confirm) actions",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-23",
+      "summary": "Navbar update: remove Calendar tab/icon entirely and replace with Notifications bell; nav order Home → Moments/Vault → Camera → Notifications → Profile",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-24",
+      "summary": "Onboarding/splash: restore correct Slide 3 image; Slide 4 (Get Started slide) uses provided video asset as the media; remove the “capture every moment” slide if present",
       "reqIds": [],
       "status": "pending"
     }
@@ -692,7 +737,7 @@
     "Backend is a Motoko canister composed via mixins (authorization + blob-storage maintenance endpoints). RBAC is first-user-admin bootstrapped via env var CAFFEINE_ADMIN_TOKEN and a user-provided secret.",
     "Repository now includes a reusable build-template scaffold (React + Tailwind + shadcn/ui + ICP canister YAMLs) with deploy/build scripts (Dockerfile, icp.yaml, deploy.sh) and asset maintenance utilities (resize/prune images).",
     "Notifications are local-first: notifications are persisted in browser storage with unread state and timestamps, surfaced via floating chat-bubble popups near the logo and a dedicated inbox page with unread badge; updates propagate via storage listeners and custom events.",
-    "Add consistent back-navigation (pop) page transition animation (slide) across routes for smoother UX."
+    "Back-navigation (history pop) transitions are handled via a dedicated hook (useBackSlideNavigation) to apply consistent slide animations on route back actions."
   ],
   "known_issues": [
     "Two global CSS entrypoints exist (frontend/index.css and frontend/src/index.css). The app imports frontend/src/index.css via src/main.tsx; the other file can drift and cause confusion.",
@@ -701,9 +746,8 @@
     "backend/blob-storage/Storage.mo references env var CAFFFEINE_STORAGE_CASHIER_PRINCIPAL (likely misspelled), increasing deployment misconfiguration risk.",
     "backend/blob-storage/Storage.mo refillCashier computes Nat.sub(currentBalance, reservedCycles); if currentBalance < reservedCycles this can trap due to Nat underflow.",
     "authorization/access-control.mo traps for unregistered users in getUserRole; callers must ensure initialization occurs for new principals before permission checks.",
-    "Notifications/nav update appears incomplete: calendar icon still present in navbar and notification feature reportedly not working as expected.",
     "Local storage can become full; current UX does not allow users to delete existing stored items to recover space.",
-    "Notifications/nav still incorrect: calendar icon remains in navbar and notification feature not working as intended (needs fix)."
+    "Deployments intermittently fail; requires investigation of build/deploy pipeline stability (redeploy often fails even without code changes)."
   ],
   "isFixRequest": true,
   "generatedImages": [
@@ -721,7 +765,7 @@
     }
   ],
   "gameProjectType": "none",
-  "projectName": "Moments",
-  "clarification_mode": "pro",
+  "projectName": "Moments Mobile App",
+  "clarification_mode": "instant",
   "clarification_rounds": 0
 }

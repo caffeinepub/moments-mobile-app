@@ -2,10 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-a-4th-splash-screen-slide-in-frontend-src-pages-mobilesplashscreen-tsx-that-uses-the-provided-video-asset-gel-polish-manicure-1-mp4-replacing-the-prior-image-used-for-that-slide-the-video-must-appear-indistinguishable-from-an-image-no-visible-controls-or-hover-affordances-no-user-interaction-pointer-events-muted-looping-inline",
-      "featureTitle": "Add a 4th splash screen slide in `frontend/src/pages/MobileSplashScreen.tsx` that uses the provided video asset `Gel Polish Manicure (1).mp4`, replacing the prior image used for that slide; the video must appear indistinguishable from an image (no visible controls or hover affordances, no user interaction/pointer events, muted, looping, inline).",
+      "featureId": "feature-promote-the-currently-deployed-draft-build-draft-version-140-to-the-live-production-deployment-so-end-users-receive-the-latest-version",
+      "featureTitle": "Promote the currently deployed draft build (Draft Version 140) to the live production deployment so end users receive the latest version.",
       "files": [
-        "frontend/src/pages/MobileSplashScreen.tsx"
+        "frontend/DEPLOYMENT_PROMOTION.md",
+        "frontend/DEPLOYMENT_STATUS.md"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -19,148 +20,6 @@
       ],
       "testIds": [
         "REQ-4"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-rename-the-user-facing-feature-label-vault-to-moments-everywhere-it-appears-in-the-ui-page-headers-navbar-labels-empty-states-aria-labels-and-any-other-visible-copy-without-changing-the-existing-route-paths-e-g-keep-vault-and-vault-momentid-unless-required-by-existing-routing-constraints",
-      "featureTitle": "Rename the user-facing feature label “Vault” to “Moments” everywhere it appears in the UI (page headers, navbar labels, empty states, aria labels, and any other visible copy), without changing the existing route paths (e.g., keep `/vault` and `/vault/$momentId` unless required by existing routing constraints).",
-      "files": [
-        "frontend/src/pages/HomeScreen.tsx",
-        "frontend/src/pages/VaultMomentPage.tsx",
-        "frontend/src/pages/VaultPage.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "blob-storage@4.0.0",
-        "authorization@4.0.0",
-        "camera@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-5"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-replace-the-home-bottom-navbar-calendar-icon-label-with-a-notifications-bell-icon-label-and-wire-it-to-the-app-s-notifications-inbox-screen-so-notifications-navigation-works-and-the-calendar-item-is-removed-from-the-navbar",
-      "featureTitle": "Replace the Home bottom navbar Calendar icon/label with a notifications bell icon/label and wire it to the app’s notifications inbox screen so notifications navigation works (and the calendar item is removed from the navbar).",
-      "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/pages/HomeScreen.tsx",
-        "frontend/src/pages/NotificationsPage.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "blob-storage@4.0.0",
-        "authorization@4.0.0",
-        "camera@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-6"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-remove-the-music-option-from-the-moments-formerly-vault-moment-viewer-ui-by-removing-the-music-toggle-control-and-disabling-any-background-music-initialization-auto-play-behavior-in-frontend-src-pages-vaultmomentpage-tsx",
-      "featureTitle": "Remove the music option from the Moments (formerly Vault) moment viewer UI by removing the music toggle control and disabling any background music initialization/auto-play behavior in `frontend/src/pages/VaultMomentPage.tsx`.",
-      "files": [
-        "frontend/src/pages/VaultMomentPage.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "blob-storage@4.0.0",
-        "authorization@4.0.0",
-        "camera@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-7"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-support-saving-and-viewing-video-moments-in-addition-to-image-moments-allow-selecting-video-files-from-the-gallery-upload-flow-persist-them-in-the-existing-local-first-moments-storage-and-render-videos-correctly-in-the-moments-grid-and-the-moment-detail-viewer",
-      "featureTitle": "Support saving and viewing video moments in addition to image moments: allow selecting video files from the gallery upload flow, persist them in the existing local-first moments storage, and render videos correctly in the Moments grid and the moment detail viewer.",
-      "files": [
-        "frontend/src/pages/CameraScreen.tsx",
-        "frontend/src/pages/SaveMomentConfirmPage.tsx",
-        "frontend/src/pages/VaultMomentPage.tsx",
-        "frontend/src/pages/VaultPage.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "blob-storage@4.0.0",
-        "authorization@4.0.0",
-        "camera@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-8"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-enforce-a-maximum-of-10-stored-moments-combined-images-videos-in-local-moments-storage-and-provide-an-in-app-way-for-users-to-delete-existing-moments-to-free-space-including-when-a-storage-full-error-occurs",
-      "featureTitle": "Enforce a maximum of 10 stored moments (combined images + videos) in local moments storage, and provide an in-app way for users to delete existing moments to free space (including when a storage-full error occurs).",
-      "files": [
-        "frontend/src/pages/SaveMomentConfirmPage.tsx",
-        "frontend/src/pages/VaultMomentPage.tsx",
-        "frontend/src/pages/VaultPage.tsx",
-        "frontend/src/utils/momentsPhotosStorage.ts"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "blob-storage@4.0.0",
-        "authorization@4.0.0",
-        "camera@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-9"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-a-consistent-slide-transition-animation-when-navigating-back-via-any-screen-s-back-arrow-and-equivalent-back-actions-so-that-returning-to-the-previous-screen-uses-a-smooth-slide-transition-across-the-app",
-      "featureTitle": "Add a consistent slide transition animation when navigating back via any screen’s back arrow (and equivalent back actions) so that returning to the previous screen uses a smooth slide transition across the app.",
-      "files": [
-        "frontend/src/hooks/useBackSlideNavigation.ts",
-        "frontend/src/pages/CalendarPage.tsx",
-        "frontend/src/pages/NotificationsPage.tsx",
-        "frontend/src/pages/ProfilePage.tsx",
-        "frontend/src/pages/SettingsPage.tsx",
-        "frontend/src/pages/VaultMomentPage.tsx",
-        "frontend/src/pages/VaultPage.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "blob-storage@4.0.0",
-        "authorization@4.0.0",
-        "camera@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-10"
       ],
       "confidence": "high"
     }

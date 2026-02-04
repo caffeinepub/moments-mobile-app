@@ -6,6 +6,7 @@ import { useInView } from '../hooks/useInView';
 import { getFeelingEmoji } from '../utils/momentFeelings';
 import { useBackSlideNavigation } from '../hooks/useBackSlideNavigation';
 import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
+import { addNotification } from '../utils/localNotificationsStorage';
 
 interface MonthGroup {
   monthYear: string;
@@ -87,8 +88,20 @@ function VaultPage() {
   const { isExiting, handleBackWithSlide } = useBackSlideNavigation(() => navigate({ to: '/home' }));
   const [monthGroups, setMonthGroups] = useState<MonthGroup[]>([]);
   const [momentToDelete, setMomentToDelete] = useState<MomentsPhoto | null>(null);
+  const [isFirstVisit, setIsFirstVisit] = useState(false);
 
   useEffect(() => {
+    // Check if this is the first vault visit
+    const triggersData = localStorage.getItem('notification_triggers');
+    const triggers = triggersData ? JSON.parse(triggersData) : {};
+    const firstVisit = !triggers['first-vault-visit'];
+    setIsFirstVisit(firstVisit);
+    
+    // Trigger notification for first vault visit
+    if (firstVisit) {
+      addNotification('first-vault-visit');
+    }
+    
     loadAndGroupMoments();
 
     // Listen for storage updates

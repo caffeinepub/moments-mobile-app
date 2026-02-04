@@ -379,6 +379,7 @@ function CalendarPage() {
         <InlineToast
           message={toastMessage}
           placement="side"
+          variant="warning"
           onClose={() => setToastMessage(null)}
         />
       )}
