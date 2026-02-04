@@ -4,9 +4,10 @@ interface InlineToastProps {
   message: string;
   duration?: number;
   onClose?: () => void;
+  placement?: 'bottom' | 'side';
 }
 
-function InlineToast({ message, duration = 2000, onClose }: InlineToastProps) {
+function InlineToast({ message, duration = 2000, onClose, placement = 'bottom' }: InlineToastProps) {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
@@ -20,13 +21,19 @@ function InlineToast({ message, duration = 2000, onClose }: InlineToastProps) {
     return () => clearTimeout(timer);
   }, [duration, onClose]);
 
+  const positionClasses = placement === 'side' 
+    ? 'fixed top-1/2 right-4 -translate-y-1/2 z-50'
+    : 'fixed bottom-24 left-1/2 -translate-x-1/2 z-50';
+
+  const animationClasses = placement === 'side'
+    ? isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'
+    : isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4';
+
   return (
     <div
-      className={`fixed bottom-24 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 ${
-        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-      }`}
+      className={`${positionClasses} transition-all duration-300 ${animationClasses}`}
       style={{
-        maxWidth: '320px',
+        maxWidth: placement === 'side' ? '280px' : '320px',
       }}
     >
       <div

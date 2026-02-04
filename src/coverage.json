@@ -1,68 +1,23 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-04T02:04:33.656Z",
+  "generatedAt": "2026-02-04T11:39:04.300Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 4,
-    "implemented": 4,
+    "total": 1,
+    "implemented": 1,
     "items": [
       {
-        "id": "REQ-10",
-        "summary": "Fix planned-moment date color coding in the Home weekly calendar strip so that the day pill itself becomes color-coded for dates that have planned moments (not just a small dot indicator), matching the expectation that the pill is colored on its date immediately after saving a plan.",
+        "id": "REQ-1",
+        "summary": "Adjust the planned-moment pill card styling so the card appears significantly narrower (reduced height/thickness) and more elongated horizontally, while preserving the existing border-only pill look, left color dot, and right-side action icons. Implement this by updating the CSS for the planned-moment card classes used by `frontend/src/components/PlannedMomentCard.tsx` (e.g., `.planned-moment-card-clear`, `.planned-moment-card-color-dot`, and related action/icon sizing/spacing) in `frontend/src/index.css`.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/HomeWeeklyCalendarStrip.tsx",
           "frontend/src/index.css"
         ],
         "matchedFiles": [
-          "frontend/src/components/HomeWeeklyCalendarStrip.tsx",
-          "frontend/src/index.css"
-        ]
-      },
-      {
-        "id": "REQ-7",
-        "summary": "On the Home screen, after a planned moment is successfully saved from the planner bottom sheet, render a new \"saved planning\" card directly below the planning area. The card must show all provided planning details: a date label, the time, and the title when it was provided (omit the title row if not provided). The card must use the plan’s assigned color as a full background fill.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/PlannedMomentCard.tsx",
-          "frontend/src/pages/HomeScreen.tsx",
-          "frontend/src/index.css"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/PlannedMomentCard.tsx",
-          "frontend/src/pages/HomeScreen.tsx",
-          "frontend/src/index.css"
-        ]
-      },
-      {
-        "id": "REQ-8",
-        "summary": "On the Home screen, display multiple saved planning cards in a vertical list below the planning area and sort them most-recent-first (newest saved appears at the top).",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/utils/plannedMomentsStorage.ts",
-          "frontend/src/hooks/usePlannedMoments.ts",
-          "frontend/src/pages/HomeScreen.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/utils/plannedMomentsStorage.ts",
-          "frontend/src/hooks/usePlannedMoments.ts",
-          "frontend/src/pages/HomeScreen.tsx"
-        ]
-      },
-      {
-        "id": "REQ-9",
-        "summary": "Update the Home planning CTA behavior: when no planned moments exist, show the current \"Start Planning\" button; once the first planned moment has been saved, replace/shrink that CTA into a compact '+' icon button (camera-circle style) positioned to allow adding more plans. Tapping the '+' must open the same planning bottom sheet flow as the original CTA.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/HomeScreen.tsx",
-          "frontend/src/index.css"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/HomeScreen.tsx",
           "frontend/src/index.css"
         ]
       }
@@ -73,12 +28,7 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/HomeWeeklyCalendarStrip.tsx",
-    "frontend/src/components/PlannedMomentCard.tsx",
-    "frontend/src/hooks/usePlannedMoments.ts",
     "frontend/src/index.css",
-    "frontend/src/pages/HomeScreen.tsx",
-    "frontend/src/utils/plannedMomentsStorage.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

@@ -4,7 +4,12 @@ import { Plus } from 'lucide-react';
 import HomeWeeklyCalendarStrip from '../components/HomeWeeklyCalendarStrip';
 import PlannedMomentBottomSheet from '../components/PlannedMomentBottomSheet';
 import PlannedMomentCard from '../components/PlannedMomentCard';
+import InlineToast from '../components/InlineToast';
+import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
 import { usePlannedMoments } from '../hooks/usePlannedMoments';
+import { useProfile } from '../hooks/useProfile';
+import { PlannedMoment } from '../utils/plannedMomentsStorage';
+import { generatePlannedMomentShareText } from '../utils/plannedMomentShareText';
 
 function HomeScreen() {
     const navigate = useNavigate();
@@ -12,8 +17,12 @@ function HomeScreen() {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
     const [isNavbarVisible, setIsNavbarVisible] = useState(true);
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const [toastPlacement, setToastPlacement] = useState<'bottom' | 'side'>('bottom');
+    const [momentToDelete, setMomentToDelete] = useState<PlannedMoment | null>(null);
 
-    const { allMoments, datesWithMoments, dateColorMap, addMoment } = usePlannedMoments(null);
+    const { allMoments, datesWithMoments, dateColorMap, addMoment, deleteMoment } = usePlannedMoments(null);
+    const { profile } = useProfile();
 
     const handleCameraClick = () => {
         navigate({ to: '/camera' });
@@ -47,6 +56,63 @@ function HomeScreen() {
 
     const handleChangeDate = (newDate: Date) => {
         setSelectedDate(newDate);
+    };
+
+    const handleDuplicateDate = () => {
+        setToastPlacement('side');
+        setToastMessage('You can only have one moment per day');
+    };
+
+    const handleShare = async (moment: PlannedMoment) => {
+        const shareText = generatePlannedMomentShareText(moment, profile.displayName);
+
+        // Always copy to clipboard (no native share)
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(shareText);
+                setToastPlacement('bottom');
+                setToastMessage('Copied to clipboard');
+            } else {
+                // Fallback for browsers without Clipboard API
+                const textArea = document.createElement('textarea');
+                textArea.value = shareText;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    setToastPlacement('bottom');
+                    setToastMessage('Copied to clipboard');
+                } catch (err) {
+                    console.error('Fallback copy failed:', err);
+                    setToastPlacement('bottom');
+                    setToastMessage('Failed to copy');
+                }
+                document.body.removeChild(textArea);
+            }
+        } catch (error) {
+            console.error('Copy failed:', error);
+            setToastPlacement('bottom');
+            setToastMessage('Failed to copy');
+        }
+    };
+
+    const handleDeleteRequest = (moment: PlannedMoment) => {
+        setMomentToDelete(moment);
+    };
+
+    const handleConfirmDelete = () => {
+        if (momentToDelete) {
+            deleteMoment(momentToDelete.id);
+            setMomentToDelete(null);
+        }
+    };
+
+    const handleCancelDelete = () => {
+        setMomentToDelete(null);
     };
 
     const hasMoments = allMoments.length > 0;
@@ -149,7 +215,12 @@ function HomeScreen() {
                         {hasMoments && (
                             <div className="mt-6 flex flex-col gap-3">
                                 {allMoments.map((moment) => (
-                                    <PlannedMomentCard key={moment.id} moment={moment} />
+                                    <PlannedMomentCard 
+                                        key={moment.id} 
+                                        moment={moment}
+                                        onShare={handleShare}
+                                        onDelete={handleDeleteRequest}
+                                    />
                                 ))}
                             </div>
                         )}
@@ -299,6 +370,25 @@ function HomeScreen() {
                 onSave={addMoment}
                 onVisibilityChange={handleBottomSheetVisibilityChange}
                 onChangeDate={handleChangeDate}
+                onDuplicateDate={handleDuplicateDate}
+            />
+
+            {/* Toast notification */}
+            {toastMessage && (
+                <InlineToast
+                    message={toastMessage}
+                    placement={toastPlacement}
+                    onClose={() => setToastMessage(null)}
+                />
+            )}
+
+            {/* Delete confirmation modal */}
+            <ConfirmDeleteModal
+                isOpen={!!momentToDelete}
+                onConfirm={handleConfirmDelete}
+                onCancel={handleCancelDelete}
+                title="Delete Moment?"
+                message="This planned moment will be permanently removed."
             />
         </div>
     );

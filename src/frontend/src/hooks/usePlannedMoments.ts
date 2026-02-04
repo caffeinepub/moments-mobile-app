@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import {
   PlannedMoment,
+  SaveResult,
   loadPlannedMoments,
   loadPlannedMomentsMostRecentFirst,
   savePlannedMoment,
+  deletePlannedMoment,
   getPlannedMomentsForDate,
   getDatesWithMoments,
   getDateColorMap,
@@ -43,8 +45,14 @@ export function usePlannedMoments(selectedDate: Date | null) {
     }
   }, [selectedDate]);
 
-  const addMoment = (moment: Omit<PlannedMoment, 'id' | 'createdAt'>) => {
-    const newMoment = savePlannedMoment(moment);
+  const addMoment = (moment: Omit<PlannedMoment, 'id' | 'createdAt'>): SaveResult => {
+    const result = savePlannedMoment(moment);
+    // Data will be refreshed automatically via storage change subscription
+    return result;
+  };
+
+  const deleteMoment = (momentId: string) => {
+    deletePlannedMoment(momentId);
     // Data will be refreshed automatically via storage change subscription
   };
 
@@ -54,5 +62,6 @@ export function usePlannedMoments(selectedDate: Date | null) {
     datesWithMoments,
     dateColorMap,
     addMoment,
+    deleteMoment,
   };
 }

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { usePlannedMoments } from '../hooks/usePlannedMoments';
 import PlannedMomentBottomSheet from '../components/PlannedMomentBottomSheet';
+import InlineToast from '../components/InlineToast';
 import { ChevronLeft, ChevronRight, MoreVertical } from 'lucide-react';
 
 interface PhotoMetadata {
@@ -34,6 +35,7 @@ function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [weekDates, setWeekDates] = useState<CalendarDate[]>([]);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const { moments: plannedMoments, datesWithMoments, dateColorMap, addMoment } = usePlannedMoments(selectedDate);
@@ -146,6 +148,10 @@ function CalendarPage() {
 
   const handleChangeDate = (newDate: Date) => {
     setSelectedDate(newDate);
+  };
+
+  const handleDuplicateDate = () => {
+    setToastMessage('You can only have one moment per day');
   };
 
   const formatTime = (time: string): string => {
@@ -366,6 +372,16 @@ function CalendarPage() {
           selectedDate={selectedDate}
           onSave={addMoment}
           onChangeDate={handleChangeDate}
+          onDuplicateDate={handleDuplicateDate}
+        />
+      )}
+
+      {/* Toast notification */}
+      {toastMessage && (
+        <InlineToast
+          message={toastMessage}
+          placement="side"
+          onClose={() => setToastMessage(null)}
         />
       )}
     </div>

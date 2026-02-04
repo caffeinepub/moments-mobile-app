@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X, Clock, ChevronUp } from 'lucide-react';
-import { getColorForDate } from '../utils/plannedMomentsStorage';
+import { getColorForDate, SaveResult } from '../utils/plannedMomentsStorage';
 
 interface PlannedMomentBottomSheetProps {
   isOpen: boolean;
@@ -11,9 +11,10 @@ interface PlannedMomentBottomSheetProps {
     time: string;
     title?: string;
     color: string;
-  }) => void;
+  }) => SaveResult;
   onVisibilityChange?: (isVisible: boolean) => void;
   onChangeDate?: (newDate: Date) => void;
+  onDuplicateDate?: () => void;
 }
 
 export default function PlannedMomentBottomSheet({
@@ -23,6 +24,7 @@ export default function PlannedMomentBottomSheet({
   onSave,
   onVisibilityChange,
   onChangeDate,
+  onDuplicateDate,
 }: PlannedMomentBottomSheetProps) {
   const [time, setTime] = useState('12:00');
   const [title, setTitle] = useState('');
@@ -56,17 +58,22 @@ export default function PlannedMomentBottomSheet({
     const dateStr = formatDateToISO(selectedDate);
     const color = getColorForDate(dateStr);
 
-    onSave({
+    const result = onSave({
       date: dateStr,
       time,
       title: title.trim() || undefined,
       color,
     });
 
-    // Reset form
-    setTime('12:00');
-    setTitle('');
-    onClose();
+    // Only reset and close if save was successful
+    if (result.success) {
+      setTime('12:00');
+      setTitle('');
+      onClose();
+    } else if (result.error === 'duplicate-date') {
+      // Keep sheet open, trigger duplicate notification
+      onDuplicateDate?.();
+    }
   };
 
   const handleCancel = () => {

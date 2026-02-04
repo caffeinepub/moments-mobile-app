@@ -1,57 +1,23 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-04T02:04:33.639Z",
-  "summary": "REQ-7/8/9/10 appear implemented via new local-first planned-moment storage + hook, a new PlannedMomentCard component with full background fill, HomeScreen conditional CTA switching to a compact '+' after first save, and weekly calendar strip support for color-filled day pills. However, the diff summary also indicates unrelated changes (including to an immutable auth hook and multiple UI/animation features) that were not requested.",
+  "generatedAt": "2026-02-04T11:39:04.280Z",
+  "summary": "REQ-1 appears to be implemented via CSS updates in `frontend/src/index.css` to make planned-moment pill cards slimmer/more elongated while keeping the border-only moment.color-based styling. However, the actual planned-moment CSS section is not visible in the truncated `index.css` excerpt, so verification relies on the diff summary text. Two additional non-requested metadata/documentation files were also modified.",
   "missing_requirements": [],
   "hallucinated_features": [
     {
-      "description": "Modified Internet Identity hook behavior (delegation validity checks / avoiding re-login), despite constraint that frontend/src/hooks/useInternetIdentity.ts(.tsx) must not be edited and not requested by this BuildRequest.",
-      "reason": "Not part of REQ-7..REQ-10 and explicitly disallowed by constraints.",
+      "description": "Modified project metadata/documentation files (`frontend-file-summaries.txt`, `project_state.json`) even though the BuildRequest only asked for CSS changes to planned-moment card styling.",
+      "reason": "The BuildRequest requirements and constraints focus on styling changes in `frontend/src/index.css` for planned-moment card classes; it does not request updates to repository summary/state files.",
       "evidence": [
-        "frontend-file-summaries.txt (\"frontend/src/hooks/useInternetIdentity.ts\": updated behavior)"
-      ]
-    },
-    {
-      "description": "Added/changed onboarding splash slideshow animations and media preloading behaviors.",
-      "reason": "Not requested (BuildRequest is only about Home planning cards/CTA and weekly strip pill coloring).",
-      "evidence": [
-        "frontend-file-summaries.txt (\"frontend/src/pages/MobileSplashScreen.tsx\": enhanced animations)",
-        "frontend-file-summaries.txt (\"frontend/index.html\": preloading media)"
-      ]
-    },
-    {
-      "description": "Added/changed SignInOverlay animation/theme and introduced GSAP dependency.",
-      "reason": "Not requested; also goes beyond Home planning requirements.",
-      "evidence": [
-        "frontend-file-summaries.txt (\"frontend/src/components/SignInOverlay.tsx\": GSAP/CSS animation changes)",
-        "frontend-file-summaries.txt (\"frontend/package.json\": GSAP dependency)"
-      ]
-    },
-    {
-      "description": "Introduced/changed HamburgerMenu animated component.",
-      "reason": "Not requested by REQ-7..REQ-10.",
-      "evidence": [
-        "frontend-file-summaries.txt (\"frontend/src/components/HamburgerMenu.tsx\")"
-      ]
-    },
-    {
-      "description": "Expanded/changed MomentsPage to TikTok-style vertical photo scrolling with background music.",
-      "reason": "Not requested and unrelated to Home planning requirements.",
-      "evidence": [
-        "frontend-file-summaries.txt (\"frontend/src/pages/MomentsPage.tsx\": vertical scrolling + music)"
+        "frontend-file-summaries.txt",
+        "project_state.json"
       ]
     }
   ],
-  "confidence": 0.62,
+  "confidence": 0.66,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/src/components/HomeWeeklyCalendarStrip.tsx",
-    "frontend/src/components/PlannedMomentCard.tsx",
-    "frontend/src/hooks/usePlannedMoments.ts",
     "frontend/src/index.css",
-    "frontend/src/pages/HomeScreen.tsx",
-    "frontend/src/utils/plannedMomentsStorage.ts",
     "project_state.json"
   ]
 }

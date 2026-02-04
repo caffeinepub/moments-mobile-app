@@ -1,89 +1,35 @@
 {
   "kind": "build_request",
-  "title": "Home: render saved planning cards + convert Start Planning CTA into '+' after first save; fix date pill color fill",
+  "title": "Make planned-moment pill cards slimmer and more elongated",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-7",
-      "text": "On the Home screen, after a planned moment is successfully saved from the planner bottom sheet, render a new \"saved planning\" card directly below the planning area. The card must show all provided planning details: a date label, the time, and the title when it was provided (omit the title row if not provided). The card must use the plan’s assigned color as a full background fill.",
+      "id": "REQ-1",
+      "text": "Adjust the planned-moment pill card styling so the card appears significantly narrower (reduced height/thickness) and more elongated horizontally, while preserving the existing border-only pill look, left color dot, and right-side action icons. Implement this by updating the CSS for the planned-moment card classes used by `frontend/src/components/PlannedMomentCard.tsx` (e.g., `.planned-moment-card-clear`, `.planned-moment-card-color-dot`, and related action/icon sizing/spacing) in `frontend/src/index.css`.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-4"
         ],
         "quotes": [
-          "after succesfully save a moment planning..it should appear below the start planning card..as a card on its own with all the details thta was inputed and color graded",
-          "all must be provided color is full bg"
+          "make the card pill way more narrower and then longer.."
         ]
       },
       "acceptanceCriteria": [
-        "Saving a planned moment causes a new card to appear below the planning area without requiring navigation or reload",
-        "Each card displays: date label + time + (optional) title",
-        "Each card uses the planned moment color as a full card background (not just an accent/stripe)"
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "text": "On the Home screen, display multiple saved planning cards in a vertical list below the planning area and sort them most-recent-first (newest saved appears at the top).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "most-recent-first"
-        ]
-      },
-      "acceptanceCriteria": [
-        "If 2+ planned moments exist, the Home screen shows a stacked list of planning cards",
-        "The top card corresponds to the most recently created planned moment"
-      ]
-    },
-    {
-      "id": "REQ-9",
-      "text": "Update the Home planning CTA behavior: when no planned moments exist, show the current \"Start Planning\" button; once the first planned moment has been saved, replace/shrink that CTA into a compact '+' icon button (camera-circle style) positioned to allow adding more plans. Tapping the '+' must open the same planning bottom sheet flow as the original CTA.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "the add icon is still the smae plan npw just when a first plan is made it shrinks into a plus"
-        ]
-      },
-      "acceptanceCriteria": [
-        "With zero planned moments, the Home screen shows the \"Start Planning\" CTA",
-        "After saving the first planned moment, the \"Start Planning\" CTA is replaced by a compact '+' icon button",
-        "Tapping the '+' opens the same Plan a Moment bottom sheet used previously"
-      ]
-    },
-    {
-      "id": "REQ-10",
-      "text": "Fix planned-moment date color coding in the Home weekly calendar strip so that the day pill itself becomes color-coded for dates that have planned moments (not just a small dot indicator), matching the expectation that the pill is colored on its date immediately after saving a plan.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "after creating /planning a moment on that spefic date it should be color coded..and i mean the pill should be colored on its date ..that isnt working at the moment"
-        ]
-      },
-      "acceptanceCriteria": [
-        "After saving a planned moment for a date, that date’s day pill in the Home weekly strip visually reflects the plan color (pill is color-coded, not only a dot)",
-        "The change appears immediately after Save (same session, no reload needed)"
+        "Planned-moment cards render with noticeably less vertical thickness than before (reduced overall height).",
+        "Cards read as more elongated capsules (higher width-to-height ratio) without changing the overall layout structure (left dot, center text stack, right stacked icons).",
+        "No regressions to functionality: share and delete actions still work, and text remains readable/truncated appropriately (no overflow outside the pill).",
+        "The pill remains border-only with transparent interior and border color still matches `moment.color`."
       ]
     }
   ],
   "constraints": [
-    "Frontend immutable paths must not be edited: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui/*",
-    "Keep the backend as a single Motoko actor; no new backend services",
-    "Use English for any user-facing text"
+    "Do not modify any files under `frontend/src/components/ui`.",
+    "Keep the card border-only/transparent style and continue using `moment.color` for the border color via `--card-border-color`."
   ],
   "nonGoals": [
-    "Implementing real notifications behind any bell/notifications UI",
-    "Changing Internet Identity authentication flow",
-    "Adding backend persistence for planned moments (this feature remains local-first storage)"
+    "No changes to planned-moment data models, storage, or backend APIs.",
+    "No redesign of icon set or card content layout beyond size/spacing adjustments needed to achieve a slimmer/longer pill."
   ],
   "imageRequirements": {
     "required": [],

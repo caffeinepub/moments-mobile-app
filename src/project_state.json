@@ -1,16 +1,16 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Moments Mobile App is evolving into a minimal, planning-first mobile React SPA: users progress through a 3-slide onboarding → Sign In (Internet Identity) → Welcome (slide-style) → Home. Home is primarily for planning (single-row weekly calendar + “Start Planning” CTA) and then viewing saved planned moments directly below; photo capture remains, but social-media-like “feed” behaviors are being removed/de-emphasized. UI direction is consistent: fixed mobile viewport, glassmorphic cards (buttons excluded), clean typography (no emojis), and smooth GSAP/Framer Motion transitions.",
+  "summary": "Moments is a mobile-first React + TypeScript SPA focused on a calm, minimal, planning-first flow (single-row weekly calendar on Home + slide-up planner) and a private capture-to-save Moments flow (camera → confirm → feeling check) with a Vault for viewing saved photo moments. The app integrates Dfinity Internet Identity for authentication, uses local-first persistence, and is being refactored to avoid social-media-like feeds, emphasizing planning and quiet memory keeping.",
   "existing_features": [
     {
       "id": "IF-1",
-      "title": "Client-side routing across primary screens",
+      "title": "Client-side routing across app screens",
       "synonyms": [
         "TanStack Router",
         "SPA navigation"
       ],
-      "description": "Defines routes for splash (/), welcome (/welcome), home (/home), camera (/camera), save moment (/save-moment), feeling check (/feeling-check), calendar (/calendar), vault (/vault), vault detail (/vault/$momentId), profile (/profile), and settings (/settings).",
+      "description": "Defines routes for splash (/), welcome (/welcome), home (/home), camera (/camera), save moment confirmation (/save-moment), feeling check (/feeling-check), calendar (/calendar), vault (/vault), vault detail (/vault/$momentId), profile (/profile), and settings (/settings).",
       "reqIds": [],
       "version": 1
     },
@@ -19,335 +19,328 @@
       "title": "React Query provider setup",
       "synonyms": [
         "QueryClientProvider",
-        "app-wide query cache"
+        "TanStack React Query"
       ],
-      "description": "Initializes a global QueryClient and wraps the app with QueryClientProvider to support cached backend actor/query patterns.",
+      "description": "Initializes a shared QueryClient and wraps the app to enable cached queries and shared query invalidation patterns.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-3",
-      "title": "Mobile-first fixed viewport layout",
+      "title": "Internet Identity authentication provider and hook",
       "synonyms": [
-        "390x844 viewport container",
-        "mobile-centered UI"
+        "AuthClient integration",
+        "InternetIdentityProvider"
       ],
-      "description": "Pages render within a full-screen overlay and a centered container (max 390x844) to maintain a consistent mobile layout on larger screens.",
+      "description": "Manages identity hydration on mount, login/logout, and exposes granular status flags (initializing/idle/logging-in/success/loginError) plus error state.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-4",
-      "title": "Animated onboarding splash slideshow (3 cards)",
+      "title": "Backend actor creation and caching per principal",
       "synonyms": [
-        "onboarding carousel",
-        "splash cards"
+        "useActor",
+        "authenticated actor"
       ],
-      "description": "Implements a 3-slide onboarding experience with timed auto-advance, manual Prev/Next controls, and direction-aware 3D card transitions.",
+      "description": "Creates anonymous or authenticated backend actors depending on Internet Identity state, caches them with React Query keyed by principal, and triggers access-control initialization using a secret token.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-5",
-      "title": "Splash cards support mixed media",
+      "title": "Secure-ish URL hash secret extraction with session persistence",
       "synonyms": [
-        "video slide",
-        "image slides"
+        "getSecretParameter",
+        "URL hash scrubbing"
       ],
-      "description": "Splash slides can render either an autoplaying looping muted video (slide 1) or images (slides 2–3) with eager loading hints and layout adjustments.",
+      "description": "Utilities to extract sensitive parameters from the URL hash, persist them in sessionStorage, and scrub them from the address bar via history.replaceState.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-6",
-      "title": "Preloading onboarding and welcome assets",
+      "title": "Mobile-first fixed viewport frame layout",
       "synonyms": [
-        "preload hints",
-        "instant splash media"
+        "390×844 container",
+        "phone frame UI"
       ],
-      "description": "Uses HTML preload hints for splash video/images and the welcome image to improve perceived loading performance.",
+      "description": "Most pages render inside a fixed full-screen backdrop with a centered viewport constrained to typical mobile dimensions for consistent design on desktop and mobile.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-7",
-      "title": "Internet Identity authentication context and hook",
+      "title": "Animated onboarding splash slideshow (3 slides)",
       "synonyms": [
-        "InternetIdentityProvider",
-        "AuthClient integration"
+        "onboarding carousel",
+        "3D transitions"
       ],
-      "description": "Provides identity state and login/logout (clear) actions, persists identity across reloads, and exposes loginStatus flags (initializing/idle/logging-in/success/loginError).",
+      "description": "Implements a 3-slide onboarding experience with long-duration 3D enter/exit transitions, autoplay progression, and Prev/Next navigation controls.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-8",
-      "title": "Auth-aware splash CTA and post-auth navigation",
+      "title": "Splash cards support video and image media",
       "synonyms": [
-        "smart sign-in button",
-        "continue when authenticated"
+        "mixed media slides",
+        "autoplay video slide"
       ],
-      "description": "On slide 3, the CTA text adapts to auth state (Loading/Connecting/Continue/Sign In); authenticated users navigate to /welcome, otherwise the login flow is initiated. Also auto-navigates when identity becomes available on slide 3.",
+      "description": "Splash cards can render an autoplaying, muted looping video (playsInline) or eager-loaded images with slide-specific layout tweaks.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-9",
-      "title": "Welcome screen with entrance animations",
+      "title": "Auth-aware onboarding CTA (Sign In / Continue)",
       "synonyms": [
-        "post-login welcome",
-        "Get Started CTA"
+        "smart sign-in",
+        "contextual CTA"
       ],
-      "description": "Renders an animated welcome card and a Get Started button that navigates to /home.",
+      "description": "On the final onboarding slide, CTA text and behavior adapt to auth state: shows Loading/Connecting, triggers login when unauthenticated, and continues to /welcome when authenticated.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-10",
-      "title": "Backend actor creation and caching per principal",
+      "title": "Welcome page with entrance animations",
       "synonyms": [
-        "useActor",
-        "authenticated/anonymous actor"
+        "post-login welcome",
+        "Get Started"
       ],
-      "description": "Creates an anonymous actor when unauthenticated and an authenticated actor when identity exists; caches by principal using React Query and triggers invalidation/refetch of other queries when the actor changes.",
+      "description": "Animated welcome card matching onboarding motion language; provides Get Started CTA routing to /home.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-11",
-      "title": "Secret token extraction from URL hash with session persistence",
+      "title": "Home planning screen (weekly strip + planner entry)",
       "synonyms": [
-        "hash secret handling",
-        "URL cleanup"
+        "HomeScreen",
+        "planning-first home"
       ],
-      "description": "Utilities read sensitive parameters from the URL hash, persist them to sessionStorage, and remove them from the address bar via history.replaceState to reduce leakage.",
+      "description": "Home shows logo header, search bar stub, a weekly calendar strip, a planning container CTA, and a list of saved planned moments. Includes a floating bottom navigation bar and hides it while the planner sheet is open.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-12",
-      "title": "Planning-first Home screen",
+      "title": "Home weekly calendar strip with week navigation and planned-day fill colors",
       "synonyms": [
-        "home dashboard",
-        "start planning CTA"
+        "HomeWeeklyCalendarStrip",
+        "week selector"
       ],
-      "description": "Home shows branding, a search input stub, a weekly calendar strip, and a planning prompt with a Start Planning CTA that opens the planning bottom sheet.",
+      "description": "Renders a Sunday-start week row with prev/next week arrows; planned dates are shown as color-filled pills based on dateColorMap; selected date is shown as a black pill.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-13",
-      "title": "Floating footer navigation",
+      "title": "Planner bottom sheet for creating planned moments",
       "synonyms": [
-        "bottom nav",
-        "curved footer"
+        "PlannedMomentBottomSheet",
+        "plan-a-moment"
       ],
-      "description": "Home includes a floating footer nav linking to Calendar, Camera, Vault, and Profile, with a central camera button and hover/active styling.",
+      "description": "Slide-up bottom sheet (~75vh) with open/close animations, required time picker, optional title, native date-picker reschedule support, and save/cancel actions.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-14",
-      "title": "Home weekly calendar strip component",
+      "title": "Planned moments local persistence (CRUD) with reactive updates",
       "synonyms": [
-        "HomeWeeklyCalendarStrip",
-        "single-row week selector"
+        "plannedMomentsStorage",
+        "plannedMomentsChanged event"
       ],
-      "description": "Reusable week strip with prev/next week navigation, controlled selected date, onDateSelect callback, and per-date planned-moment indicator dots driven by a dateColorMap.",
+      "description": "Stores planned moments in localStorage with generated IDs and createdAt timestamps; supports create, delete, load, get-by-date, and publishes same-tab change events plus filtered cross-tab storage subscriptions.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-15",
-      "title": "Planned moments local persistence",
+      "title": "Deterministic date→color assignment for planned moments",
       "synonyms": [
-        "plannedMomentsStorage",
-        "local planner data"
+        "getColorForDate",
+        "pastel OKLCH palette"
       ],
-      "description": "Stores planned moments in localStorage with generated IDs and createdAt, supports querying by date, and derives a set of dates with moments.",
+      "description": "Uses a muted OKLCH palette and a deterministic hash of ISO date strings to consistently map each date to a color across sessions.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-16",
-      "title": "Palette-based deterministic planned-moment coloring by date",
+      "title": "One planned moment per day enforcement",
       "synonyms": [
-        "getColorForDate",
-        "date-hash palette"
+        "duplicate-date prevention",
+        "one-per-day rule"
       ],
-      "description": "Assigns planned-moment colors deterministically via a hash of the ISO date string into a vibrant OKLCH palette; derives a dateColorMap using the earliest-by-time moment for each date.",
-      "reqIds": [
-        "REQ-6"
-      ],
+      "description": "savePlannedMoment rejects saving another plan on the same ISO date with a 'duplicate-date' error; UI surfaces a friendly toast and keeps the bottom sheet open.",
+      "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-17",
-      "title": "Observable planned-moment updates across the app",
+      "title": "Planned moment card UI (transparent pill border-only) with actions",
       "synonyms": [
-        "plannedMomentsChanged event",
-        "storage subscription"
+        "PlannedMomentCard",
+        "reference-matched layout"
       ],
-      "description": "Emits a custom plannedMomentsChanged event on writes and listens to both 'storage' and the custom event to refresh UI state across tabs and within the same tab.",
+      "description": "Renders planned moments as pill-shaped, fully transparent cards with a thin border colored to the moment/date color, a left color dot with a black ring, and right-side vertically stacked share + trash icons (Font Awesome).",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-18",
-      "title": "Planned moments hook for reactive UI state",
+      "title": "Clipboard-based planned moment sharing",
       "synonyms": [
-        "usePlannedMoments",
-        "planner state adapter"
+        "copy share text",
+        "plannedMomentShareText"
       ],
-      "description": "Wraps planned-moment storage utilities and exposes moments for a selected date, datesWithMoments, dateColorMap, and an addMoment action.",
+      "description": "Generates formatted share text (date/time/title + optional profile display name) and copies it to clipboard using Clipboard API with textarea/document.execCommand fallback; shows toast feedback.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-19",
-      "title": "Planned moment creation bottom sheet",
+      "title": "Planned moment deletion with confirmation modal",
       "synonyms": [
-        "PlannedMomentBottomSheet",
-        "plan-a-moment sheet"
+        "ConfirmDeleteModal",
+        "delete confirm"
       ],
-      "description": "Slide-up bottom sheet with animated open/close, date display, time picker, optional title, Save/Cancel actions, and auto-assigned palette color for the selected date.",
-      "reqIds": [
-        "REQ-4",
-        "REQ-6"
-      ],
+      "description": "Provides an in-app confirm/cancel modal before deleting a planned moment from localStorage.",
+      "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-20",
-      "title": "Bottom sheet date rescheduling control",
+      "title": "Inline toast notifications",
       "synonyms": [
-        "change date arrow",
-        "native date picker"
+        "InlineToast",
+        "in-app feedback"
       ],
-      "description": "Adds a small up-arrow button on the selected date container that triggers a hidden native date input picker and calls onChangeDate to reschedule dynamically.",
-      "reqIds": [
-        "REQ-5"
-      ],
+      "description": "Reusable toast with auto-dismiss and fade/slide transitions; supports bottom or side placement for feedback like copy success, duplicate-date warnings, and profile saved.",
+      "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-21",
-      "title": "Hide Home footer nav while planner bottom sheet is visible",
+      "title": "Calendar page weekly view with planned/photo indicators and planner integration",
       "synonyms": [
-        "navbar suppression",
-        "sheet visibility coordination"
+        "CalendarPage",
+        "weekly strip"
       ],
-      "description": "Home listens to the bottom sheet’s onVisibilityChange to hide the floating footer navigation while the planner is open and restore it after close animation completes.",
+      "description": "Shows a weekly date strip with month/week navigation; indicates planned moments (ring + dot) and photo moments (dot) by checking storage; opens the planner bottom sheet on date selection and supports rescheduling via native date picker.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-22",
-      "title": "Calendar page weekly view with planned/photo indicators",
+      "title": "Browser camera hook (stream lifecycle + capture)",
       "synonyms": [
-        "CalendarPage",
-        "weekly strip"
+        "useCamera",
+        "getUserMedia management"
       ],
-      "description": "Renders a weekly strip with month/week navigation, highlights today/selected day, shows planned-moment color rings and dot indicators for planned/photo moments, opens the planning bottom sheet on date tap, and lists planned moments for the selected date.",
+      "description": "Encapsulates camera support detection, getUserMedia constraints, stream cleanup, facing-mode switching, retry, and photo capture via canvas→Blob→File with configurable quality/format.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-23",
-      "title": "Camera hook for getUserMedia lifecycle and photo capture",
+      "title": "Camera capture/review flow with gallery upload",
       "synonyms": [
-        "useCamera",
-        "MediaStream management"
+        "CameraScreen",
+        "capture then confirm"
       ],
-      "description": "Encapsulates camera support detection, stream lifecycle cleanup, facing-mode switching, retry handling, and photo capture via canvas → Blob → File with categorized error reporting.",
+      "description": "Provides live preview, capture/retake, switch camera, optional gallery upload, and advances to the save confirmation screen after storing a session draft.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-24",
-      "title": "Camera screen capture/upload and review flow",
+      "title": "Session draft storage for camera → confirm → feeling flow",
       "synonyms": [
-        "CameraScreen",
-        "capture then continue"
+        "pendingMomentDraftStorage",
+        "sessionStorage drafts"
       ],
-      "description": "Full-screen camera UI with live preview, capture, retake, switch camera, error/loading overlays, and gallery upload; converts the chosen image to base64 draft data and routes to /save-moment.",
+      "description": "Stores captured photo draft, confirmation inputs, and the saved moment ID in sessionStorage; supports clearing draft on retake/completion.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-25",
-      "title": "Session draft storage for the capture → confirm → feeling flow",
-      "synonyms": [
-        "pendingMomentDraftStorage",
-        "sessionStorage drafts"
-      ],
-      "description": "Persists the captured image draft, confirmation inputs, and saved moment ID in sessionStorage; supports clearing draft state on retake/completion.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-26",
       "title": "Save moment confirmation screen (who + reflection)",
       "synonyms": [
         "SaveMomentConfirmPage",
         "post-capture confirmation"
       ],
-      "description": "Shows the captured photo preview, lets the user select who it was with and add an optional reflection, saves the moment to localStorage, stores the new moment ID, and navigates to /feeling-check.",
+      "description": "Shows captured photo, allows selecting who and entering an optional reflection, saves the moment to localStorage, stores the moment ID for follow-up, and routes to the feeling check screen.",
       "reqIds": [],
       "version": 1
     },
     {
-      "id": "IF-27",
+      "id": "IF-26",
       "title": "Post-save feeling check-in for a moment",
       "synonyms": [
         "MomentFeelingCheckPage",
         "emotional check-in"
       ],
-      "description": "Prompts the user to select one of three feelings (Meaningful/Good/Okay), updates the stored moment, clears session draft data, and returns to /home.",
+      "description": "Prompts “How did this feel?” with Meaningful/Good/Okay options, updates the saved moment record with the selected feeling, clears the session draft, then routes back to /home.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-27",
+      "title": "Local photo moments storage utilities",
+      "synonyms": [
+        "momentsPhotosStorage",
+        "local photo registry"
+      ],
+      "description": "Stores photo moments in localStorage (id, data URL, timestamp, MIME type, who, reflection, feeling) and provides load/update/get-by-id helpers; emits a same-tab update event on writes.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-28",
-      "title": "Local moments photo storage utilities",
+      "title": "Photo moments hook with reactive refresh",
       "synonyms": [
-        "momentsPhotosStorage",
-        "local photo registry"
+        "useMomentsPhotos",
+        "storage/event listeners"
       ],
-      "description": "Stores photo moments in localStorage (id, data URL, timestamp, type, who, reflection, feeling) and provides load/update/get-by-id helpers; emits a same-tab moments_photos_updated event on writes.",
+      "description": "Loads all photo moments and the most recent photo, refreshing on storage events (filtered by key) and a custom moments_photos_updated event.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-29",
-      "title": "Moments photos hook with reactive refresh",
-      "synonyms": [
-        "useMomentsPhotos",
-        "storage/event listeners"
-      ],
-      "description": "Loads photo moments and the most recent moment, refreshing on both filtered 'storage' events and the custom moments_photos_updated event.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-30",
       "title": "Vault gallery grouped by month with animated thumbnail grid",
       "synonyms": [
         "VaultPage",
         "memory vault"
       ],
-      "description": "Groups moments by month/year, displays a 3-column grid of up to 6 thumbnails per month with in-view entrance animations, and shows an optional feeling badge on thumbnails.",
+      "description": "Groups photo moments by month/year, shows a 3-column thumbnail grid (limited to 6 per month) with entrance animations and optional feeling badges; navigates to per-moment view.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-30",
+      "title": "Vault moment detail viewer with metadata overlay",
+      "synonyms": [
+        "VaultMomentPage",
+        "full-screen viewer"
+      ],
+      "description": "Full-screen moment viewer with back control and bottom gradient overlay showing relative time, who, reflection, and feeling.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-31",
-      "title": "Vault moment detail viewer with metadata overlay",
+      "title": "IntersectionObserver in-view hook",
       "synonyms": [
-        "VaultMomentPage",
-        "full-screen moment view"
+        "useInView",
+        "viewport detection"
       ],
-      "description": "Displays a single moment full-screen with a close/back control, relative timestamp formatting, and an overlay showing who/reflection/feeling.",
+      "description": "Reusable hook to detect when elements enter the viewport with configurable threshold/rootMargin and trigger-once behavior (used for Vault section animations).",
       "reqIds": [],
       "version": 1
     },
@@ -364,93 +357,82 @@
     },
     {
       "id": "IF-33",
-      "title": "IntersectionObserver-based in-view hook",
-      "synonyms": [
-        "useInView",
-        "viewport detection"
-      ],
-      "description": "Hook for detecting when an element enters the viewport with configurable threshold/rootMargin and optional trigger-once behavior (used for Vault animations).",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-34",
       "title": "Local-first profile storage with invite code generation",
       "synonyms": [
         "profileStorage",
         "invite code"
       ],
-      "description": "Stores user profile data in localStorage, ensures an invite code exists (generating one if missing), and emits a profile_updated event on save for same-tab updates.",
+      "description": "Stores user profile data in localStorage, ensures an invite code exists (generating one if missing), and emits a profile_updated event on save.",
       "reqIds": [],
       "version": 1
     },
     {
-      "id": "IF-35",
+      "id": "IF-34",
       "title": "Auto-geolocation hook (once per session)",
       "synonyms": [
         "useAutoGeolocation",
         "session-gated geolocation"
       ],
-      "description": "Requests browser geolocation at most once per session (sessionStorage gated) when enabled, calls onSuccess with coordinates on grant, and logs failures without throwing.",
+      "description": "Requests browser geolocation at most once per session when profile location/coordinates are missing; calls onSuccess with coordinates on grant and logs errors without throwing.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-35",
+      "title": "Profile state hook with reactive updates",
+      "synonyms": [
+        "useProfile",
+        "profile adapter"
+      ],
+      "description": "Manages profile state, persists updates to localStorage, auto-requests geolocation when needed, and refreshes on storage/profile_updated events.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-36",
-      "title": "Profile hook with auto-geolocation and reactive updates",
-      "synonyms": [
-        "useProfile",
-        "profile state adapter"
-      ],
-      "description": "Manages profile state, auto-requests geolocation when location/coordinates are missing, persists formatted location + coordinates, and refreshes on profile_updated and storage events.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-37",
       "title": "Profile management screen",
       "synonyms": [
         "ProfilePage",
         "edit profile"
       ],
-      "description": "UI to edit display name/location, upload a profile photo (FileReader→data URL), copy invite code to clipboard with fallback, show inline toast feedback, and navigate to Settings or Home.",
+      "description": "Edits display name/location, supports profile photo upload (FileReader→data URL), copies invite code to clipboard with fallback, shows toast feedback, and navigates to Settings or Home.",
       "reqIds": [],
       "version": 1
     },
     {
-      "id": "IF-38",
-      "title": "Inline toast notification component",
-      "synonyms": [
-        "InlineToast",
-        "in-app confirmations"
-      ],
-      "description": "Reusable toast component with auto-dismiss and fade/slide animations used for lightweight confirmations (e.g., profile saved, invite code copied).",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-39",
+      "id": "IF-37",
       "title": "Settings screen with logout",
       "synonyms": [
         "SettingsPage",
         "sign out"
       ],
-      "description": "Renders grouped settings UI (mostly placeholder actions) and supports logout by clearing Internet Identity state and routing back to splash (/).",
+      "description": "Settings UI with grouped placeholder items and a logout action that clears Internet Identity state and routes to the splash screen (/).",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-38",
+      "title": "Presentational moment image card component",
+      "synonyms": [
+        "MomentsImageCard",
+        "moment UI card"
+      ],
+      "description": "Reusable presentational card for displaying a moment image with avatar/name/location/timestamp and optional who/reflection/feeling metadata (no social engagement actions).",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-39",
+      "title": "Reserved module for future backend query hooks",
+      "synonyms": [
+        "useQueries placeholder"
+      ],
+      "description": "Placeholder file reserved for future React Query hooks that interact with the backend; currently exports nothing.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-40",
-      "title": "Reserved module for future React Query backend hooks",
-      "synonyms": [
-        "useQueries placeholder"
-      ],
-      "description": "Placeholder file reserved for future backend query hooks; currently exports nothing.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-41",
       "title": "Backend RBAC with admin bootstrap secret",
       "synonyms": [
         "AccessControl",
@@ -462,7 +444,7 @@
       "version": 1
     },
     {
-      "id": "IF-42",
+      "id": "IF-41",
       "title": "Backend user profile API with authorization checks",
       "synonyms": [
         "getCallerUserProfile",
@@ -474,7 +456,7 @@
       "version": 1
     },
     {
-      "id": "IF-43",
+      "id": "IF-42",
       "title": "Backend user settings API with authorization checks",
       "synonyms": [
         "getCallerSettings",
@@ -485,69 +467,34 @@
       "version": 1
     },
     {
-      "id": "IF-44",
-      "title": "Backend moments photo metadata registry (per-user index)",
+      "id": "IF-43",
+      "title": "Backend photo metadata registry per user (index only)",
       "synonyms": [
         "storePhoto metadata",
         "getCallerMomentsPhotos",
         "deletePhoto"
       ],
-      "description": "Maintains a per-user list of photo metadata records (id/owner/timestamp/blobId) with authenticated store/list and owner-only delete behavior (blob persistence integration is incomplete).",
+      "description": "Maintains a per-user list of photo metadata records (id/owner/timestamp/blobId) with authenticated store/list and owner-only delete behavior; blob persistence is incomplete.",
       "reqIds": [],
       "version": 1
     },
     {
-      "id": "IF-45",
-      "title": "Backend blob-storage maintenance mixin endpoints",
+      "id": "IF-44",
+      "title": "Backend blob-storage maintenance and authorization endpoints (mixin)",
       "synonyms": [
         "MixinStorage",
-        "dead blob pruning",
+        "gateway allowlist",
         "cycles refill"
       ],
-      "description": "Exposes endpoints to update authorized gateway principals, check blob liveness, list dead blobs for deletion (authorized callers), confirm deletion and trigger GC, create a certificate stub, and refill cycles via a cashier principal.",
+      "description": "Exposes endpoints to update authorized gateway principals, check blob liveness, list dead blobs for deletion (authorized callers), confirm deletion + trigger GC, create an upload certificate stub, and refill cycles via a cashier principal.",
       "reqIds": [],
       "version": 1
     },
     {
-      "id": "IF-46",
-      "title": "Backend blob-storage authorization registry and cashier refill utility",
-      "synonyms": [
-        "blob-storage/Storage.mo",
-        "gateway principal allowlist"
-      ],
-      "description": "Implements a gateway principal allowlist fetched from a cashier canister, authorization checks against that list, and a refillCashier method that forwards available cycles to the cashier’s top-up endpoint.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "feature-on-the-home-screen-after-a-planned-moment-is-successfully-saved-from-the-planner-bottom-sheet-render-a-new-saved-planning-card-directly-below-the-planning-area-the-card-must-show-all-provided-planning-details-a-date-label-the-time-and-the-title-when-it-was-provided-omit-the-title-row-if-not-provided-the-card-must-use-the-plan-s-assigned-color-as-a-full-background-fill",
-      "title": "On the Home screen, after a planned moment is successfully saved from the planner bottom sheet, render a new \"saved planning\" card directly below the planning area. The card must show all provided planning details: a date label, the time, and the title when it was provided (omit the title row if not provided). The card must use the plan’s assigned color as a full background fill.",
+      "id": "feature-adjust-the-planned-moment-pill-card-styling-so-the-card-appears-significantly-narrower-reduced-height-thickness-and-more-elongated-horizontally-while-preserving-the-existing-border-only-pill-look-left-color-dot-and-right-side-action-icons-implement-this-by-updating-the-css-for-the-planned-moment-card-classes-used-by-frontend-src-components-plannedmomentcard-tsx-e-g-planned-moment-card-clear-planned-moment-card-color-dot-and-related-action-icon-sizing-spacing-in-frontend-src-index-css",
+      "title": "Adjust the planned-moment pill card styling so the card appears significantly narrower (reduced height/thickness) and more elongated horizontally, while preserving the existing border-only pill look, left color dot, and right-side action icons. Implement this by updating the CSS for the planned-moment card classes used by `frontend/src/components/PlannedMomentCard.tsx` (e.g., `.planned-moment-card-clear`, `.planned-moment-card-color-dot`, and related action/icon sizing/spacing) in `frontend/src/index.css`.",
       "reqIds": [
-        "REQ-7"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-on-the-home-screen-display-multiple-saved-planning-cards-in-a-vertical-list-below-the-planning-area-and-sort-them-most-recent-first-newest-saved-appears-at-the-top",
-      "title": "On the Home screen, display multiple saved planning cards in a vertical list below the planning area and sort them most-recent-first (newest saved appears at the top).",
-      "reqIds": [
-        "REQ-8"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-home-planning-cta-behavior-when-no-planned-moments-exist-show-the-current-start-planning-button-once-the-first-planned-moment-has-been-saved-replace-shrink-that-cta-into-a-compact-icon-button-camera-circle-style-positioned-to-allow-adding-more-plans-tapping-the-must-open-the-same-planning-bottom-sheet-flow-as-the-original-cta",
-      "title": "Update the Home planning CTA behavior: when no planned moments exist, show the current \"Start Planning\" button; once the first planned moment has been saved, replace/shrink that CTA into a compact '+' icon button (camera-circle style) positioned to allow adding more plans. Tapping the '+' must open the same planning bottom sheet flow as the original CTA.",
-      "reqIds": [
-        "REQ-9"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-fix-planned-moment-date-color-coding-in-the-home-weekly-calendar-strip-so-that-the-day-pill-itself-becomes-color-coded-for-dates-that-have-planned-moments-not-just-a-small-dot-indicator-matching-the-expectation-that-the-pill-is-colored-on-its-date-immediately-after-saving-a-plan",
-      "title": "Fix planned-moment date color coding in the Home weekly calendar strip so that the day pill itself becomes color-coded for dates that have planned moments (not just a small dot indicator), matching the expectation that the pill is colored on its date immediately after saving a plan.",
-      "reqIds": [
-        "REQ-10"
+        "REQ-1"
       ],
       "version": 1
     }
@@ -555,93 +502,85 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Refactor navigation + flow to strict step-by-step onboarding (Slide 1→2→3→Sign In→Welcome→Discover/Home) with no forced /welcome redirect; ensure app always starts at Slide 1",
+      "summary": "Refactor Home into a planning-first surface: single-row weekly calendar matching reference design, Start Planning CTA that opens a slide-up planner, and render saved planned-moment cards below the calendar.",
       "reqIds": [],
       "status": "in_progress"
     },
     {
       "id": "AR-2",
-      "summary": "Onboarding slideshow: add/maintain 3 themed cards + Welcome (04), with GSAP-based smooth transitions, adjustable pacing/pauses, optional gentle zoom-on-land, and Prev/Next navigation controls",
+      "summary": "Planned-moment creation bottom sheet UX: smooth eased translate open/close, ~3/4 height, pill-style inputs, improved time UI, smaller color-coded Cancel/Save buttons, and hide bottom navbar while sheet is open.",
       "reqIds": [],
       "status": "in_progress"
     },
     {
       "id": "AR-3",
-      "summary": "Internet Identity sign-in flow fixes: reliable redirect on mobile + cross-browser, handle already-authenticated users, and remove Sign Out button from UI",
+      "summary": "Planned moments visual system: deterministic pastel color per date, calendar date pill uses that color, and planned-moment cards use matching thin pastel border with no fill; deleting a plan removes the date’s color pill.",
       "reqIds": [],
       "status": "in_progress"
     },
     {
       "id": "AR-4",
-      "summary": "Persist last screen/route across reloads (session restore) while still supporting explicit reset to Slide 1 when desired",
+      "summary": "Enforce one planned moment per day with a friendly side-popup message when user attempts a second plan on the same date.",
       "reqIds": [],
-      "status": "pending"
+      "status": "in_progress"
     },
     {
       "id": "AR-5",
-      "summary": "Home becomes planning-first: single-row weekly calendar matching reference design (one week row, month change, horizontal scroll), tap-date/Start Planning opens a slide-up planner sheet, and planned moments list appears below calendar",
+      "summary": "Planned-moment card actions per reference: icons/layout matching reference, share copies generated text to clipboard, delete uses a small custom confirmation modal; cards are pill-shaped and responsive.",
       "reqIds": [],
       "status": "in_progress"
     },
     {
       "id": "AR-6",
-      "summary": "Planner bottom sheet UX: clean eased translate slide up/down, 3/4 height, pill-style inputs (search-bar theme), small color-coded Cancel (red) / Save (green) buttons, date-change arrow in date container, smooth motion, hide navbar during sheet",
+      "summary": "Navigation update: reorder bottom nav to Home → Vault → Camera → Notifications → Profile, and replace/remove Calendar icon (notifications bell placeholder; no screen needed yet).",
       "reqIds": [],
       "status": "in_progress"
     },
     {
       "id": "AR-7",
-      "summary": "Planned moments color system: auto-assign colors from existing app palette; color the calendar date pill immediately on save; support up to 3 color segments when multiple plans exist on same date; show planned dates as swipeable/auto-drifting pill row (single line) and/or cards below calendar",
+      "summary": "Camera-first, non-social flow refactor: redesign camera confirmation screen (minimal fields) and remove/de-emphasize feed-like Moments browsing; keep memories private and accessed via Calendar/Vault/Reflection.",
       "reqIds": [],
       "status": "in_progress"
     },
     {
       "id": "AR-8",
-      "summary": "Home planned-moment cards: after first plan save, render a full-color background card (date label + time + title if provided) below planning area; convert Start Planning CTA into a compact '+' icon (camera-circle style) to add more plans; list most-recent-first",
+      "summary": "Profile enhancements: allow profile picture + name, generate/share invite code, and persist profile locally (backend-ready later).",
       "reqIds": [],
       "status": "pending"
-    },
-    {
-      "id": "AR-9",
-      "summary": "App-wide card styling standard: glassmorphic cards as default across app (excluding buttons) and remove vault photo surfaces from Home entirely",
-      "reqIds": [],
-      "status": "in_progress"
-    },
-    {
-      "id": "AR-10",
-      "summary": "Bottom nav redesign: remove Calendar tab and replace with Notifications bell icon (placeholder screen), reorder to Home → Vault → Camera → Notifications → Profile",
-      "reqIds": [],
-      "status": "in_progress"
     }
   ],
   "architectural_notes": [
-    "Frontend is a React SPA using TanStack Router for page-level navigation and a fixed mobile viewport container (max 390x844) for consistent phone-like layout on desktop.",
-    "Authentication is handled via an InternetIdentityProvider (AuthClient) and consumed through a hook exposing identity plus detailed login state flags.",
-    "Backend integration pattern uses a React Query-cached actor (useActor) keyed by the authenticated principal; when the actor changes, other queries are invalidated/refetched.",
-    "Local-first persistence is the default UX: planned moments, photo moments, and profile are stored in localStorage; the multi-step camera flow uses sessionStorage draft state.",
-    "Cross-component synchronization uses both the browser 'storage' event (cross-tab) and same-tab custom events (e.g., plannedMomentsChanged, moments_photos_updated, profile_updated).",
-    "Planned moments use a deterministic date-hash color palette (OKLCH strings) and a derived dateColorMap used by calendar indicators.",
-    "Styling is Tailwind-based with extensive custom CSS for glassmorphic surfaces, mobile scrollbars, and timed animations (splash 3D card transitions, bottom sheet open/close, vault entrance animations).",
-    "Motoko backend composes functionality via 'mixin' includes for authorization and blob-storage maintenance utilities; RBAC is initialized via an environment secret and a user-provided token.",
-    "Home is shifting to planning-first UX: weekly single-row calendar + bottom-sheet planner; planned moments rendered below calendar and may drive calendar pill coloring (including segmented colors for multiple plans).",
-    "Navigation is being simplified toward a 5-screen maximum architecture and removing social-media-like feed behaviors; Moments feed/tab removed/de-emphasized in favor of Calendar/Vault access patterns.",
-    "UI standardization: glassmorphic cards become default styling across the app (buttons excluded)."
+    "Frontend is a React + TypeScript SPA using TanStack Router for routing and TanStack React Query for shared caching (notably backend actor caching keyed by principal).",
+    "Mobile UI is built with a consistent fixed full-screen backdrop and a centered “phone frame” viewport constrained to ~390×844, using Tailwind utility classes plus extensive custom CSS.",
+    "Design system uses OKLCH CSS variables with Tailwind config mapping tokens (e.g., background/foreground/beige) and many bespoke animations (onboarding 3D card transitions, welcome entrance, bottom sheet transitions, toasts).",
+    "Local-first persistence: planned moments, photo moments, and user profile are stored in localStorage; the camera → confirm → feeling flow uses sessionStorage as a transient draft store.",
+    "Cross-component and same-tab synchronization uses custom DOM events (plannedMomentsChanged, moments_photos_updated, profile_updated) in addition to the browser 'storage' event for cross-tab updates.",
+    "Onboarding/auth flow uses a custom Internet Identity provider around AuthClient and a “smart sign-in” CTA that adapts based on auth state.",
+    "Backend is a Motoko canister composed via mixins (authorization + blob-storage maintenance), using an admin bootstrap token from an environment variable and a user-provided secret to assign the first admin.",
+    "Home must never show Vault photos/thumbnails/indicators; Home is strictly planning-first (calendar + planning UI + planned-moment cards).",
+    "Calendar on Home is a single-row weekly view with horizontal scrolling and month switching, matching the provided reference design; no vault/photo indicators in calendar.",
+    "Planned moments are constrained to one per date; attempts to add another are blocked with a friendly side toast/popup.",
+    "Planned-moment color is deterministic by date using a muted pastel palette; the same color is used for the calendar date pill and the corresponding planned-moment card border.",
+    "Planned-moment cards are pill-shaped, transparent/no-fill, with a thin pastel border; action icons match reference and include share-to-clipboard and delete-with-confirmation.",
+    "Planner bottom sheet uses a clean eased translate motion (no bounce), targets ~75% viewport height, and hides the bottom navbar while open."
   ],
   "known_issues": [
-    "backend/main.mo: storePhoto does not actually persist the passed Blob into blob storage (comment notes missing put call) and sets timestamp=0; getBlob is a null placeholder.",
-    "backend/blob-storage/Storage.mo expects env var 'CAFFFEINE_STORAGE_CASHIER_PRINCIPAL' (triple 'F'), which is typo-prone and must match deployment configuration exactly.",
-    "backend/authorization/access-control.mo: getUserRole traps with 'User is not registered' until initialization occurs; callers must ensure _initializeAccessControlWithSecret is invoked before permission checks.",
-    "frontend/src/pages/CalendarPage.tsx: PhotoMetadata interface uses 'dataUrl' but momentsPhotosStorage persists field 'data'; calendar currently only checks timestamp, but the type/model is inconsistent.",
-    "frontend/src/utils/plannedMomentsStorage.ts: subscribeToStorageChanges listens to all 'storage' events without filtering keys, potentially causing unnecessary refreshes.",
-    "frontend/src/pages/CameraScreen.tsx: has a flash toggle UI state (isFlashOn) but no torch/flash control is implemented in the camera hook (UI-only).",
-    "frontend/src/components/HamburgerMenu.tsx and frontend/src/components/SignInOverlay.tsx are present but empty in this snapshot.",
-    "frontend/src/pages/MomentsPage.tsx is present but empty/unimplemented in this snapshot.",
-    "Two global CSS entry files exist (frontend/index.css and frontend/src/index.css); the app imports frontend/src/index.css, so the other file may drift or cause confusion if included later.",
-    "Intermittent deployment failures / draft expiration during rapid iteration; redeploy attempts sometimes fail.",
-    "Calendar planned-date pill color-coding not reliably updating immediately after saving a plan (expected pill to take assigned palette color).",
-    "Home flow/regression risk: forced redirect to /welcome and/or starting on Slide 3 instead of Slide 1 has occurred; needs prevention."
+    "Two CSS entrypoints exist (frontend/index.css and frontend/src/index.css). The app imports frontend/src/index.css; the extra entrypoint can drift and cause styling confusion.",
+    "frontend/src/components/HamburgerMenu.tsx is empty (placeholder).",
+    "frontend/src/components/SignInOverlay.tsx is empty (placeholder).",
+    "frontend/src/pages/MomentsPage.tsx is empty/unimplemented.",
+    "frontend/src/pages/MomentFeelingCheckPage.tsx uses setTimeout for navigation without cleanup; navigation could occur after unmount in edge cases.",
+    "CalendarPage defines PhotoMetadata with a dataUrl field, but momentsPhotosStorage persists the image under data; CalendarPage currently uses only timestamp, so the mismatch is latent but confusing.",
+    "CameraScreen’s flash toggle is UI-only; the camera hook does not implement torch control.",
+    "Backend storePhoto does not persist the provided Blob into blob storage (comment indicates missing put call) and sets metadata timestamp to 0.",
+    "backend/main.mo getBlob is a placeholder that always returns null.",
+    "Backend canister state (maps/counters/roles) is not stable; data will be lost on upgrade without stable variables and preupgrade/postupgrade handling.",
+    "backend/blob-storage/Storage.mo uses env var name 'CAFFFEINE_STORAGE_CASHIER_PRINCIPAL' (likely misspelled), increasing deployment misconfiguration risk.",
+    "authorization/access-control.mo traps for unregistered users in getUserRole; callers must ensure initialization occurs for new principals before permission checks.",
+    "Intermittent deployment failures were encountered during iterative UI changes (redeploy/build sometimes fails).",
+    "Regression risk: planned-date pill color sometimes fails to update immediately after saving a plan (needs verification across flows)."
   ],
-  "isFixRequest": true,
+  "isFixRequest": false,
   "gameProjectType": "none",
   "projectName": "Moments Mobile App",
   "clarification_mode": "instant",
