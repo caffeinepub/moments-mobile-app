@@ -144,6 +144,10 @@ function CalendarPage() {
     navigate({ to: '/home' });
   };
 
+  const handleChangeDate = (newDate: Date) => {
+    setSelectedDate(newDate);
+  };
+
   const formatTime = (time: string): string => {
     const [hours, minutes] = time.split(':');
     const hour = parseInt(hours, 10);
@@ -322,11 +326,6 @@ function CalendarPage() {
                   key={moment.id}
                   className="bg-gray-50 rounded-xl p-3 flex items-start gap-2 hover:bg-gray-100 transition-colors"
                 >
-                  <div className="flex-shrink-0 w-8 h-8 bg-white rounded-full flex items-center justify-center border border-gray-200">
-                    <span className="text-xs text-gray-600" style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}>
-                      {moment.withWho.charAt(0)}
-                    </span>
-                  </div>
                   <div className="flex-1 min-w-0">
                     {moment.title && (
                       <h3
@@ -336,12 +335,6 @@ function CalendarPage() {
                         {moment.title}
                       </h3>
                     )}
-                    <p
-                      className="text-xs text-gray-600"
-                      style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
-                    >
-                      {moment.withWho}
-                    </p>
                     <div className="flex items-center gap-1.5 mt-1">
                       <i className="fa fa-flag text-[10px] text-gray-400"></i>
                       <p
@@ -372,6 +365,7 @@ function CalendarPage() {
           onClose={() => setIsBottomSheetOpen(false)}
           selectedDate={selectedDate}
           onSave={addMoment}
+          onChangeDate={handleChangeDate}
         />
       )}
     </div>

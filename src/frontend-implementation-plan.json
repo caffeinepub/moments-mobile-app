@@ -1,120 +1,97 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Home planned-moment bottom sheet, refreshed planned-moment indicators, and opt-in button pulse",
+  "title": "Home planning UI: saved planning cards, CTA '+' after first save, and weekly pill color fill",
   "requirements": [
     {
-      "id": "REQ-8",
-      "summary": "Open the planned-moment slide-up bottom sheet from Home (weekly strip tap + Start Planning CTA) without navigating away, using the selected/clicked date and closing back to Home without route changes.",
+      "id": "REQ-7",
+      "summary": "After saving a planned moment from the bottom sheet, render a new saved-planning card below the planning area showing date label, time, and optional title, with the plan color as full background fill.",
       "acceptanceCriteria": [
-        "On Home, tapping any day in the weekly strip opens the planned-moment bottom sheet for that date.",
-        "On Home, tapping “Start Planning” opens the planned-moment bottom sheet (defaulting to the currently selected day in the weekly strip; if none is selected, default to today).",
-        "Closing/canceling the bottom sheet returns to Home and does not navigate to /calendar."
+        "Saving a planned moment causes a new card to appear below the planning area without requiring navigation or reload",
+        "Each card displays: date label + time + (optional) title",
+        "Each card uses the planned moment color as a full card background (not just an accent/stripe)"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/HomeScreen.tsx",
-          "operation": "modify",
-          "description": "Lift selected date state into Home, wire HomeWeeklyCalendarStrip day taps to open PlannedMomentBottomSheet, and change the “Start Planning” CTA to open the same bottom sheet (no navigation). Ensure close/cancel only toggles local state so the route stays on Home."
+          "path": "frontend/src/components/PlannedMomentCard.tsx",
+          "operation": "create",
+          "description": "Create a dedicated saved-planning card component that renders planned moment details (date label, time, optional title) and applies the moment color as a full card background fill with readable text styling."
         },
         {
-          "path": "frontend/src/components/HomeWeeklyCalendarStrip.tsx",
+          "path": "frontend/src/pages/HomeScreen.tsx",
           "operation": "modify",
-          "description": "Support a controlled selected date (prop-driven) so Home can determine the currently selected day, and continue calling onDateSelect(date) on taps to drive bottom sheet open behavior."
+          "description": "Render saved planning card(s) directly below the planning area after a successful Save by mapping planned moments to the new PlannedMomentCard component, ensuring the optional title row is omitted when not provided."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add/adjust Home saved-planning card styles as needed (spacing, rounded corners, typography) while keeping the moment color as the full card background fill."
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "Show multiple saved planning cards in a vertical list under the planning area and sort them most-recent-first.",
+      "acceptanceCriteria": [
+        "If 2+ planned moments exist, the Home screen shows a stacked list of planning cards",
+        "The top card corresponds to the most recently created planned moment"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/utils/plannedMomentsStorage.ts",
+          "operation": "modify",
+          "description": "Add a read helper that returns all planned moments sorted most-recent-first (by createdAt descending) to support Home’s vertical list rendering."
+        },
+        {
+          "path": "frontend/src/hooks/usePlannedMoments.ts",
+          "operation": "modify",
+          "description": "Expose an all-moments collection for Home that refreshes on the existing storage-change subscription and uses the most-recent-first ordering provided by planned moments storage."
+        },
+        {
+          "path": "frontend/src/pages/HomeScreen.tsx",
+          "operation": "modify",
+          "description": "Update Home to render a vertical list of saved planning cards using the sorted all-moments data, ensuring newest saved appears at the top."
         }
       ]
     },
     {
       "id": "REQ-9",
-      "summary": "Redesign the Planned Moment bottom sheet UI with a cleaner time selection UI (no +/- steppers), clear icons, simple icon-based “With who?” selector, and no pulsing buttons.",
+      "summary": "Change Home planning CTA: show 'Start Planning' when there are no planned moments; after first save replace it with a compact '+' icon button that opens the same planning bottom sheet.",
       "acceptanceCriteria": [
-        "The time selection UI in the bottom sheet no longer uses +/- steppers and is visually simpler/cleaner.",
-        "Buttons within the bottom sheet do not pulse.",
-        "The “With who?” selector remains simple and icon-based, with a clear selected state.",
-        "User-facing copy remains in English."
+        "With zero planned moments, the Home screen shows the \"Start Planning\" CTA",
+        "After saving the first planned moment, the \"Start Planning\" CTA is replaced by a compact '+' icon button",
+        "Tapping the '+' opens the same Plan a Moment bottom sheet used previously"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/PlannedMomentBottomSheet.tsx",
+          "path": "frontend/src/pages/HomeScreen.tsx",
           "operation": "modify",
-          "description": "Replace the current hour/minute stepper UI with a compact time input/picker (e.g., a single time input). Keep icon-based With-who options with a clear selected state, and ensure the sheet’s buttons opt out of any pulse animation via classes as needed."
+          "description": "Conditionally render the planning CTA based on whether any planned moments exist: show the existing 'Start Planning' button for zero moments, otherwise render a compact '+' icon button positioned for adding more plans; keep both CTAs wired to the same bottom sheet open flow."
         },
         {
           "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "Adjust bottom sheet-related styles to match the redesigned time control (remove stepper styling dependencies, add any needed styling for the new time input/picker), and ensure the bottom sheet buttons are not animated."
+          "description": "Add styling for the compact '+' icon button in the Home planning area (camera-circle style, compact size, consistent borders/shadows) and ensure layout accommodates it without introducing new routes."
         }
       ]
     },
     {
       "id": "REQ-10",
-      "summary": "Make planned moments appear on the exact chosen day and show reliable, category-color-coded indicators in the Home weekly calendar strip that update immediately after saving and remain consistent with Calendar behavior.",
+      "summary": "Fix Home weekly calendar strip planned-moment color coding so the entire day pill is color-coded (not only a dot), updating immediately after saving a plan.",
       "acceptanceCriteria": [
-        "After saving a planned moment, the selected date shows a color-coded indicator in the Home weekly calendar strip without requiring a refresh.",
-        "The color-coded indicator corresponds to the saved moment category color (as stored with the planned moment).",
-        "Planned moments are stored and retrieved for the correct ISO date (YYYY-MM-DD) so they display on the exact selected day."
+        "After saving a planned moment for a date, that date’s day pill in the Home weekly strip visually reflects the plan color (pill is color-coded, not only a dot)",
+        "The change appears immediately after Save (same session, no reload needed)"
       ],
       "file_operations": [
-        {
-          "path": "frontend/src/pages/HomeScreen.tsx",
-          "operation": "modify",
-          "description": "Use the planned-moments hook on Home and pass dates-with-moments + date-to-color mapping into HomeWeeklyCalendarStrip so it can render immediate color-coded indicators after a save."
-        },
         {
           "path": "frontend/src/components/HomeWeeklyCalendarStrip.tsx",
           "operation": "modify",
-          "description": "Render planned-moment indicators on the weekly strip days (color-coded using the passed date color mapping) and ensure the indicator aligns with the exact ISO day key used for planned moments."
+          "description": "Update the day rendering logic so dates with planned moments apply the plan color to the full day pill background (including when selected), rather than only showing a dot indicator, while preserving selected/active affordances."
         },
-        {
-          "path": "frontend/src/utils/plannedMomentsStorage.ts",
-          "operation": "modify",
-          "description": "Ensure saving and lookups consistently use ISO date strings (YYYY-MM-DD) and provide stable, deterministic date-to-color mapping based on stored category color for that day."
-        }
-      ]
-    },
-    {
-      "id": "REQ-11",
-      "summary": "Make planned-moment storage changes observable so saving a planned moment triggers automatic UI refresh across Home, Calendar, and any lists without manual reload.",
-      "acceptanceCriteria": [
-        "Saving a planned moment triggers an immediate UI update in both Home and Calendar surfaces (where applicable) without manual reload.",
-        "Planned-moment indicators remain correct after navigating between Home and Calendar."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/utils/plannedMomentsStorage.ts",
-          "operation": "modify",
-          "description": "Emit an observable signal on planned-moment writes (e.g., a custom window event in addition to relying on the browser storage event) so same-tab and cross-tab UIs can react immediately."
-        },
-        {
-          "path": "frontend/src/hooks/usePlannedMoments.ts",
-          "operation": "modify",
-          "description": "Subscribe to planned-moment storage change signals (custom event + storage event) and refresh moments/datesWithMoments/dateColorMap automatically so any component using the hook stays in sync after saves and navigation."
-        },
-        {
-          "path": "frontend/src/pages/CalendarPage.tsx",
-          "operation": "modify",
-          "description": "Ensure Calendar page relies on the observable planned-moment hook refresh behavior so weekly indicators and lists reflect newly saved planned moments immediately and remain correct after navigating between screens."
-        }
-      ]
-    },
-    {
-      "id": "REQ-12",
-      "summary": "Change global pulsating button behavior to be opt-in (keep only explicitly designated buttons pulsing, e.g., camera if desired) with no regressions to disabled/hover/active states.",
-      "acceptanceCriteria": [
-        "Most buttons across the app no longer pulse by default.",
-        "Any remaining pulsing (if kept) is limited to explicitly designated buttons only.",
-        "No regressions: disabled buttons do not animate; button hover/active states still function."
-      ],
-      "file_operations": [
         {
           "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "Remove the global default pulse selector that animates most buttons, and change pulsing to opt-in via an explicit class (keeping existing camera pulsing behavior via its explicit class). Ensure disabled buttons never animate and hover/active styling remains intact."
-        },
-        {
-          "path": "frontend/src/pages/HomeScreen.tsx",
-          "operation": "modify",
-          "description": "Verify only the intended button(s) (e.g., camera) retain an explicit pulse class after the global CSS change, and ensure Home CTAs remain visually strong without relying on animation."
+          "description": "Adjust/extend Home weekly strip styles to support a color-filled pill state (e.g., text color contrast, hover/active behavior, shadows) for dates that have planned moments."
         }
       ]
     }

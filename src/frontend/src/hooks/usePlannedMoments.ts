@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import {
   PlannedMoment,
   loadPlannedMoments,
+  loadPlannedMomentsMostRecentFirst,
   savePlannedMoment,
   getPlannedMomentsForDate,
   getDatesWithMoments,
@@ -11,10 +12,12 @@ import {
 
 export function usePlannedMoments(selectedDate: Date | null) {
   const [moments, setMoments] = useState<PlannedMoment[]>([]);
+  const [allMoments, setAllMoments] = useState<PlannedMoment[]>([]);
   const [datesWithMoments, setDatesWithMoments] = useState<Set<string>>(new Set());
   const [dateColorMap, setDateColorMap] = useState<Map<string, string>>(new Map());
 
   const refreshData = () => {
+    setAllMoments(loadPlannedMomentsMostRecentFirst());
     setDatesWithMoments(getDatesWithMoments());
     setDateColorMap(getDateColorMap());
     if (selectedDate) {
@@ -47,6 +50,7 @@ export function usePlannedMoments(selectedDate: Date | null) {
 
   return {
     moments,
+    allMoments,
     datesWithMoments,
     dateColorMap,
     addMoment,

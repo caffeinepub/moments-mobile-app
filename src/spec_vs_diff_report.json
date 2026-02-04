@@ -1,86 +1,55 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-04T00:08:02.454Z",
-  "summary": "Implemented observable planned-moment local storage with immediate cross-component refresh, added color-coded date indicators (via dateColorMap) to Home weekly strip and Calendar, and switched Home interactions to open the planned-moment bottom sheet instead of routing. However, Home “Start Planning” date-defaulting behavior does not match the spec, and several unrelated UI/auth/onboarding changes appear in the diff summary despite not being requested (including edits to an immutable hook).",
-  "missing_requirements": [
-    {
-      "id": "REQ-8",
-      "requirement": "On Home, tapping “Start Planning” opens the planned-moment bottom sheet defaulting to the currently selected day in the weekly strip (if none selected, default to today).",
-      "reason": "HomeScreen’s Start Planning handler always resets the selected date to today rather than using the currently selected day.",
-      "evidence": [
-        "frontend/src/pages/HomeScreen.tsx (handleStartPlanning setsSelectedDate(new Date()))"
-      ]
-    }
-  ],
+  "generatedAt": "2026-02-04T02:04:33.639Z",
+  "summary": "REQ-7/8/9/10 appear implemented via new local-first planned-moment storage + hook, a new PlannedMomentCard component with full background fill, HomeScreen conditional CTA switching to a compact '+' after first save, and weekly calendar strip support for color-filled day pills. However, the diff summary also indicates unrelated changes (including to an immutable auth hook and multiple UI/animation features) that were not requested.",
+  "missing_requirements": [],
   "hallucinated_features": [
     {
-      "description": "Internet Identity hook behavior changes (delegation validity check / avoiding re-login prompts).",
-      "reason": "BuildRequest explicitly marks `frontend/src/hooks/useInternetIdentity.ts` and `.tsx` as immutable; also no requirement asks for auth changes.",
+      "description": "Modified Internet Identity hook behavior (delegation validity checks / avoiding re-login), despite constraint that frontend/src/hooks/useInternetIdentity.ts(.tsx) must not be edited and not requested by this BuildRequest.",
+      "reason": "Not part of REQ-7..REQ-10 and explicitly disallowed by constraints.",
       "evidence": [
-        "frontend-file-summaries.txt (\"frontend/src/hooks/useInternetIdentity.ts\": ... cross-browser compatibility ... delegation validity ...)"
+        "frontend-file-summaries.txt (\"frontend/src/hooks/useInternetIdentity.ts\": updated behavior)"
       ]
     },
     {
-      "description": "Major onboarding/splash screen animation and theming changes, plus media preloading changes in index.html.",
-      "reason": "Not requested by REQ-8..REQ-12 (scope is Home/Calendar planned-moment UI, indicators, and pulse behavior).",
+      "description": "Added/changed onboarding splash slideshow animations and media preloading behaviors.",
+      "reason": "Not requested (BuildRequest is only about Home planning cards/CTA and weekly strip pill coloring).",
       "evidence": [
-        "frontend-file-summaries.txt (\"frontend/src/pages/MobileSplashScreen.tsx\": ... enhanced 3D animations ... )",
-        "frontend-file-summaries.txt (\"frontend/index.html\": ... preloading ... )"
+        "frontend-file-summaries.txt (\"frontend/src/pages/MobileSplashScreen.tsx\": enhanced animations)",
+        "frontend-file-summaries.txt (\"frontend/index.html\": preloading media)"
       ]
     },
     {
-      "description": "New/changed SignInOverlay with GSAP animations and related dependency changes.",
-      "reason": "Not requested; outside planned-moment UI/indicator/pulse requirements.",
+      "description": "Added/changed SignInOverlay animation/theme and introduced GSAP dependency.",
+      "reason": "Not requested; also goes beyond Home planning requirements.",
       "evidence": [
-        "frontend-file-summaries.txt (\"frontend/src/components/SignInOverlay.tsx\": ... GSAP ...)",
-        "frontend-file-summaries.txt (\"frontend/package.json\": ... including GSAP ...)"
+        "frontend-file-summaries.txt (\"frontend/src/components/SignInOverlay.tsx\": GSAP/CSS animation changes)",
+        "frontend-file-summaries.txt (\"frontend/package.json\": GSAP dependency)"
       ]
     },
     {
-      "description": "Welcome page redesign/animation changes and sign-out button removal.",
-      "reason": "Not requested by the BuildRequest.",
+      "description": "Introduced/changed HamburgerMenu animated component.",
+      "reason": "Not requested by REQ-7..REQ-10.",
       "evidence": [
-        "frontend-file-summaries.txt (\"frontend/src/pages/WelcomePage.tsx\": ... 3D entrance animation ... Sign Out button removed ...)"
+        "frontend-file-summaries.txt (\"frontend/src/components/HamburgerMenu.tsx\")"
       ]
     },
     {
-      "description": "HamburgerMenu animation changes.",
-      "reason": "Not requested by the BuildRequest.",
+      "description": "Expanded/changed MomentsPage to TikTok-style vertical photo scrolling with background music.",
+      "reason": "Not requested and unrelated to Home planning requirements.",
       "evidence": [
-        "frontend-file-summaries.txt (\"frontend/src/components/HamburgerMenu.tsx\": ... morphs ... )"
-      ]
-    },
-    {
-      "description": "MomentsPage changes including TikTok-style scrolling and auto-playing background music.",
-      "reason": "Explicitly outside scope (non-goals mention not redesigning unrelated screens); not requested by any REQ.",
-      "evidence": [
-        "frontend-file-summaries.txt (\"frontend/src/pages/MomentsPage.tsx\": ... auto-playing background music ... )"
-      ]
-    },
-    {
-      "description": "Settings page UI adjustments.",
-      "reason": "Not requested by REQ-8..REQ-12.",
-      "evidence": [
-        "frontend-file-summaries.txt (\"frontend/src/pages/SettingsPage.tsx\": ... compact grouped sections ...)"
-      ]
-    },
-    {
-      "description": "Tailwind config extension adding a beige token.",
-      "reason": "Not explicitly requested by REQ-8..REQ-12 (may support new styling, but not specified).",
-      "evidence": [
-        "frontend-file-summaries.txt (\"frontend/tailwind.config.js\": ... beige color token ...)"
+        "frontend-file-summaries.txt (\"frontend/src/pages/MomentsPage.tsx\": vertical scrolling + music)"
       ]
     }
   ],
-  "confidence": 0.72,
+  "confidence": 0.62,
   "changed_files": [
     "frontend-file-summaries.txt",
     "frontend/src/components/HomeWeeklyCalendarStrip.tsx",
-    "frontend/src/components/PlannedMomentBottomSheet.tsx",
+    "frontend/src/components/PlannedMomentCard.tsx",
     "frontend/src/hooks/usePlannedMoments.ts",
     "frontend/src/index.css",
-    "frontend/src/pages/CalendarPage.tsx",
     "frontend/src/pages/HomeScreen.tsx",
     "frontend/src/utils/plannedMomentsStorage.ts",
     "project_state.json"

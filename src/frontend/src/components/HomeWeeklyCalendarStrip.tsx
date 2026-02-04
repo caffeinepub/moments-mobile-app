@@ -121,18 +121,21 @@ export default function HomeWeeklyCalendarStrip({
               key={index}
               onClick={() => handleDayClick(date)}
               className={`home-calendar-day-button no-pulse ${
-                isSelected ? 'home-calendar-day-selected' : 'home-calendar-day-inactive'
+                isSelected 
+                  ? 'home-calendar-day-selected' 
+                  : hasMoment && momentColor
+                  ? 'home-calendar-day-with-moment'
+                  : 'home-calendar-day-inactive'
               }`}
+              style={
+                !isSelected && hasMoment && momentColor
+                  ? { backgroundColor: momentColor }
+                  : undefined
+              }
               aria-label={`${dayInitial} ${dayNumber}`}
             >
               <span className="home-calendar-day-initial">{dayInitial}</span>
               <span className="home-calendar-day-number">{dayNumber}</span>
-              {hasMoment && momentColor && !isSelected && (
-                <div
-                  className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full"
-                  style={{ backgroundColor: momentColor }}
-                />
-              )}
             </button>
           );
         })}

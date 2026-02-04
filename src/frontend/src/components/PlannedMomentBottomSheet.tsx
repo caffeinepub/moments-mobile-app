@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { X, Users, User, Heart, Sparkles, Clock } from 'lucide-react';
+import { X, Clock, ChevronUp } from 'lucide-react';
+import { getColorForDate } from '../utils/plannedMomentsStorage';
 
 interface PlannedMomentBottomSheetProps {
   isOpen: boolean;
@@ -9,28 +10,22 @@ interface PlannedMomentBottomSheetProps {
     date: string;
     time: string;
     title?: string;
-    withWho: 'Family' | 'Friends' | 'Partner' | 'Solo' | 'Custom';
     color: string;
   }) => void;
+  onVisibilityChange?: (isVisible: boolean) => void;
+  onChangeDate?: (newDate: Date) => void;
 }
-
-const WITH_WHO_OPTIONS = [
-  { value: 'Family' as const, label: 'Family', icon: Users, color: 'oklch(65% 0.18 145)' }, // Green
-  { value: 'Friends' as const, label: 'Friends', icon: Users, color: 'oklch(65% 0.18 220)' }, // Blue
-  { value: 'Partner' as const, label: 'Partner', icon: Heart, color: 'oklch(65% 0.20 25)' }, // Red/Pink
-  { value: 'Solo' as const, label: 'Solo', icon: User, color: 'oklch(47% 0.14 262)' }, // Purple
-  { value: 'Custom' as const, label: 'Custom', icon: Sparkles, color: 'oklch(70% 0.15 60)' }, // Yellow/Gold
-];
 
 export default function PlannedMomentBottomSheet({
   isOpen,
   onClose,
   selectedDate,
   onSave,
+  onVisibilityChange,
+  onChangeDate,
 }: PlannedMomentBottomSheetProps) {
   const [time, setTime] = useState('12:00');
   const [title, setTitle] = useState('');
-  const [withWho, setWithWho] = useState<'Family' | 'Friends' | 'Partner' | 'Solo' | 'Custom' | null>(null);
   const [isClosing, setIsClosing] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
 
@@ -38,47 +33,63 @@ export default function PlannedMomentBottomSheet({
     if (isOpen) {
       setShouldRender(true);
       setIsClosing(false);
+      onVisibilityChange?.(true);
     } else if (shouldRender) {
       setIsClosing(true);
       const timer = setTimeout(() => {
         setShouldRender(false);
         setIsClosing(false);
+        onVisibilityChange?.(false);
       }, 400);
       return () => clearTimeout(timer);
     }
-  }, [isOpen, shouldRender]);
+  }, [isOpen, shouldRender, onVisibilityChange]);
 
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTime(e.target.value);
   };
 
   const handleSave = () => {
-    if (!withWho || !time) return;
+    if (!time) return;
 
-    const selectedOption = WITH_WHO_OPTIONS.find(opt => opt.value === withWho);
-    const color = selectedOption?.color || 'oklch(47% 0.14 262)';
-
+    // Auto-assign color based on date using palette
     const dateStr = formatDateToISO(selectedDate);
+    const color = getColorForDate(dateStr);
+
     onSave({
       date: dateStr,
       time,
       title: title.trim() || undefined,
-      withWho,
       color,
     });
 
     // Reset form
     setTime('12:00');
     setTitle('');
-    setWithWho(null);
     onClose();
   };
 
   const handleCancel = () => {
     setTime('12:00');
     setTitle('');
-    setWithWho(null);
     onClose();
+  };
+
+  const handleChangeDateClick = () => {
+    // Trigger native date picker via hidden input
+    const input = document.getElementById('hidden-date-picker') as HTMLInputElement;
+    if (input) {
+      input.showPicker?.();
+    }
+  };
+
+  const handleDatePickerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newDateStr = e.target.value;
+    if (newDateStr && onChangeDate) {
+      const [year, month, day] = newDateStr.split('-').map(Number);
+      const newDate = new Date(year, month - 1, day);
+      onChangeDate(newDate);
+    }
   };
 
   const formatDateToISO = (date: Date): string => {
@@ -98,7 +109,7 @@ export default function PlannedMomentBottomSheet({
 
   if (!shouldRender) return null;
 
-  const canSave = time && withWho;
+  const canSave = time;
 
   return (
     <>
@@ -140,18 +151,38 @@ export default function PlannedMomentBottomSheet({
           </div>
 
           {/* Content - scrollable */}
-          <div className="px-4 py-3 space-y-4 overflow-y-auto flex-1">
-            {/* Selected Date Display */}
-            <div className="bg-gray-50 rounded-lg p-2 text-center">
+          <div className="px-4 py-3 space-y-3 overflow-y-auto flex-1">
+            {/* Selected Date Display with Change Arrow */}
+            <div className="relative bg-gray-50 rounded-lg p-2 text-center">
               <p
                 className="text-xs font-medium text-gray-700"
                 style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
               >
                 {formatDateDisplay(selectedDate)}
               </p>
+              {onChangeDate && (
+                <>
+                  <button
+                    onClick={handleChangeDateClick}
+                    className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center text-gray-500 hover:text-black transition-colors rounded-full hover:bg-gray-200 no-pulse"
+                    aria-label="Change date"
+                  >
+                    <ChevronUp size={14} />
+                  </button>
+                  {/* Hidden native date picker */}
+                  <input
+                    id="hidden-date-picker"
+                    type="date"
+                    value={formatDateToISO(selectedDate)}
+                    onChange={handleDatePickerChange}
+                    className="absolute opacity-0 pointer-events-none"
+                    aria-hidden="true"
+                  />
+                </>
+              )}
             </div>
 
-            {/* Time Picker - Clean Input */}
+            {/* Time Picker - Compact Mobile Input */}
             <div>
               <label
                 className="block text-xs font-medium text-gray-700 mb-1.5"
@@ -161,19 +192,19 @@ export default function PlannedMomentBottomSheet({
               </label>
               <div className="relative">
                 <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                  <Clock size={18} />
+                  <Clock size={16} />
                 </div>
                 <input
                   type="time"
                   value={time}
                   onChange={handleTimeChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl bg-white text-base font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                  className="bottom-sheet-compact-input"
                   style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
                 />
               </div>
             </div>
 
-            {/* Title Input (Optional) */}
+            {/* Title Input (Optional) - Compact */}
             <div>
               <label
                 className="block text-xs font-medium text-gray-700 mb-1.5"
@@ -186,41 +217,9 @@ export default function PlannedMomentBottomSheet({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g., Coffee with Sarah"
-                className="bottom-sheet-pill-input"
+                className="bottom-sheet-compact-input"
                 style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
               />
-            </div>
-
-            {/* With Who Options - Simple Icon-Based */}
-            <div>
-              <label
-                className="block text-xs font-medium text-gray-700 mb-2"
-                style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
-              >
-                With who? <span className="text-red-500">*</span>
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {WITH_WHO_OPTIONS.map((option) => {
-                  const IconComponent = option.icon;
-                  const isSelected = withWho === option.value;
-                  return (
-                    <button
-                      key={option.value}
-                      onClick={() => setWithWho(option.value)}
-                      className={`with-who-pill no-pulse ${
-                        isSelected ? 'with-who-pill-selected' : ''
-                      }`}
-                      style={{
-                        fontFamily: "'Bricolage Grotesque', sans-serif",
-                        ...(isSelected ? { backgroundColor: option.color, borderColor: option.color } : {}),
-                      }}
-                    >
-                      <IconComponent size={16} />
-                      <span className="text-xs font-medium">{option.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
             </div>
           </div>
 

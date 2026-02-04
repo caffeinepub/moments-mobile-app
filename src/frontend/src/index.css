@@ -185,9 +185,26 @@ body {
   background: rgba(156, 163, 175, 0.1);
 }
 
+/* Day with planned moment - color-filled pill */
+.home-calendar-day-with-moment {
+  color: #ffffff;
+  padding: 12px 8px;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.home-calendar-day-with-moment:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  transform: translateY(-1px);
+}
+
+.home-calendar-day-with-moment:active {
+  transform: scale(0.97);
+}
+
 /* Selected day state - tall black pill */
 .home-calendar-day-selected {
-  background: #1f2937;
+  background: #1f2937 !important;
   color: #ffffff;
   padding: 16px 12px;
   border-radius: 20px;
@@ -195,12 +212,109 @@ body {
 }
 
 .home-calendar-day-selected:hover {
-  background: #111827;
+  background: #111827 !important;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
 .home-calendar-day-selected:active {
   transform: scale(0.97);
+}
+
+/* ============================================
+   HOME PLANNED MOMENT CARD STYLES
+   ============================================ */
+
+/* Planned moment card - full color background */
+.planned-moment-card {
+  width: 100%;
+  padding: 16px 20px;
+  border-radius: 16px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+  transition: all 0.25s ease;
+  cursor: default;
+}
+
+.planned-moment-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+  transform: translateY(-1px);
+}
+
+/* Card date label */
+.planned-moment-card-date {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  letter-spacing: 0.01em;
+}
+
+/* Card time label */
+.planned-moment-card-time {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  letter-spacing: 0.01em;
+}
+
+/* Card title */
+.planned-moment-card-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.98);
+  line-height: 1.4;
+  margin-top: 4px;
+}
+
+/* ============================================
+   HOME ADD PLANNING BUTTON (+ ICON)
+   ============================================ */
+
+/* Compact + icon button - camera-circle style */
+.home-add-planning-button {
+  background-color: #fbbf24;
+  color: #000000;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid #000000;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.home-add-planning-button:hover:not(:disabled) {
+  background-color: #f59e0b;
+  transform: scale(1.08);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18);
+}
+
+.home-add-planning-button:active:not(:disabled) {
+  transform: scale(0.95);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+.home-add-planning-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ============================================
+   HOME SCROLLBAR - HIDDEN
+   ============================================ */
+
+.home-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.home-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* ============================================
@@ -864,7 +978,30 @@ body {
   }
 }
 
-/* Bottom sheet pill input styling - matching search bar theme */
+/* Bottom sheet compact input styling - mobile-optimized with reduced padding */
+.bottom-sheet-compact-input {
+  width: 100%;
+  padding: 8px 14px 8px 36px;
+  border: 1px solid oklch(88% 0.01 106);
+  border-radius: 12px;
+  background: oklch(100% 0 0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  font-size: 14px;
+  transition: all 0.2s ease;
+  outline: none;
+  min-height: 38px;
+}
+
+.bottom-sheet-compact-input:focus {
+  border-color: oklch(75% 0.02 106);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.08);
+}
+
+.bottom-sheet-compact-input::placeholder {
+  color: oklch(60% 0.01 106);
+}
+
+/* Bottom sheet pill input styling - matching search bar theme (legacy, kept for compatibility) */
 .bottom-sheet-pill-input {
   width: 100%;
   padding: 10px 16px;

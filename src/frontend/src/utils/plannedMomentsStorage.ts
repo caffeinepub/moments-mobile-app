@@ -5,13 +5,36 @@ export interface PlannedMoment {
   date: string; // ISO date string (YYYY-MM-DD)
   time: string; // HH:MM format
   title?: string;
-  withWho: 'Family' | 'Friends' | 'Partner' | 'Solo' | 'Custom';
+  withWho?: 'Family' | 'Friends' | 'Partner' | 'Solo' | 'Custom'; // Optional for backward compatibility
   color: string; // OKLCH color string
   createdAt: number;
 }
 
 const STORAGE_KEY = 'plannedMoments';
 const STORAGE_EVENT_NAME = 'plannedMomentsChanged';
+
+// Color palette for planned moments - vibrant, distinct colors
+const COLOR_PALETTE = [
+  'oklch(65% 0.20 25)',   // Red/coral
+  'oklch(65% 0.18 40)',   // Orange/amber
+  'oklch(70% 0.15 85)',   // Yellow
+  'oklch(65% 0.18 145)',  // Green
+  'oklch(65% 0.18 220)',  // Blue
+  'oklch(65% 0.20 280)',  // Purple
+  'oklch(70% 0.18 330)',  // Pink/magenta
+];
+
+// Deterministic color selection based on date string
+export function getColorForDate(dateStr: string): string {
+  // Simple hash function to convert date string to index
+  let hash = 0;
+  for (let i = 0; i < dateStr.length; i++) {
+    hash = ((hash << 5) - hash) + dateStr.charCodeAt(i);
+    hash = hash & hash; // Convert to 32-bit integer
+  }
+  const index = Math.abs(hash) % COLOR_PALETTE.length;
+  return COLOR_PALETTE[index];
+}
 
 // Emit a custom event when planned moments change
 function emitStorageChange() {
@@ -27,6 +50,11 @@ export function loadPlannedMoments(): PlannedMoment[] {
     console.error('Error loading planned moments:', error);
     return [];
   }
+}
+
+export function loadPlannedMomentsMostRecentFirst(): PlannedMoment[] {
+  const moments = loadPlannedMoments();
+  return moments.sort((a, b) => b.createdAt - a.createdAt);
 }
 
 export function savePlannedMoment(moment: Omit<PlannedMoment, 'id' | 'createdAt'>): PlannedMoment {

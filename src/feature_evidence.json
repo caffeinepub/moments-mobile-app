@@ -2,11 +2,35 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-home-screen-so-that-a-clicking-a-date-in-the-home-weekly-calendar-strip-and-b-clicking-the-start-planning-cta-both-open-the-planned-moment-slide-up-bottom-sheet-same-interaction-pattern-as-the-calendar-page-instead-of-navigating-away-the-bottom-sheet-must-use-the-clicked-selected-date-and-closing-the-sheet-must-return-the-user-to-the-home-screen-without-route-changes",
-      "featureTitle": "Update the Home screen so that (a) clicking a date in the Home weekly calendar strip and (b) clicking the “Start Planning” CTA both open the planned-moment slide-up bottom sheet (same interaction pattern as the Calendar page) instead of navigating away. The bottom sheet must use the clicked/selected date, and closing the sheet must return the user to the Home screen without route changes.",
+      "featureId": "feature-on-the-home-screen-after-a-planned-moment-is-successfully-saved-from-the-planner-bottom-sheet-render-a-new-saved-planning-card-directly-below-the-planning-area-the-card-must-show-all-provided-planning-details-a-date-label-the-time-and-the-title-when-it-was-provided-omit-the-title-row-if-not-provided-the-card-must-use-the-plan-s-assigned-color-as-a-full-background-fill",
+      "featureTitle": "On the Home screen, after a planned moment is successfully saved from the planner bottom sheet, render a new \"saved planning\" card directly below the planning area. The card must show all provided planning details: a date label, the time, and the title when it was provided (omit the title row if not provided). The card must use the plan’s assigned color as a full background fill.",
       "files": [
-        "frontend/src/components/HomeWeeklyCalendarStrip.tsx",
+        "frontend/src/components/PlannedMomentCard.tsx",
+        "frontend/src/index.css",
         "frontend/src/pages/HomeScreen.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "blob-storage@4.0.0",
+        "authorization@4.0.0",
+        "camera@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-7"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-on-the-home-screen-display-multiple-saved-planning-cards-in-a-vertical-list-below-the-planning-area-and-sort-them-most-recent-first-newest-saved-appears-at-the-top",
+      "featureTitle": "On the Home screen, display multiple saved planning cards in a vertical list below the planning area and sort them most-recent-first (newest saved appears at the top).",
+      "files": [
+        "frontend/src/hooks/usePlannedMoments.ts",
+        "frontend/src/pages/HomeScreen.tsx",
+        "frontend/src/utils/plannedMomentsStorage.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -24,11 +48,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-redesign-the-planned-moment-bottom-sheet-ui-reference-uploaded-image-image-45-png-to-improve-the-date-time-setup-and-remove-the-undesirable-pulsating-button-behavior-replace-the-current-time-stepper-controls-with-a-cleaner-time-selection-ui-e-g-a-compact-time-input-picker-and-use-clear-icons-where-appropriate-keep-the-with-who-selector-simple-still-icon-based-and-ensure-all-buttons-in-this-bottom-sheet-do-not-pulse",
-      "featureTitle": "Redesign the Planned Moment bottom sheet UI (reference: uploaded image image-45.png) to improve the date/time setup and remove the undesirable pulsating button behavior. Replace the current time stepper (+/-) controls with a cleaner time selection UI (e.g., a compact time input/picker) and use clear icons where appropriate. Keep the “With who?” selector simple (still icon-based) and ensure all buttons in this bottom sheet do not pulse.",
+      "featureId": "feature-update-the-home-planning-cta-behavior-when-no-planned-moments-exist-show-the-current-start-planning-button-once-the-first-planned-moment-has-been-saved-replace-shrink-that-cta-into-a-compact-icon-button-camera-circle-style-positioned-to-allow-adding-more-plans-tapping-the-must-open-the-same-planning-bottom-sheet-flow-as-the-original-cta",
+      "featureTitle": "Update the Home planning CTA behavior: when no planned moments exist, show the current \"Start Planning\" button; once the first planned moment has been saved, replace/shrink that CTA into a compact '+' icon button (camera-circle style) positioned to allow adding more plans. Tapping the '+' must open the same planning bottom sheet flow as the original CTA.",
       "files": [
-        "frontend/src/components/PlannedMomentBottomSheet.tsx",
-        "frontend/src/index.css"
+        "frontend/src/index.css",
+        "frontend/src/pages/HomeScreen.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -46,12 +70,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-ensure-planned-moments-reliably-appear-on-the-exact-chosen-day-and-are-color-coded-in-the-home-weekly-calendar-strip-and-remain-consistent-with-calendar-page-behavior-the-day-indicator-must-update-immediately-after-saving-a-planned-moment-and-the-chosen-day-must-reflect-the-color-associated-with-the-saved-moment-s-category",
-      "featureTitle": "Ensure planned moments reliably appear on the exact chosen day and are color-coded in the Home weekly calendar strip (and remain consistent with Calendar page behavior). The day indicator must update immediately after saving a planned moment, and the chosen day must reflect the color associated with the saved moment’s category.",
+      "featureId": "feature-fix-planned-moment-date-color-coding-in-the-home-weekly-calendar-strip-so-that-the-day-pill-itself-becomes-color-coded-for-dates-that-have-planned-moments-not-just-a-small-dot-indicator-matching-the-expectation-that-the-pill-is-colored-on-its-date-immediately-after-saving-a-plan",
+      "featureTitle": "Fix planned-moment date color coding in the Home weekly calendar strip so that the day pill itself becomes color-coded for dates that have planned moments (not just a small dot indicator), matching the expectation that the pill is colored on its date immediately after saving a plan.",
       "files": [
         "frontend/src/components/HomeWeeklyCalendarStrip.tsx",
-        "frontend/src/pages/HomeScreen.tsx",
-        "frontend/src/utils/plannedMomentsStorage.ts"
+        "frontend/src/index.css"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -65,51 +88,6 @@
       ],
       "testIds": [
         "REQ-10"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-fix-planned-moment-ui-updates-across-components-by-making-planned-moment-storage-changes-observable-when-a-planned-moment-is-saved-any-ui-that-depends-on-planned-moments-home-weekly-strip-indicators-calendar-page-indicators-and-any-planned-moment-lists-must-refresh-from-storage-automatically",
-      "featureTitle": "Fix planned-moment UI updates across components by making planned-moment storage changes observable. When a planned moment is saved, any UI that depends on planned moments (Home weekly strip indicators, Calendar page indicators, and any planned-moment lists) must refresh from storage automatically.",
-      "files": [
-        "frontend/src/hooks/usePlannedMoments.ts",
-        "frontend/src/pages/CalendarPage.tsx",
-        "frontend/src/utils/plannedMomentsStorage.ts"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "blob-storage@4.0.0",
-        "authorization@4.0.0",
-        "camera@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-11"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-adjust-the-global-pulsating-button-behavior-so-the-app-does-not-pulse-most-buttons-by-default-pulsing-should-be-opt-in-e-g-only-for-the-camera-button-if-still-desired-and-existing-critical-ctas-should-remain-visually-strong-without-animation-reliance",
-      "featureTitle": "Adjust the global pulsating button behavior so the app does not pulse most buttons by default. Pulsing should be opt-in (e.g., only for the camera button if still desired), and existing critical CTAs should remain visually strong without animation reliance.",
-      "files": [
-        "frontend/src/index.css",
-        "frontend/src/pages/HomeScreen.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "blob-storage@4.0.0",
-        "authorization@4.0.0",
-        "camera@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-12"
       ],
       "confidence": "high"
     }

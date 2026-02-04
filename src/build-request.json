@@ -1,108 +1,89 @@
 {
   "kind": "build_request",
-  "title": "Improve planned-moment slide-up planner UI and ensure reliable color-coded calendar indicators",
+  "title": "Home: render saved planning cards + convert Start Planning CTA into '+' after first save; fix date pill color fill",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-8",
-      "text": "Update the Home screen so that (a) clicking a date in the Home weekly calendar strip and (b) clicking the “Start Planning” CTA both open the planned-moment slide-up bottom sheet (same interaction pattern as the Calendar page) instead of navigating away. The bottom sheet must use the clicked/selected date, and closing the sheet must return the user to the Home screen without route changes.",
+      "id": "REQ-7",
+      "text": "On the Home screen, after a planned moment is successfully saved from the planner bottom sheet, render a new \"saved planning\" card directly below the planning area. The card must show all provided planning details: a date label, the time, and the title when it was provided (omit the title row if not provided). The card must use the plan’s assigned color as a full background fill.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "recent-messages-4"
+          "msg-1"
         ],
         "quotes": [
-          "when you click on adate on the calender in the homepage or you click on start planning oit should shwo this slideup page as shown"
+          "after succesfully save a moment planning..it should appear below the start planning card..as a card on its own with all the details thta was inputed and color graded",
+          "all must be provided color is full bg"
         ]
       },
       "acceptanceCriteria": [
-        "On Home, tapping any day in the weekly strip opens the planned-moment bottom sheet for that date.",
-        "On Home, tapping “Start Planning” opens the planned-moment bottom sheet (defaulting to the currently selected day in the weekly strip; if none is selected, default to today).",
-        "Closing/canceling the bottom sheet returns to Home and does not navigate to /calendar."
+        "Saving a planned moment causes a new card to appear below the planning area without requiring navigation or reload",
+        "Each card displays: date label + time + (optional) title",
+        "Each card uses the planned moment color as a full card background (not just an accent/stripe)"
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "text": "On the Home screen, display multiple saved planning cards in a vertical list below the planning area and sort them most-recent-first (newest saved appears at the top).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "most-recent-first"
+        ]
+      },
+      "acceptanceCriteria": [
+        "If 2+ planned moments exist, the Home screen shows a stacked list of planning cards",
+        "The top card corresponds to the most recently created planned moment"
       ]
     },
     {
       "id": "REQ-9",
-      "text": "Redesign the Planned Moment bottom sheet UI (reference: uploaded image image-45.png) to improve the date/time setup and remove the undesirable pulsating button behavior. Replace the current time stepper (+/-) controls with a cleaner time selection UI (e.g., a compact time input/picker) and use clear icons where appropriate. Keep the “With who?” selector simple (still icon-based) and ensure all buttons in this bottom sheet do not pulse.",
+      "text": "Update the Home planning CTA behavior: when no planned moments exist, show the current \"Start Planning\" button; once the first planned moment has been saved, replace/shrink that CTA into a compact '+' icon button (camera-circle style) positioned to allow adding more plans. Tapping the '+' must open the same planning bottom sheet flow as the original CTA.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "recent-messages-4"
+          "msg-1"
         ],
         "quotes": [
-          "but improve the ui..i dont like the date and time set up and also the puslationg buttons and use icons  the who can co we can keep it simple"
+          "the add icon is still the smae plan npw just when a first plan is made it shrinks into a plus"
         ]
       },
       "acceptanceCriteria": [
-        "The time selection UI in the bottom sheet no longer uses +/- steppers and is visually simpler/cleaner.",
-        "Buttons within the bottom sheet do not pulse.",
-        "The “With who?” selector remains simple and icon-based, with a clear selected state.",
-        "User-facing copy remains in English."
+        "With zero planned moments, the Home screen shows the \"Start Planning\" CTA",
+        "After saving the first planned moment, the \"Start Planning\" CTA is replaced by a compact '+' icon button",
+        "Tapping the '+' opens the same Plan a Moment bottom sheet used previously"
       ]
     },
     {
       "id": "REQ-10",
-      "text": "Ensure planned moments reliably appear on the exact chosen day and are color-coded in the Home weekly calendar strip (and remain consistent with Calendar page behavior). The day indicator must update immediately after saving a planned moment, and the chosen day must reflect the color associated with the saved moment’s category.",
+      "text": "Fix planned-moment date color coding in the Home weekly calendar strip so that the day pill itself becomes color-coded for dates that have planned moments (not just a small dot indicator), matching the expectation that the pill is colored on its date immediately after saving a plan.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "recent-messages-4"
+          "msg-1"
         ],
         "quotes": [
-          "then ones succefully creted and save it should appear on the exact day choosen should be color codeed"
+          "after creating /planning a moment on that spefic date it should be color coded..and i mean the pill should be colored on its date ..that isnt working at the moment"
         ]
       },
       "acceptanceCriteria": [
-        "After saving a planned moment, the selected date shows a color-coded indicator in the Home weekly calendar strip without requiring a refresh.",
-        "The color-coded indicator corresponds to the saved moment category color (as stored with the planned moment).",
-        "Planned moments are stored and retrieved for the correct ISO date (YYYY-MM-DD) so they display on the exact selected day."
-      ]
-    },
-    {
-      "id": "REQ-11",
-      "text": "Fix planned-moment UI updates across components by making planned-moment storage changes observable. When a planned moment is saved, any UI that depends on planned moments (Home weekly strip indicators, Calendar page indicators, and any planned-moment lists) must refresh from storage automatically.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "recent-messages-4"
-        ],
-        "quotes": [
-          "should be color codeed"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Saving a planned moment triggers an immediate UI update in both Home and Calendar surfaces (where applicable) without manual reload.",
-        "Planned-moment indicators remain correct after navigating between Home and Calendar."
-      ]
-    },
-    {
-      "id": "REQ-12",
-      "text": "Adjust the global pulsating button behavior so the app does not pulse most buttons by default. Pulsing should be opt-in (e.g., only for the camera button if still desired), and existing critical CTAs should remain visually strong without animation reliance.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "recent-messages-4"
-        ],
-        "quotes": [
-          "i dont like ... the puslationg buttons"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Most buttons across the app no longer pulse by default.",
-        "Any remaining pulsing (if kept) is limited to explicitly designated buttons only.",
-        "No regressions: disabled buttons do not animate; button hover/active states still function."
+        "After saving a planned moment for a date, that date’s day pill in the Home weekly strip visually reflects the plan color (pill is color-coded, not only a dot)",
+        "The change appears immediately after Save (same session, no reload needed)"
       ]
     }
   ],
   "constraints": [
-    "Do not edit files under frontend/src/components/ui (compose them instead).",
-    "Do not edit immutable hook/entry files: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx.",
-    "Keep backend as single-actor Motoko; no backend changes are required for this request."
+    "Frontend immutable paths must not be edited: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui/*",
+    "Keep the backend as a single Motoko actor; no new backend services",
+    "Use English for any user-facing text"
   ],
   "nonGoals": [
-    "Do not add new authentication methods beyond Internet Identity.",
-    "Do not add server-side persistence for planned moments (keep local-first).",
-    "Do not redesign unrelated screens (Vault, Camera capture flow) except for global pulse behavior adjustments."
+    "Implementing real notifications behind any bell/notifications UI",
+    "Changing Internet Identity authentication flow",
+    "Adding backend persistence for planned moments (this feature remains local-first storage)"
   ],
   "imageRequirements": {
     "required": [],

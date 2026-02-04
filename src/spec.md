@@ -1,13 +1,13 @@
 # Specification
 
 ## Summary
-**Goal:** Improve the Home planned-moment planning flow by using a slide-up bottom sheet (not navigation), refine the bottom sheet UI (especially date/time), and ensure planned-moment day indicators reliably update and color-code immediately across Home and Calendar.
+**Goal:** Improve the Home planning experience by immediately surfacing saved planned moments, updating the planning CTA after the first save, and correctly color-filling the weekly date pill for planned days.
 
 **Planned changes:**
-- Update Home interactions so tapping a day in the weekly strip or tapping “Start Planning” opens the planned-moment slide-up bottom sheet (matching the Calendar page pattern) and uses the selected/tapped date; closing returns to Home without route changes.
-- Redesign the Planned Moment bottom sheet UI (per image-45.png reference) to simplify date/time setup by replacing +/- steppers with a cleaner time selection control, keep the “With who?” selector simple and icon-based, and remove any pulsating button behavior within the sheet.
-- Ensure planned moments are stored/retrieved using the correct ISO date (YYYY-MM-DD) so they appear on the exact chosen day, and show a color-coded indicator in the Home weekly strip based on the saved moment’s category color.
-- Make planned-moment storage changes observable so saving a planned moment automatically refreshes dependent UI (Home weekly indicators, Calendar indicators, and any planned-moment lists) without manual reload.
-- Adjust global pulsing behavior so most buttons across the app do not pulse by default; pulsing becomes opt-in for explicitly designated buttons only.
+- After a planned moment is saved from the planner bottom sheet, render a new “saved planning” card directly below the planning area showing the plan’s date label, time, and optional title (omit title row when not provided).
+- Style each saved planning card using the plan’s assigned color as a full background fill.
+- Display multiple saved planning cards in a vertical list sorted most-recent-first (newest at the top).
+- Update the Home planning CTA: show “Start Planning” when there are no planned moments; after the first save, replace it with a compact “+” icon button that opens the same planning bottom sheet flow.
+- Fix Home weekly calendar strip color coding so the entire day pill becomes color-filled for dates that have planned moments (not just a dot), and updates immediately after saving.
 
-**User-visible outcome:** On Home, users can open the planned-moment planner as a slide-up sheet from the weekly calendar or “Start Planning,” set a time with a cleaner UI, save without pulsing animations, and immediately see correctly color-coded indicators on the chosen day (consistent across Home and Calendar).
+**User-visible outcome:** After saving a plan, it instantly appears on Home as a color-filled card below the planning area; additional saved plans stack with the newest on top; the “Start Planning” button becomes a “+” add button after the first plan; and planned dates show a fully color-filled day pill in the weekly strip right away.
