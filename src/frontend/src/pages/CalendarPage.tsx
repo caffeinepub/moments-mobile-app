@@ -176,7 +176,7 @@ function CalendarPage() {
         <header className="relative w-full px-4 pt-4 pb-2 flex items-center justify-between border-b border-gray-200">
           <button
             onClick={handleBack}
-            className="w-8 h-8 flex items-center justify-center text-black hover:opacity-70 transition-opacity"
+            className="w-8 h-8 flex items-center justify-center text-black hover:opacity-70 transition-opacity no-pulse"
             aria-label="Back"
           >
             <i className="fa fa-arrow-left text-base"></i>
@@ -185,7 +185,7 @@ function CalendarPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrevMonth}
-              className="calendar-nav-button"
+              className="calendar-nav-button no-pulse"
               aria-label="Previous month"
             >
               <ChevronLeft size={16} />
@@ -198,7 +198,7 @@ function CalendarPage() {
             </h1>
             <button
               onClick={handleNextMonth}
-              className="calendar-nav-button"
+              className="calendar-nav-button no-pulse"
               aria-label="Next month"
             >
               <ChevronRight size={16} />
@@ -206,7 +206,7 @@ function CalendarPage() {
           </div>
 
           <button
-            className="w-8 h-8 flex items-center justify-center text-black hover:opacity-70 transition-opacity"
+            className="w-8 h-8 flex items-center justify-center text-black hover:opacity-70 transition-opacity no-pulse"
             aria-label="Menu"
           >
             <i className="fa fa-bars text-base"></i>
@@ -241,7 +241,7 @@ function CalendarPage() {
                   <button
                     key={`${dateInfo.year}-${dateInfo.month}-${dateInfo.date}-${index}`}
                     onClick={() => handleDateClick(dateInfo)}
-                    className="flex flex-col items-center justify-center py-2 rounded-lg hover:bg-gray-50 transition-all active:scale-95 cursor-pointer min-h-[50px]"
+                    className="flex flex-col items-center justify-center py-2 rounded-lg hover:bg-gray-50 transition-all active:scale-95 cursor-pointer min-h-[50px] no-pulse"
                     style={{ scrollSnapAlign: 'start' }}
                   >
                     <div
@@ -299,14 +299,14 @@ function CalendarPage() {
             <div className="flex justify-between items-center mt-2">
               <button
                 onClick={handlePrevWeek}
-                className="calendar-week-nav-button"
+                className="calendar-week-nav-button no-pulse"
                 aria-label="Previous week"
               >
                 <ChevronLeft size={16} />
               </button>
               <button
                 onClick={handleNextWeek}
-                className="calendar-week-nav-button"
+                className="calendar-week-nav-button no-pulse"
                 aria-label="Next week"
               >
                 <ChevronRight size={16} />
@@ -353,7 +353,7 @@ function CalendarPage() {
                     </div>
                   </div>
                   <button
-                    className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-gray-400 hover:text-black transition-colors rounded-full hover:bg-gray-200"
+                    className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-gray-400 hover:text-black transition-colors rounded-full hover:bg-gray-200 no-pulse"
                     aria-label="More options"
                   >
                     <MoreVertical size={14} />

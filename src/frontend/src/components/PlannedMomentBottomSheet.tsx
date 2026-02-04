@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Users, User, Heart, UserCircle, Sparkles, Plus, Minus } from 'lucide-react';
+import { X, Users, User, Heart, Sparkles, Clock } from 'lucide-react';
 
 interface PlannedMomentBottomSheetProps {
   isOpen: boolean;
@@ -28,8 +28,7 @@ export default function PlannedMomentBottomSheet({
   selectedDate,
   onSave,
 }: PlannedMomentBottomSheetProps) {
-  const [hours, setHours] = useState('12');
-  const [minutes, setMinutes] = useState('00');
+  const [time, setTime] = useState('12:00');
   const [title, setTitle] = useState('');
   const [withWho, setWithWho] = useState<'Family' | 'Friends' | 'Partner' | 'Solo' | 'Custom' | null>(null);
   const [isClosing, setIsClosing] = useState(false);
@@ -49,60 +48,12 @@ export default function PlannedMomentBottomSheet({
     }
   }, [isOpen, shouldRender]);
 
-  const handleHoursChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, '');
-    if (value === '') {
-      setHours('');
-    } else {
-      const num = parseInt(value, 10);
-      if (num >= 0 && num <= 23) {
-        setHours(value);
-      }
-    }
-  };
-
-  const handleMinutesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, '');
-    if (value === '') {
-      setMinutes('');
-    } else {
-      const num = parseInt(value, 10);
-      if (num >= 0 && num <= 59) {
-        setMinutes(value);
-      }
-    }
-  };
-
-  const incrementHours = () => {
-    const current = hours === '' ? 0 : parseInt(hours, 10);
-    const next = (current + 1) % 24;
-    setHours(String(next).padStart(2, '0'));
-  };
-
-  const decrementHours = () => {
-    const current = hours === '' ? 0 : parseInt(hours, 10);
-    const prev = current === 0 ? 23 : current - 1;
-    setHours(String(prev).padStart(2, '0'));
-  };
-
-  const incrementMinutes = () => {
-    const current = minutes === '' ? 0 : parseInt(minutes, 10);
-    const next = (current + 1) % 60;
-    setMinutes(String(next).padStart(2, '0'));
-  };
-
-  const decrementMinutes = () => {
-    const current = minutes === '' ? 0 : parseInt(minutes, 10);
-    const prev = current === 0 ? 59 : current - 1;
-    setMinutes(String(prev).padStart(2, '0'));
+  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTime(e.target.value);
   };
 
   const handleSave = () => {
-    const normalizedHours = hours === '' ? '00' : String(parseInt(hours, 10)).padStart(2, '0');
-    const normalizedMinutes = minutes === '' ? '00' : String(parseInt(minutes, 10)).padStart(2, '0');
-    const time = `${normalizedHours}:${normalizedMinutes}`;
-
-    if (!withWho) return;
+    if (!withWho || !time) return;
 
     const selectedOption = WITH_WHO_OPTIONS.find(opt => opt.value === withWho);
     const color = selectedOption?.color || 'oklch(47% 0.14 262)';
@@ -117,16 +68,14 @@ export default function PlannedMomentBottomSheet({
     });
 
     // Reset form
-    setHours('12');
-    setMinutes('00');
+    setTime('12:00');
     setTitle('');
     setWithWho(null);
     onClose();
   };
 
   const handleCancel = () => {
-    setHours('12');
-    setMinutes('00');
+    setTime('12:00');
     setTitle('');
     setWithWho(null);
     onClose();
@@ -149,7 +98,7 @@ export default function PlannedMomentBottomSheet({
 
   if (!shouldRender) return null;
 
-  const canSave = (hours !== '' || minutes !== '') && withWho;
+  const canSave = time && withWho;
 
   return (
     <>
@@ -183,7 +132,7 @@ export default function PlannedMomentBottomSheet({
             </h2>
             <button
               onClick={handleCancel}
-              className="w-7 h-7 flex items-center justify-center text-gray-500 hover:text-black transition-colors rounded-full hover:bg-gray-100"
+              className="w-7 h-7 flex items-center justify-center text-gray-500 hover:text-black transition-colors rounded-full hover:bg-gray-100 no-pulse"
               aria-label="Close"
             >
               <X size={18} />
@@ -202,7 +151,7 @@ export default function PlannedMomentBottomSheet({
               </p>
             </div>
 
-            {/* Time Picker with Steppers */}
+            {/* Time Picker - Clean Input */}
             <div>
               <label
                 className="block text-xs font-medium text-gray-700 mb-1.5"
@@ -210,78 +159,17 @@ export default function PlannedMomentBottomSheet({
               >
                 Time <span className="text-red-500">*</span>
               </label>
-              <div className="flex items-center justify-center gap-2">
-                {/* Hours */}
-                <div className="flex flex-col items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={incrementHours}
-                    className="time-stepper-button"
-                    aria-label="Increment hours"
-                  >
-                    <Plus size={14} />
-                  </button>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    value={hours}
-                    onChange={handleHoursChange}
-                    onBlur={() => {
-                      if (hours !== '') {
-                        setHours(String(parseInt(hours, 10)).padStart(2, '0'));
-                      }
-                    }}
-                    className="time-input-box"
-                    placeholder="00"
-                    maxLength={2}
-                    style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
-                  />
-                  <button
-                    type="button"
-                    onClick={decrementHours}
-                    className="time-stepper-button"
-                    aria-label="Decrement hours"
-                  >
-                    <Minus size={14} />
-                  </button>
+              <div className="relative">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                  <Clock size={18} />
                 </div>
-
-                <span className="text-2xl font-bold text-gray-400 pb-6">:</span>
-
-                {/* Minutes */}
-                <div className="flex flex-col items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={incrementMinutes}
-                    className="time-stepper-button"
-                    aria-label="Increment minutes"
-                  >
-                    <Plus size={14} />
-                  </button>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    value={minutes}
-                    onChange={handleMinutesChange}
-                    onBlur={() => {
-                      if (minutes !== '') {
-                        setMinutes(String(parseInt(minutes, 10)).padStart(2, '0'));
-                      }
-                    }}
-                    className="time-input-box"
-                    placeholder="00"
-                    maxLength={2}
-                    style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
-                  />
-                  <button
-                    type="button"
-                    onClick={decrementMinutes}
-                    className="time-stepper-button"
-                    aria-label="Decrement minutes"
-                  >
-                    <Minus size={14} />
-                  </button>
-                </div>
+                <input
+                  type="time"
+                  value={time}
+                  onChange={handleTimeChange}
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl bg-white text-base font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                  style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
+                />
               </div>
             </div>
 
@@ -303,7 +191,7 @@ export default function PlannedMomentBottomSheet({
               />
             </div>
 
-            {/* With Who Options - Pill/Segmented Style */}
+            {/* With Who Options - Simple Icon-Based */}
             <div>
               <label
                 className="block text-xs font-medium text-gray-700 mb-2"
@@ -319,7 +207,7 @@ export default function PlannedMomentBottomSheet({
                     <button
                       key={option.value}
                       onClick={() => setWithWho(option.value)}
-                      className={`with-who-pill ${
+                      className={`with-who-pill no-pulse ${
                         isSelected ? 'with-who-pill-selected' : ''
                       }`}
                       style={{
@@ -340,7 +228,7 @@ export default function PlannedMomentBottomSheet({
           <div className="flex gap-3 px-4 py-3 border-t border-gray-100 flex-shrink-0 justify-center">
             <button
               onClick={handleCancel}
-              className="bottom-sheet-action-button bottom-sheet-action-button-cancel"
+              className="bottom-sheet-action-button bottom-sheet-action-button-cancel no-pulse"
               style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
             >
               Cancel
@@ -348,7 +236,7 @@ export default function PlannedMomentBottomSheet({
             <button
               onClick={handleSave}
               disabled={!canSave}
-              className="bottom-sheet-action-button bottom-sheet-action-button-save"
+              className="bottom-sheet-action-button bottom-sheet-action-button-save no-pulse"
               style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
             >
               Save

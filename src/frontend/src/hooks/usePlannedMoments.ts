@@ -6,6 +6,7 @@ import {
   getPlannedMomentsForDate,
   getDatesWithMoments,
   getDateColorMap,
+  subscribeToStorageChanges,
 } from '../utils/plannedMomentsStorage';
 
 export function usePlannedMoments(selectedDate: Date | null) {
@@ -13,10 +14,22 @@ export function usePlannedMoments(selectedDate: Date | null) {
   const [datesWithMoments, setDatesWithMoments] = useState<Set<string>>(new Set());
   const [dateColorMap, setDateColorMap] = useState<Map<string, string>>(new Map());
 
-  useEffect(() => {
-    // Load dates with moments and color map
+  const refreshData = () => {
     setDatesWithMoments(getDatesWithMoments());
     setDateColorMap(getDateColorMap());
+    if (selectedDate) {
+      setMoments(getPlannedMomentsForDate(selectedDate));
+    }
+  };
+
+  useEffect(() => {
+    // Initial load
+    refreshData();
+
+    // Subscribe to storage changes
+    const unsubscribe = subscribeToStorageChanges(refreshData);
+
+    return unsubscribe;
   }, []);
 
   useEffect(() => {
@@ -29,9 +42,7 @@ export function usePlannedMoments(selectedDate: Date | null) {
 
   const addMoment = (moment: Omit<PlannedMoment, 'id' | 'createdAt'>) => {
     const newMoment = savePlannedMoment(moment);
-    setMoments(prev => [...prev, newMoment].sort((a, b) => a.time.localeCompare(b.time)));
-    setDatesWithMoments(getDatesWithMoments());
-    setDateColorMap(getDateColorMap());
+    // Data will be refreshed automatically via storage change subscription
   };
 
   return {

@@ -1,122 +1,120 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Vault UX polish: motion, square thumbnails, crisp full-screen view, and global button pulse",
+  "title": "Home planned-moment bottom sheet, refreshed planned-moment indicators, and opt-in button pulse",
   "requirements": [
     {
-      "id": "REQ-1",
-      "summary": "Add subtle entrance/scroll motion for month sections and photo cards on the Vault list, plus a pressed/tap micro-interaction on thumbnail click.",
+      "id": "REQ-8",
+      "summary": "Open the planned-moment slide-up bottom sheet from Home (weekly strip tap + Start Planning CTA) without navigating away, using the selected/clicked date and closing back to Home without route changes.",
       "acceptanceCriteria": [
-        "When opening /vault, month headers and card grids animate in subtly (no jarring bounce).",
-        "Tapping a thumbnail provides immediate visual feedback (pressed/scale-down) before navigation."
+        "On Home, tapping any day in the weekly strip opens the planned-moment bottom sheet for that date.",
+        "On Home, tapping “Start Planning” opens the planned-moment bottom sheet (defaulting to the currently selected day in the weekly strip; if none is selected, default to today).",
+        "Closing/canceling the bottom sheet returns to Home and does not navigate to /calendar."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useInView.ts",
-          "operation": "create",
-          "description": "Add a lightweight IntersectionObserver-based hook to detect when a month section or thumbnail card enters the viewport so Vault can trigger subtle fade/slide/scale-in animations."
+          "path": "frontend/src/pages/HomeScreen.tsx",
+          "operation": "modify",
+          "description": "Lift selected date state into Home, wire HomeWeeklyCalendarStrip day taps to open PlannedMomentBottomSheet, and change the “Start Planning” CTA to open the same bottom sheet (no navigation). Ensure close/cancel only toggles local state so the route stays on Home."
         },
         {
-          "path": "frontend/src/pages/VaultPage.tsx",
+          "path": "frontend/src/components/HomeWeeklyCalendarStrip.tsx",
           "operation": "modify",
-          "description": "Apply initial-render and in-viewport entrance animations to each month group and to thumbnail tiles using the in-view hook; add a pressed/tap micro-interaction (scale-down + quick transition) on thumbnail button interaction prior to navigation."
-        },
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Add Vault-specific motion classes/keyframes for subtle fade/slide-up + slight scale entrance (for month headers/groups and thumbnail tiles), and a reusable pressed/tap interaction class for card buttons."
+          "description": "Support a controlled selected date (prop-driven) so Home can determine the currently selected day, and continue calling onDateSelect(date) on taps to drive bottom sheet open behavior."
         }
       ]
     },
     {
-      "id": "REQ-2",
-      "summary": "Redesign Vault thumbnails to use consistent glassmorphic tile styling with refined spacing/radius/shadows and a clean 3-column mobile grid.",
+      "id": "REQ-9",
+      "summary": "Redesign the Planned Moment bottom sheet UI with a cleaner time selection UI (no +/- steppers), clear icons, simple icon-based “With who?” selector, and no pulsing buttons.",
       "acceptanceCriteria": [
-        "Vault thumbnails have consistent corner radius, spacing, and a cohesive card surface (no mismatched/unstyled tiles).",
-        "The grid remains 3 columns and does not overflow or distort on a 390x844 viewport."
+        "The time selection UI in the bottom sheet no longer uses +/- steppers and is visually simpler/cleaner.",
+        "Buttons within the bottom sheet do not pulse.",
+        "The “With who?” selector remains simple and icon-based, with a clear selected state.",
+        "User-facing copy remains in English."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/VaultPage.tsx",
+          "path": "frontend/src/components/PlannedMomentBottomSheet.tsx",
           "operation": "modify",
-          "description": "Update the thumbnail tile/button structure and Tailwind classes to consistently apply the app’s glassmorphic card surface (e.g., via the existing .glass-card styling), refine padding/inner framing, and ensure the 3-column grid remains stable and readable on mobile."
+          "description": "Replace the current hour/minute stepper UI with a compact time input/picker (e.g., a single time input). Keep icon-based With-who options with a clear selected state, and ensure the sheet’s buttons opt out of any pulse animation via classes as needed."
         },
         {
           "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "Add/adjust Vault thumbnail tile styling helpers (e.g., a dedicated Vault tile class that composes glassmorphic surface + consistent radius/shadow + spacing) to ensure cohesive visuals across months."
+          "description": "Adjust bottom sheet-related styles to match the redesigned time control (remove stepper styling dependencies, add any needed styling for the new time input/picker), and ensure the bottom sheet buttons are not animated."
         }
       ]
     },
     {
-      "id": "REQ-3",
-      "summary": "Force Vault thumbnails to render as true squares without relying on Tailwind’s aspect-square, while preserving object-fit: cover.",
+      "id": "REQ-10",
+      "summary": "Make planned moments appear on the exact chosen day and show reliable, category-color-coded indicators in the Home weekly calendar strip that update immediately after saving and remain consistent with Calendar behavior.",
       "acceptanceCriteria": [
-        "All Vault thumbnails render as perfect squares (1:1) on mobile and desktop browsers.",
-        "Thumbnails use `object-fit: cover` and do not appear stretched."
+        "After saving a planned moment, the selected date shows a color-coded indicator in the Home weekly calendar strip without requiring a refresh.",
+        "The color-coded indicator corresponds to the saved moment category color (as stored with the planned moment).",
+        "Planned moments are stored and retrieved for the correct ISO date (YYYY-MM-DD) so they display on the exact selected day."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/index.css",
+          "path": "frontend/src/pages/HomeScreen.tsx",
           "operation": "modify",
-          "description": "Add a robust square-thumbnail utility (aspect-ratio: 1 / 1 plus a CSS fallback for browsers/environments where needed) that can be applied to Vault thumbnail wrappers without using Tailwind’s aspect-square class."
+          "description": "Use the planned-moments hook on Home and pass dates-with-moments + date-to-color mapping into HomeWeeklyCalendarStrip so it can render immediate color-coded indicators after a save."
         },
         {
-          "path": "frontend/src/pages/VaultPage.tsx",
+          "path": "frontend/src/components/HomeWeeklyCalendarStrip.tsx",
           "operation": "modify",
-          "description": "Remove reliance on the `aspect-square` class and instead apply the new square-thumbnail styling (or an inline aspectRatio plus fallback wrapper) to guarantee a 1:1 tile layout; keep images set to object-fit: cover."
+          "description": "Render planned-moment indicators on the weekly strip days (color-coded using the passed date color mapping) and ensure the indicator aligns with the exact ISO day key used for planned moments."
+        },
+        {
+          "path": "frontend/src/utils/plannedMomentsStorage.ts",
+          "operation": "modify",
+          "description": "Ensure saving and lookups consistently use ISO date strings (YYYY-MM-DD) and provide stable, deterministic date-to-color mapping based on stored category color for that day."
         }
       ]
     },
     {
-      "id": "REQ-4",
-      "summary": "Ensure tapping a Vault thumbnail always opens a crisp, full-screen (or near full-screen) enlarged image view with an obvious close/back control using the original stored image data.",
+      "id": "REQ-11",
+      "summary": "Make planned-moment storage changes observable so saving a planned moment triggers automatic UI refresh across Home, Calendar, and any lists without manual reload.",
       "acceptanceCriteria": [
-        "Tapping a Vault thumbnail always results in a full-screen (or near full-screen) image view with a clear close/back action.",
-        "The enlarged view uses the original stored image data (not a smaller thumbnail variant).",
-        "The enlarged image is displayed without visible distortion; the user can see it clearly against the background."
+        "Saving a planned moment triggers an immediate UI update in both Home and Calendar surfaces (where applicable) without manual reload.",
+        "Planned-moment indicators remain correct after navigating between Home and Calendar."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/VaultPage.tsx",
+          "path": "frontend/src/utils/plannedMomentsStorage.ts",
           "operation": "modify",
-          "description": "Confirm thumbnail navigation consistently targets the existing /vault/$momentId route using the moment id (not derived thumbnail data) so the detail view loads the original stored moment image."
+          "description": "Emit an observable signal on planned-moment writes (e.g., a custom window event in addition to relying on the browser storage event) so same-tab and cross-tab UIs can react immediately."
         },
         {
-          "path": "frontend/src/pages/VaultMomentPage.tsx",
+          "path": "frontend/src/hooks/usePlannedMoments.ts",
           "operation": "modify",
-          "description": "Polish the full-screen moment view to prioritize the image (high-contrast background, stable sizing, no unintended container constraints that reduce clarity), ensure the close/back control is obvious and consistently accessible, and keep the image displayed without distortion."
+          "description": "Subscribe to planned-moment storage change signals (custom event + storage event) and refresh moments/datesWithMoments/dateColorMap automatically so any component using the hook stays in sync after saves and navigation."
         },
         {
-          "path": "frontend/src/index.css",
+          "path": "frontend/src/pages/CalendarPage.tsx",
           "operation": "modify",
-          "description": "Add/adjust styles for the Vault full-screen viewer (e.g., viewer backdrop, close button visibility/affordance, and any crispness-related presentation tweaks) to ensure an enlarged, clear view."
+          "description": "Ensure Calendar page relies on the observable planned-moment hook refresh behavior so weekly indicators and lists reflect newly saved planned moments immediately and remain correct after navigating between screens."
         }
       ]
     },
     {
-      "id": "REQ-5",
-      "summary": "Apply the existing camera pulse animation to all buttons across the app, exclude disabled buttons, and provide a documented opt-out class.",
+      "id": "REQ-12",
+      "summary": "Change global pulsating button behavior to be opt-in (keep only explicitly designated buttons pulsing, e.g., camera if desired) with no regressions to disabled/hover/active states.",
       "acceptanceCriteria": [
-        "All clickable buttons visibly pulse with the same rhythm as the camera button.",
-        "Disabled buttons do not pulse.",
-        "At least one opt-out mechanism exists and is documented in code (e.g., `className=\"no-pulse\"`)."
+        "Most buttons across the app no longer pulse by default.",
+        "Any remaining pulsing (if kept) is limited to explicitly designated buttons only.",
+        "No regressions: disabled buttons do not animate; button hover/active states still function."
       ],
       "file_operations": [
         {
           "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "Extend the existing `cameraPulse` / `.camera-pulse` animation behavior to apply by default to buttons (including icon-only buttons), while explicitly excluding disabled buttons and any element with a `no-pulse` opt-out class; document the opt-out mechanism in a code comment near the global rule."
+          "description": "Remove the global default pulse selector that animates most buttons, and change pulsing to opt-in via an explicit class (keeping existing camera pulsing behavior via its explicit class). Ensure disabled buttons never animate and hover/active styling remains intact."
         },
         {
-          "path": "frontend/src/pages/VaultPage.tsx",
+          "path": "frontend/src/pages/HomeScreen.tsx",
           "operation": "modify",
-          "description": "Audit Vault buttons (e.g., back arrow, thumbnail buttons) to ensure they inherit the global pulse by default; apply the `no-pulse` class selectively where pulsing harms usability (if any) to demonstrate the opt-out mechanism."
-        },
-        {
-          "path": "frontend/src/pages/VaultMomentPage.tsx",
-          "operation": "modify",
-          "description": "Ensure the enlarged viewer close/back control is treated as a button that pulses when enabled, and apply `no-pulse` only if needed to maintain usability (e.g., if pulse competes with critical viewing focus)."
+          "description": "Verify only the intended button(s) (e.g., camera) retain an explicit pulse class after the global CSS change, and ensure Home CTAs remain visually strong without relying on animation."
         }
       ]
     }

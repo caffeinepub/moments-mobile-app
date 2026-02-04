@@ -11,6 +11,12 @@ export interface PlannedMoment {
 }
 
 const STORAGE_KEY = 'plannedMoments';
+const STORAGE_EVENT_NAME = 'plannedMomentsChanged';
+
+// Emit a custom event when planned moments change
+function emitStorageChange() {
+  window.dispatchEvent(new CustomEvent(STORAGE_EVENT_NAME));
+}
 
 export function loadPlannedMoments(): PlannedMoment[] {
   try {
@@ -32,6 +38,10 @@ export function savePlannedMoment(moment: Omit<PlannedMoment, 'id' | 'createdAt'
   };
   moments.push(newMoment);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(moments));
+  
+  // Emit change event for immediate UI updates
+  emitStorageChange();
+  
   return newMoment;
 }
 
@@ -76,4 +86,20 @@ function formatDateToISO(date: Date): string {
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
+}
+
+// Subscribe to storage changes
+export function subscribeToStorageChanges(callback: () => void): () => void {
+  const handleStorageChange = () => callback();
+  const handleCustomEvent = () => callback();
+  
+  // Listen to both storage events (cross-tab) and custom events (same-tab)
+  window.addEventListener('storage', handleStorageChange);
+  window.addEventListener(STORAGE_EVENT_NAME, handleCustomEvent);
+  
+  // Return cleanup function
+  return () => {
+    window.removeEventListener('storage', handleStorageChange);
+    window.removeEventListener(STORAGE_EVENT_NAME, handleCustomEvent);
+  };
 }

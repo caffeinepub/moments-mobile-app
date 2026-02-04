@@ -1,104 +1,108 @@
 {
   "kind": "build_request",
-  "title": "Vault UX polish: motion, square thumbnails, clear enlarged view, and pulsating buttons",
+  "title": "Improve planned-moment slide-up planner UI and ensure reliable color-coded calendar indicators",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-1",
-      "text": "Add subtle motion to the Vault list screen to reduce the static/bland feel: animate month sections and photo cards on initial render and when they enter the viewport (e.g., fade/slide-up + slight scale), and add a gentle pressed/tap micro-interaction on card click.",
+      "id": "REQ-8",
+      "text": "Update the Home screen so that (a) clicking a date in the Home weekly calendar strip and (b) clicking the “Start Planning” CTA both open the planned-moment slide-up bottom sheet (same interaction pattern as the Calendar page) instead of navigating away. The bottom sheet must use the clicked/selected date, and closing the sheet must return the user to the Home screen without route changes.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "recent-messages-4"
         ],
         "quotes": [
-          "thevault  is bland and has no motion"
+          "when you click on adate on the calender in the homepage or you click on start planning oit should shwo this slideup page as shown"
         ]
       },
       "acceptanceCriteria": [
-        "When opening /vault, month headers and card grids animate in subtly (no jarring bounce).",
-        "Tapping a thumbnail provides immediate visual feedback (pressed/scale-down) before navigation."
+        "On Home, tapping any day in the weekly strip opens the planned-moment bottom sheet for that date.",
+        "On Home, tapping “Start Planning” opens the planned-moment bottom sheet (defaulting to the currently selected day in the weekly strip; if none is selected, default to today).",
+        "Closing/canceling the bottom sheet returns to Home and does not navigate to /calendar."
       ]
     },
     {
-      "id": "REQ-2",
-      "text": "Redesign Vault month card thumbnails so they look consistent and intentional: apply the app’s glassmorphic card styling standard to the thumbnail tiles (or a clearly improved equivalent), refine spacing/radius/shadows, and ensure the grid reads cleanly on mobile.",
+      "id": "REQ-9",
+      "text": "Redesign the Planned Moment bottom sheet UI (reference: uploaded image image-45.png) to improve the date/time setup and remove the undesirable pulsating button behavior. Replace the current time stepper (+/-) controls with a cleaner time selection UI (e.g., a compact time input/picker) and use clear icons where appropriate. Keep the “With who?” selector simple (still icon-based) and ensure all buttons in this bottom sheet do not pulse.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "recent-messages-4"
         ],
         "quotes": [
-          "the cards look weird"
+          "but improve the ui..i dont like the date and time set up and also the puslationg buttons and use icons  the who can co we can keep it simple"
         ]
       },
       "acceptanceCriteria": [
-        "Vault thumbnails have consistent corner radius, spacing, and a cohesive card surface (no mismatched/unstyled tiles).",
-        "The grid remains 3 columns and does not overflow or distort on a 390x844 viewport."
+        "The time selection UI in the bottom sheet no longer uses +/- steppers and is visually simpler/cleaner.",
+        "Buttons within the bottom sheet do not pulse.",
+        "The “With who?” selector remains simple and icon-based, with a clear selected state.",
+        "User-facing copy remains in English."
       ]
     },
     {
-      "id": "REQ-3",
-      "text": "Ensure Vault photos render as true square thumbnails across all supported browsers by removing reliance on Tailwind’s `aspect-square` class (which may not be enabled) and enforcing a square layout via explicit CSS/inline aspect-ratio fallback. Keep `object-fit: cover` for thumbnails so the square crop is consistent.",
+      "id": "REQ-10",
+      "text": "Ensure planned moments reliably appear on the exact chosen day and are color-coded in the Home weekly calendar strip (and remain consistent with Calendar page behavior). The day indicator must update immediately after saving a planned moment, and the chosen day must reflect the color associated with the saved moment’s category.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "recent-messages-4"
         ],
         "quotes": [
-          "photos should be square"
+          "then ones succefully creted and save it should appear on the exact day choosen should be color codeed"
         ]
       },
       "acceptanceCriteria": [
-        "All Vault thumbnails render as perfect squares (1:1) on mobile and desktop browsers.",
-        "Thumbnails use `object-fit: cover` and do not appear stretched."
+        "After saving a planned moment, the selected date shows a color-coded indicator in the Home weekly calendar strip without requiring a refresh.",
+        "The color-coded indicator corresponds to the saved moment category color (as stored with the planned moment).",
+        "Planned moments are stored and retrieved for the correct ISO date (YYYY-MM-DD) so they display on the exact selected day."
       ]
     },
     {
-      "id": "REQ-4",
-      "text": "Improve the enlarged moment viewing experience from Vault thumbnails so the user always gets an enlarged, clear view: when a thumbnail is tapped, open a full-screen view that prioritizes the image (high contrast background, no unintended compression), and provide an obvious close/back control. Ensure the route `/vault/$momentId` (or an equivalent modal overlay) reliably shows the full image and feels “crisp”.",
+      "id": "REQ-11",
+      "text": "Fix planned-moment UI updates across components by making planned-moment storage changes observable. When a planned moment is saved, any UI that depends on planned moments (Home weekly strip indicators, Calendar page indicators, and any planned-moment lists) must refresh from storage automatically.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "recent-messages-4"
         ],
         "quotes": [
-          "when you click them you dont get an enlagred clear version"
+          "should be color codeed"
         ]
       },
       "acceptanceCriteria": [
-        "Tapping a Vault thumbnail always results in a full-screen (or near full-screen) image view with a clear close/back action.",
-        "The enlarged view uses the original stored image data (not a smaller thumbnail variant).",
-        "The enlarged image is displayed without visible distortion; the user can see it clearly against the background."
+        "Saving a planned moment triggers an immediate UI update in both Home and Calendar surfaces (where applicable) without manual reload.",
+        "Planned-moment indicators remain correct after navigating between Home and Calendar."
       ]
     },
     {
-      "id": "REQ-5",
-      "text": "Apply the same subtle pulsating animation used for the camera icon/button (`cameraPulse` / `.camera-pulse`) to all buttons across the app (including icon-only buttons like back arrows), while ensuring disabled buttons do not pulse. Provide a safe opt-out mechanism (e.g., a `no-pulse` class) for any button where pulsing harms usability.",
+      "id": "REQ-12",
+      "text": "Adjust the global pulsating button behavior so the app does not pulse most buttons by default. Pulsing should be opt-in (e.g., only for the camera button if still desired), and existing critical CTAs should remain visually strong without animation reliance.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "recent-messages-4"
         ],
         "quotes": [
-          "lastly make all button pulsating like that camers icon"
+          "i dont like ... the puslationg buttons"
         ]
       },
       "acceptanceCriteria": [
-        "All clickable buttons visibly pulse with the same rhythm as the camera button.",
-        "Disabled buttons do not pulse.",
-        "At least one opt-out mechanism exists and is documented in code (e.g., `className=\"no-pulse\"`)."
+        "Most buttons across the app no longer pulse by default.",
+        "Any remaining pulsing (if kept) is limited to explicitly designated buttons only.",
+        "No regressions: disabled buttons do not animate; button hover/active states still function."
       ]
     }
   ],
   "constraints": [
-    "Do not modify files under frontend/src/components/ui (read-only Shadcn components). Compose them instead.",
-    "Do not modify frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, or frontend/src/main.tsx (immutable paths).",
-    "Keep backend architecture single-actor; no backend changes are required for this request."
+    "Do not edit files under frontend/src/components/ui (compose them instead).",
+    "Do not edit immutable hook/entry files: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx.",
+    "Keep backend as single-actor Motoko; no backend changes are required for this request."
   ],
   "nonGoals": [
-    "Do not add new backend storage or schemas for Vault; use existing localStorage-based moments data.",
-    "Do not introduce new navigation tabs or a new feed-style Moments page as part of this Vault polish."
+    "Do not add new authentication methods beyond Internet Identity.",
+    "Do not add server-side persistence for planned moments (keep local-first).",
+    "Do not redesign unrelated screens (Vault, Camera capture flow) except for global pulse behavior adjustments."
   ],
   "imageRequirements": {
     "required": [],

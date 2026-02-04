@@ -83,13 +83,124 @@ body {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-/* Home screen empty state card - transparent navbar-like glass */
-.home-empty-glass-card {
+/* Home screen planning container - calm neutral surface */
+.home-planning-container {
   background: transparent;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid #d0d0d0;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+/* ============================================
+   HOME WEEKLY CALENDAR STRIP STYLES
+   ============================================ */
+
+/* Calendar strip container */
+.home-weekly-calendar-strip {
+  width: 100%;
+  padding: 16px 0;
+}
+
+/* Reschedule label - small gray text above month */
+.home-calendar-reschedule-label {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: #9ca3af;
+  letter-spacing: 0.02em;
+}
+
+/* Month title - centered, bold */
+.home-calendar-month-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1f2937;
+  letter-spacing: -0.02em;
+}
+
+/* Arrow navigation buttons - rounded, minimal */
+.home-calendar-arrow-button {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #f5f0e8;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1f2937;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.home-calendar-arrow-button:hover {
+  background: #e8e2d8;
+}
+
+.home-calendar-arrow-button:active {
+  transform: scale(0.95);
+}
+
+/* Day button base */
+.home-calendar-day-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px 8px;
+  border-radius: 16px;
+  border: none;
+  background: transparent;
+  transition: all 0.25s ease;
+  cursor: pointer;
+  min-width: 44px;
+  position: relative;
+}
+
+/* Day initial (Sun, Mon, etc.) */
+.home-calendar-day-initial {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* Day number */
+.home-calendar-day-number {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Inactive day state - soft gray */
+.home-calendar-day-inactive {
+  color: #9ca3af;
+}
+
+.home-calendar-day-inactive:hover {
+  background: rgba(156, 163, 175, 0.1);
+}
+
+/* Selected day state - tall black pill */
+.home-calendar-day-selected {
+  background: #1f2937;
+  color: #ffffff;
+  padding: 16px 12px;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.home-calendar-day-selected:hover {
+  background: #111827;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.home-calendar-day-selected:active {
+  transform: scale(0.97);
 }
 
 /* ============================================
@@ -407,7 +518,7 @@ body {
 }
 
 /* ============================================
-   GLOBAL BUTTON PULSE ANIMATION
+   OPT-IN BUTTON PULSE ANIMATION
    ============================================ */
 
 /* Pulsating animation keyframes */
@@ -421,16 +532,11 @@ body {
 }
 
 /* 
- * Global pulse animation applied to all buttons by default.
- * Opt-out: Add class "no-pulse" to any button that should not pulse.
- * Disabled buttons are automatically excluded.
+ * Opt-in pulse animation - only applied to elements with .camera-pulse class.
+ * All other buttons must explicitly add .no-pulse to avoid any animation.
+ * Disabled buttons never animate.
  */
-button:not(:disabled):not(.no-pulse) {
-  animation: cameraPulse 2s ease-in-out infinite;
-}
-
-/* Explicit class for camera button (legacy support) */
-.camera-pulse {
+.camera-pulse:not(:disabled) {
   animation: cameraPulse 2s ease-in-out infinite;
 }
 
@@ -828,57 +934,6 @@ button:not(:disabled):not(.no-pulse) {
 
 .bottom-sheet-action-button-save:hover:not(:disabled) {
   background-color: oklch(60% 0.20 145);
-}
-
-/* Time stepper UI - boxed inputs with +/- controls */
-.time-input-box {
-  width: 64px;
-  height: 64px;
-  border: 2px solid oklch(88% 0.01 106);
-  border-radius: 12px;
-  background: oklch(100% 0 0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
-  font-size: 24px;
-  font-weight: 600;
-  text-align: center;
-  transition: all 0.2s ease;
-  outline: none;
-}
-
-.time-input-box:focus {
-  border-color: oklch(47% 0.14 262);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-}
-
-.time-input-box::placeholder {
-  color: oklch(75% 0.01 106);
-}
-
-.time-stepper-button {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1.5px solid oklch(88% 0.01 106);
-  background: oklch(100% 0 0);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: oklch(45% 0.01 106);
-  transition: all 0.2s ease;
-  cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-}
-
-.time-stepper-button:hover {
-  border-color: oklch(47% 0.14 262);
-  background: oklch(98% 0.02 262);
-  color: oklch(47% 0.14 262);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-}
-
-.time-stepper-button:active {
-  transform: scale(0.95);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
 /* With Who pills - segmented/pill style */

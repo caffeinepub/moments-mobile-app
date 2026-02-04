@@ -1,22 +1,19 @@
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { useMomentsPhotos } from '../hooks/useMomentsPhotos';
-import { useProfile } from '../hooks/useProfile';
-import { formatRelativeTime } from '../utils/timeFormat';
-import MomentsImageCard from '../components/MomentsImageCard';
+import HomeWeeklyCalendarStrip from '../components/HomeWeeklyCalendarStrip';
+import PlannedMomentBottomSheet from '../components/PlannedMomentBottomSheet';
+import { usePlannedMoments } from '../hooks/usePlannedMoments';
 
 function HomeScreen() {
     const navigate = useNavigate();
     const [hoveredNav, setHoveredNav] = useState<string | null>(null);
-    const { mostRecent } = useMomentsPhotos();
-    const { profile } = useProfile();
+    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+    const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+
+    const { datesWithMoments, dateColorMap, addMoment } = usePlannedMoments(null);
 
     const handleCameraClick = () => {
         navigate({ to: '/camera' });
-    };
-
-    const handleSettingsClick = () => {
-        navigate({ to: '/settings' });
     };
 
     const handleCalendarClick = () => {
@@ -31,6 +28,16 @@ function HomeScreen() {
         navigate({ to: '/profile' });
     };
 
+    const handleDateSelect = (date: Date) => {
+        setSelectedDate(date);
+        setIsBottomSheetOpen(true);
+    };
+
+    const handleStartPlanning = () => {
+        setSelectedDate(new Date());
+        setIsBottomSheetOpen(true);
+    };
+
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black overflow-hidden">
             {/* Mobile viewport container with beige background */}
@@ -43,13 +50,13 @@ function HomeScreen() {
                 {/* Scrollable content area */}
                 <div className="flex-1 overflow-y-auto pb-24">
                     {/* Header Navigation */}
-                    <header className="relative w-full px-8 pt-8 pb-4">
+                    <header className="relative w-full px-8 pt-6 pb-3">
                         <div className="flex items-center justify-center">
-                            {/* Center: Logo Image - increased size */}
+                            {/* Center: Logo Image */}
                             <img 
                                 src="/assets/Gel Polish Manicure (1).png" 
                                 alt="Moments Logo"
-                                className="h-24 w-auto object-contain"
+                                className="h-16 w-auto object-contain"
                             />
                         </div>
                     </header>
@@ -78,46 +85,41 @@ function HomeScreen() {
                         </div>
                     </div>
 
-                    {/* Moments Image Card Section */}
-                    <div className="mt-8 mb-6">
-                        {mostRecent ? (
-                            <MomentsImageCard
-                                imageUrl={mostRecent.data}
-                                profilePicture={profile.profilePicture}
-                                displayName={profile.displayName}
-                                location={profile.location}
-                                timestamp={formatRelativeTime(mostRecent.timestamp)}
-                                who={mostRecent.who}
-                                reflection={mostRecent.reflection}
-                                feeling={mostRecent.feeling}
-                            />
-                        ) : (
-                            <div className="px-10">
-                                <div
-                                    className="home-empty-glass-card w-full p-8 text-center"
-                                    style={{
-                                        borderRadius: '20px',
-                                    }}
-                                >
-                                    <i className="fa fa-camera text-gray-300 text-5xl mb-4"></i>
-                                    <p
-                                        className="text-gray-500 mb-4"
-                                        style={{
-                                            fontFamily: "'Bricolage Grotesque', sans-serif",
-                                            fontSize: '15px',
-                                        }}
-                                    >
-                                        No moments captured yet
-                                    </p>
-                                    <button
-                                        onClick={handleCameraClick}
-                                        className="yellow-button-small"
-                                    >
-                                        Capture Your First Moment
-                                    </button>
-                                </div>
-                            </div>
-                        )}
+                    {/* Weekly Calendar Strip - Planning First */}
+                    <div className="mt-8 px-6">
+                        <HomeWeeklyCalendarStrip 
+                            selectedDate={selectedDate}
+                            onDateSelect={handleDateSelect}
+                            datesWithMoments={datesWithMoments}
+                            dateColorMap={dateColorMap}
+                        />
+                    </div>
+
+                    {/* Planning Content Area */}
+                    <div className="mt-8 px-10">
+                        <div
+                            className="home-planning-container"
+                            style={{
+                                borderRadius: '20px',
+                                padding: '24px',
+                            }}
+                        >
+                            <p
+                                className="text-gray-600 text-center mb-4"
+                                style={{
+                                    fontFamily: "'Bricolage Grotesque', sans-serif",
+                                    fontSize: '15px',
+                                }}
+                            >
+                                Create space for the moments that matter most
+                            </p>
+                            <button
+                                onClick={handleStartPlanning}
+                                className="yellow-button-small mx-auto block no-pulse"
+                            >
+                                Start Planning
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -137,7 +139,7 @@ function HomeScreen() {
                     <nav className="flex items-center justify-around">
                         {/* Home */}
                         <button 
-                            className="flex flex-col items-center justify-center gap-0.5 min-w-[52px] transition-all duration-300 ease-in-out"
+                            className="flex flex-col items-center justify-center gap-0.5 min-w-[52px] transition-all duration-300 ease-in-out no-pulse"
                             aria-label="Home"
                             onMouseEnter={() => setHoveredNav('home')}
                             onMouseLeave={() => setHoveredNav(null)}
@@ -164,7 +166,7 @@ function HomeScreen() {
                         {/* Calendar */}
                         <button 
                             onClick={handleCalendarClick}
-                            className="flex flex-col items-center justify-center gap-0.5 min-w-[52px] transition-all duration-300 ease-in-out"
+                            className="flex flex-col items-center justify-center gap-0.5 min-w-[52px] transition-all duration-300 ease-in-out no-pulse"
                             aria-label="Calendar"
                             onMouseEnter={() => setHoveredNav('calendar')}
                             onMouseLeave={() => setHoveredNav(null)}
@@ -200,7 +202,7 @@ function HomeScreen() {
                         {/* Vault */}
                         <button 
                             onClick={handleVaultClick}
-                            className="flex flex-col items-center justify-center gap-0.5 min-w-[52px] transition-all duration-300 ease-in-out"
+                            className="flex flex-col items-center justify-center gap-0.5 min-w-[52px] transition-all duration-300 ease-in-out no-pulse"
                             aria-label="Vault"
                             onMouseEnter={() => setHoveredNav('vault')}
                             onMouseLeave={() => setHoveredNav(null)}
@@ -227,7 +229,7 @@ function HomeScreen() {
                         {/* Profile/Settings */}
                         <button 
                             onClick={handleProfileClick}
-                            className="flex flex-col items-center justify-center gap-0.5 min-w-[52px] transition-all duration-300 ease-in-out"
+                            className="flex flex-col items-center justify-center gap-0.5 min-w-[52px] transition-all duration-300 ease-in-out no-pulse"
                             aria-label="Profile"
                             onMouseEnter={() => setHoveredNav('profile')}
                             onMouseLeave={() => setHoveredNav(null)}
@@ -253,6 +255,14 @@ function HomeScreen() {
                     </nav>
                 </footer>
             </div>
+
+            {/* Bottom Sheet */}
+            <PlannedMomentBottomSheet
+                isOpen={isBottomSheetOpen}
+                onClose={() => setIsBottomSheetOpen(false)}
+                selectedDate={selectedDate}
+                onSave={addMoment}
+            />
         </div>
     );
 }
