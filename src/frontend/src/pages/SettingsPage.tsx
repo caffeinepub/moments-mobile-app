@@ -1,13 +1,11 @@
 import { useNavigate } from '@tanstack/react-router';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import { useBackSlideNavigation } from '../hooks/useBackSlideNavigation';
 
 function SettingsPage() {
     const navigate = useNavigate();
     const { clear } = useInternetIdentity();
-
-    const handleBack = () => {
-        navigate({ to: '/home' });
-    };
+    const { isExiting, handleBackWithSlide } = useBackSlideNavigation(() => navigate({ to: '/home' }));
 
     const handleLogout = () => {
         clear();
@@ -18,16 +16,16 @@ function SettingsPage() {
         <div className="fixed inset-0 flex items-center justify-center bg-black overflow-hidden">
             {/* Mobile viewport container with white background */}
             <div 
-                className="relative w-full h-full max-w-[390px] max-h-[844px] overflow-hidden flex flex-col"
+                className={`relative w-full h-full max-w-[390px] max-h-[844px] overflow-hidden flex flex-col ${isExiting ? 'slide-back-exit' : ''}`}
                 style={{ background: '#ffffff' }}
             >
                 {/* Header - reduced size */}
                 <header className="relative w-full px-5 pt-5 pb-3 flex items-center justify-center border-b border-gray-200">
                     {/* Back arrow - left aligned */}
                     <button
-                        onClick={handleBack}
+                        onClick={handleBackWithSlide}
                         className="absolute left-5 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center text-black hover:opacity-70 transition-opacity"
-                        aria-label="Back"
+                        aria-label="Back to home"
                     >
                         <i className="fa fa-arrow-left text-lg"></i>
                     </button>

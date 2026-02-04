@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 9,
-  "summary": "Moments is a mobile-first React + TypeScript single-page app for planning small real-world moments (via a weekly calendar strip and “Plan a Moment” bottom sheet) and capturing private photo memories (camera → save confirmation → feeling check). The app is primarily local-first (planned moments, photo moments, and user profile stored in browser storage) with reactive UI updates via storage listeners and custom DOM events. It integrates Dfinity Internet Identity for authentication and includes a Motoko backend canister with role-based access control (admin bootstrap via environment token) plus early-stage profile/settings and photo-metadata APIs with incomplete blob storage wiring.",
+  "projectStateVersion": 37,
+  "summary": "Moments is a mobile-first React + TypeScript single-page app for planning small real-world moments (via a weekly calendar strip and “Plan a Moment” bottom sheet) and capturing private photo memories (camera → save confirmation → feeling check). The app is primarily local-first (planned moments, photo moments, user profile, and notifications stored in browser storage) with reactive UI updates via storage listeners and custom DOM events. It integrates Dfinity Internet Identity for authentication and includes a Motoko backend canister with role-based access control (admin bootstrap via environment token) plus profile/settings and photo APIs with blob storage wiring.",
   "existing_features": [
     {
       "id": "IF-1",
@@ -494,34 +494,190 @@
       "version": 1
     },
     {
-      "id": "feature-redesign-the-vault-overview-gallery-vaultpage-so-photo-cards-thumbnails-are-significantly-larger-on-mobile-and-no-longer-feel-cramped-e-g-fewer-columns-larger-tile-sizes-improved-spacing-and-clearer-hierarchy-between-month-header-and-grid",
-      "title": "Redesign the Vault overview gallery (VaultPage) so photo cards/thumbnails are significantly larger on mobile and no longer feel cramped (e.g., fewer columns, larger tile sizes, improved spacing, and clearer hierarchy between month header and grid).",
+      "id": "IF-45",
+      "title": "Hamburger menu component with app navigation/actions",
+      "synonyms": [
+        "HamburgerMenu",
+        "app menu"
+      ],
+      "description": "Implements the previously-empty HamburgerMenu component to provide a functional in-app menu for navigation and/or common actions.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-46",
+      "title": "Sign-in overlay component for authentication UX",
+      "synonyms": [
+        "SignInOverlay",
+        "auth overlay"
+      ],
+      "description": "Implements the previously-empty SignInOverlay component to support an in-app sign-in prompt/overlay tied to Internet Identity authentication state.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-47",
+      "title": "Moments page implementation",
+      "synonyms": [
+        "MomentsPage",
+        "moments screen"
+      ],
+      "description": "Implements the previously-empty MomentsPage route to render its intended UI instead of being an unimplemented placeholder.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-48",
+      "title": "Backend photo blob persistence and blob retrieval wired",
+      "synonyms": [
+        "storePhoto blob put",
+        "getBlob implementation"
+      ],
+      "description": "Completes backend wiring so photo uploads persist the provided blob into blob storage and blob retrieval is implemented (getBlob no longer returns a constant null placeholder). Also corrects photo metadata timestamp handling during storePhoto.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-49",
+      "title": "Local notifications storage utilities with reactive updates",
+      "synonyms": [
+        "notificationsStorage",
+        "local notification inbox"
+      ],
+      "description": "Stores notifications locally (including read/unread state and received timestamps), provides CRUD helpers, and triggers same-tab and cross-tab reactive refresh via custom events and storage listeners.",
+      "reqIds": [
+        "AR-2",
+        "AR-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "IF-50",
+      "title": "Floating notification chat-bubble popups near logo",
+      "synonyms": [
+        "NotificationPopupHost",
+        "NotificationChatBubble",
+        "useNotificationPopups"
+      ],
+      "description": "Displays small, auto-dismissing chat-bubble notification popups near the Moments logo; uses the current character/avatar image and reads from locally stored notifications.",
+      "reqIds": [
+        "AR-2",
+        "AR-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "IF-51",
+      "title": "Notifications inbox page with unread badge and timestamps",
+      "synonyms": [
+        "NotificationsPage",
+        "useNotifications",
+        "navbar unread badge"
+      ],
+      "description": "Adds a dedicated Notifications inbox screen that lists notifications with received timestamps and supports unread count badge display from local storage (in addition to floating popups).",
+      "reqIds": [
+        "AR-1",
+        "AR-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-4th-splash-screen-slide-in-frontend-src-pages-mobilesplashscreen-tsx-that-uses-the-provided-video-asset-gel-polish-manicure-1-mp4-replacing-the-prior-image-used-for-that-slide-the-video-must-appear-indistinguishable-from-an-image-no-visible-controls-or-hover-affordances-no-user-interaction-pointer-events-muted-looping-inline",
+      "title": "Add a 4th splash screen slide in `frontend/src/pages/MobileSplashScreen.tsx` that uses the provided video asset `Gel Polish Manicure (1).mp4`, replacing the prior image used for that slide; the video must appear indistinguishable from an image (no visible controls or hover affordances, no user interaction/pointer events, muted, looping, inline).",
       "reqIds": [
         "REQ-4"
       ],
       "version": 1
     },
     {
-      "id": "feature-improve-the-visual-styling-of-vault-overview-cards-tiles-to-feel-more-premium-and-intentional-refine-surface-treatment-borders-shadows-corner-radius-and-typography-consistency-while-keeping-the-current-app-s-warm-beige-baseline-background",
-      "title": "Improve the visual styling of Vault overview cards/tiles to feel more premium and intentional (refine surface treatment, borders/shadows, corner radius, and typography consistency) while keeping the current app’s warm/beige baseline background.",
+      "id": "feature-rename-the-user-facing-feature-label-vault-to-moments-everywhere-it-appears-in-the-ui-page-headers-navbar-labels-empty-states-aria-labels-and-any-other-visible-copy-without-changing-the-existing-route-paths-e-g-keep-vault-and-vault-momentid-unless-required-by-existing-routing-constraints",
+      "title": "Rename the user-facing feature label “Vault” to “Moments” everywhere it appears in the UI (page headers, navbar labels, empty states, aria labels, and any other visible copy), without changing the existing route paths (e.g., keep `/vault` and `/vault/$momentId` unless required by existing routing constraints).",
       "reqIds": [
         "REQ-5"
       ],
       "version": 1
     },
     {
-      "id": "feature-add-richer-motion-to-the-vault-experience-smoother-entrance-animations-for-month-sections-and-tiles-improved-tap-press-feedback-on-tiles-and-a-more-polished-transition-feel-when-navigating-into-and-out-of-the-moment-viewer-vaultmomentpage",
-      "title": "Add richer motion to the Vault experience: smoother entrance animations for month sections and tiles, improved tap/press feedback on tiles, and a more polished transition feel when navigating into and out of the moment viewer (VaultMomentPage).",
+      "id": "feature-replace-the-home-bottom-navbar-calendar-icon-label-with-a-notifications-bell-icon-label-and-wire-it-to-the-app-s-notifications-inbox-screen-so-notifications-navigation-works-and-the-calendar-item-is-removed-from-the-navbar",
+      "title": "Replace the Home bottom navbar Calendar icon/label with a notifications bell icon/label and wire it to the app’s notifications inbox screen so notifications navigation works (and the calendar item is removed from the navbar).",
       "reqIds": [
         "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-the-music-option-from-the-moments-formerly-vault-moment-viewer-ui-by-removing-the-music-toggle-control-and-disabling-any-background-music-initialization-auto-play-behavior-in-frontend-src-pages-vaultmomentpage-tsx",
+      "title": "Remove the music option from the Moments (formerly Vault) moment viewer UI by removing the music toggle control and disabling any background music initialization/auto-play behavior in `frontend/src/pages/VaultMomentPage.tsx`.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-support-saving-and-viewing-video-moments-in-addition-to-image-moments-allow-selecting-video-files-from-the-gallery-upload-flow-persist-them-in-the-existing-local-first-moments-storage-and-render-videos-correctly-in-the-moments-grid-and-the-moment-detail-viewer",
+      "title": "Support saving and viewing video moments in addition to image moments: allow selecting video files from the gallery upload flow, persist them in the existing local-first moments storage, and render videos correctly in the Moments grid and the moment detail viewer.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-enforce-a-maximum-of-10-stored-moments-combined-images-videos-in-local-moments-storage-and-provide-an-in-app-way-for-users-to-delete-existing-moments-to-free-space-including-when-a-storage-full-error-occurs",
+      "title": "Enforce a maximum of 10 stored moments (combined images + videos) in local moments storage, and provide an in-app way for users to delete existing moments to free space (including when a storage-full error occurs).",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-consistent-slide-transition-animation-when-navigating-back-via-any-screen-s-back-arrow-and-equivalent-back-actions-so-that-returning-to-the-previous-screen-uses-a-smooth-slide-transition-across-the-app",
+      "title": "Add a consistent slide transition animation when navigating back via any screen’s back arrow (and equivalent back actions) so that returning to the previous screen uses a smooth slide transition across the app.",
+      "reqIds": [
+        "REQ-10"
       ],
       "version": 1
     }
   ],
   "new_feature_requests": [
     {
-      "id": "AR-1",
-      "summary": "Revamp Vault UI: increase card/photo sizes, improve visual styling, and add smooth motion/animations for a more premium feel.",
+      "id": "AR-4",
+      "summary": "Add 4th splashscreen slide that uses a provided video but appears indistinguishable from an image (no obvious video affordances; hover should not reveal it)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Vault: remove the music option from the UI",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Support saving and viewing videos in the Vault (not images only)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Handle local storage full: allow users to delete existing moments/media and enforce a max of ~10 stored items",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Navbar: replace/remove calendar icon and ensure notifications UI works as intended (calendar still present)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Add consistent slide transition animation when navigating back (using back arrow / back action) across the app for smoother appearance",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Rename the Vault feature/labeling to “Moments” (user-facing rename)",
       "reqIds": [],
       "status": "pending"
     }
@@ -533,27 +689,39 @@
     "Local-first persistence: planned moments, photo moments, and profile are stored in localStorage; the capture flow uses sessionStorage for draft state between screens.",
     "Same-tab data reactivity is implemented via custom DOM events (e.g., plannedMomentsChanged, moments_photos_updated, profile_updated) in addition to the browser storage event for cross-tab updates.",
     "Authentication is provided via a custom Internet Identity context/provider built on AuthClient; actor creation is identity-aware and initialized with an admin secret read from the URL hash (scrubbed after extraction).",
-    "Backend is a Motoko canister composed via mixins (authorization + blob-storage maintenance endpoints). RBAC is first-user-admin bootstrapped via env var CAFFEINE_ADMIN_TOKEN and a user-provided secret."
+    "Backend is a Motoko canister composed via mixins (authorization + blob-storage maintenance endpoints). RBAC is first-user-admin bootstrapped via env var CAFFEINE_ADMIN_TOKEN and a user-provided secret.",
+    "Repository now includes a reusable build-template scaffold (React + Tailwind + shadcn/ui + ICP canister YAMLs) with deploy/build scripts (Dockerfile, icp.yaml, deploy.sh) and asset maintenance utilities (resize/prune images).",
+    "Notifications are local-first: notifications are persisted in browser storage with unread state and timestamps, surfaced via floating chat-bubble popups near the logo and a dedicated inbox page with unread badge; updates propagate via storage listeners and custom events.",
+    "Add consistent back-navigation (pop) page transition animation (slide) across routes for smoother UX."
   ],
   "known_issues": [
     "Two global CSS entrypoints exist (frontend/index.css and frontend/src/index.css). The app imports frontend/src/index.css via src/main.tsx; the other file can drift and cause confusion.",
-    "frontend/src/components/HamburgerMenu.tsx is empty (placeholder).",
-    "frontend/src/components/SignInOverlay.tsx is empty (placeholder).",
-    "frontend/src/pages/MomentsPage.tsx is empty/unimplemented.",
-    "frontend/src/pages/MomentFeelingCheckPage.tsx navigates via setTimeout without cleanup; navigation could fire after unmount in edge cases.",
-    "CalendarPage reads localStorage('moments_photos') into a PhotoMetadata shape containing dataUrl, but momentsPhotosStorage persists the image under data; currently CalendarPage only uses timestamp so the mismatch is latent but confusing.",
-    "CameraScreen does not revoke the captured blob URL after proceeding to the next screen (only on retake), potentially leaking memory until reload.",
     "CameraScreen flash toggle is UI-only; the camera hook does not implement torch/flash control.",
-    "Backend storePhoto does not persist the provided Blob into blob storage (comment indicates missing put call) and sets metadata timestamp to 0.",
-    "backend/main.mo getBlob is a placeholder that always returns null.",
     "Backend canister state (maps/counters/roles) is not stable; data will be lost on upgrade without stable variables and preupgrade/postupgrade handling.",
     "backend/blob-storage/Storage.mo references env var CAFFFEINE_STORAGE_CASHIER_PRINCIPAL (likely misspelled), increasing deployment misconfiguration risk.",
     "backend/blob-storage/Storage.mo refillCashier computes Nat.sub(currentBalance, reservedCycles); if currentBalance < reservedCycles this can trap due to Nat underflow.",
-    "authorization/access-control.mo traps for unregistered users in getUserRole; callers must ensure initialization occurs for new principals before permission checks."
+    "authorization/access-control.mo traps for unregistered users in getUserRole; callers must ensure initialization occurs for new principals before permission checks.",
+    "Notifications/nav update appears incomplete: calendar icon still present in navbar and notification feature reportedly not working as expected.",
+    "Local storage can become full; current UX does not allow users to delete existing stored items to recover space.",
+    "Notifications/nav still incorrect: calendar icon remains in navbar and notification feature not working as intended (needs fix)."
   ],
-  "isFixRequest": false,
+  "isFixRequest": true,
+  "generatedImages": [
+    {
+      "filename": "frontend/public/assets/generated/notif-avatar-boy.dim_256x256.png",
+      "description": "Generated notification avatar image used in notification UI.",
+      "targetWidth": 256,
+      "targetHeight": 256
+    },
+    {
+      "filename": "frontend/public/assets/generated/notif-avatar-boy-small.dim_96x96.png",
+      "description": "Small generated notification avatar image variant.",
+      "targetWidth": 96,
+      "targetHeight": 96
+    }
+  ],
   "gameProjectType": "none",
   "projectName": "Moments",
-  "clarification_mode": "instant",
+  "clarification_mode": "pro",
   "clarification_rounds": 0
 }

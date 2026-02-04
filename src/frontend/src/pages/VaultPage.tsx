@@ -1,14 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { loadMomentsPhotos, MomentsPhoto } from '../utils/momentsPhotosStorage';
+import { Trash2 } from 'lucide-react';
+import { loadMomentsPhotos, MomentsPhoto, deleteMoment } from '../utils/momentsPhotosStorage';
 import { useInView } from '../hooks/useInView';
+import { getFeelingEmoji } from '../utils/momentFeelings';
+import { useBackSlideNavigation } from '../hooks/useBackSlideNavigation';
+import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
 
 interface MonthGroup {
   monthYear: string;
   moments: MomentsPhoto[];
 }
 
-function MonthSection({ group, onMomentClick }: { group: MonthGroup; onMomentClick: (id: number) => void }) {
+function MonthSection({ group, onMomentClick, onDeleteRequest }: { group: MonthGroup; onMomentClick: (id: number) => void; onDeleteRequest: (moment: MomentsPhoto) => void }) {
   const { ref, isInView } = useInView({ threshold: 0.1, rootMargin: '50px', triggerOnce: true });
 
   return (
@@ -26,30 +30,52 @@ function MonthSection({ group, onMomentClick }: { group: MonthGroup; onMomentCli
       {/* Photo grid - 2 columns with larger tiles */}
       <div className="vault-grid">
         {group.moments.map((moment, index) => (
-          <button
+          <div
             key={moment.id}
-            onClick={() => onMomentClick(moment.id)}
             className="vault-tile"
             style={{ animationDelay: `${index * 0.08}s` }}
           >
-            <div className="vault-tile-wrapper">
-              <img
-                src={moment.data}
-                alt="Moment"
-                className="vault-tile-image"
-              />
+            <button
+              onClick={() => onMomentClick(moment.id)}
+              className="vault-tile-wrapper w-full h-full"
+            >
+              {moment.type.startsWith('video/') ? (
+                <video
+                  src={moment.data}
+                  className="vault-tile-image"
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                />
+              ) : (
+                <img
+                  src={moment.data}
+                  alt="Moment"
+                  className="vault-tile-image"
+                />
+              )}
               {/* Feeling indicator with enhanced styling */}
               {moment.feeling && (
                 <div className="vault-tile-feeling">
-                  {moment.feeling === 'Meaningful' && '❤️'}
-                  {moment.feeling === 'Good' && '🙂'}
-                  {moment.feeling === 'Okay' && '😐'}
+                  {getFeelingEmoji(moment.feeling)}
                 </div>
               )}
               {/* Subtle gradient overlay for depth */}
               <div className="vault-tile-overlay"></div>
-            </div>
-          </button>
+            </button>
+            {/* Delete button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDeleteRequest(moment);
+              }}
+              className="absolute top-2 left-2 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-red-500/90 hover:bg-red-600/90 text-white transition-all"
+              aria-label="Delete moment"
+            >
+              <Trash2 size={14} />
+            </button>
+          </div>
         ))}
       </div>
     </div>
@@ -58,7 +84,9 @@ function MonthSection({ group, onMomentClick }: { group: MonthGroup; onMomentCli
 
 function VaultPage() {
   const navigate = useNavigate();
+  const { isExiting, handleBackWithSlide } = useBackSlideNavigation(() => navigate({ to: '/home' }));
   const [monthGroups, setMonthGroups] = useState<MonthGroup[]>([]);
+  const [momentToDelete, setMomentToDelete] = useState<MomentsPhoto | null>(null);
 
   useEffect(() => {
     loadAndGroupMoments();
@@ -104,31 +132,42 @@ function VaultPage() {
     setMonthGroups(groupArray);
   };
 
-  const handleBack = () => {
-    navigate({ to: '/home' });
-  };
-
   const handleMomentClick = (momentId: number) => {
     navigate({ to: `/vault/${momentId}` });
+  };
+
+  const handleDeleteRequest = (moment: MomentsPhoto) => {
+    setMomentToDelete(moment);
+  };
+
+  const handleConfirmDelete = () => {
+    if (momentToDelete) {
+      deleteMoment(momentToDelete.id);
+      setMomentToDelete(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setMomentToDelete(null);
   };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black overflow-hidden">
       <div
-        className="relative w-full h-full max-w-[390px] max-h-[844px] overflow-hidden flex flex-col"
+        className={`relative w-full h-full max-w-[390px] max-h-[844px] overflow-hidden flex flex-col ${isExiting ? 'slide-back-exit' : ''}`}
         style={{ background: '#f5f0e8' }}
       >
         {/* Header */}
         <header className="vault-header">
           <button
-            onClick={handleBack}
+            onClick={handleBackWithSlide}
             className="vault-back-button"
-            aria-label="Back"
+            aria-label="Back to home"
           >
             <i className="fa fa-arrow-left text-gray-700 text-xl"></i>
           </button>
           <h1 className="vault-page-title">
-            Vault
+            Moments
           </h1>
           <div className="w-10"></div>
         </header>
@@ -152,12 +191,22 @@ function VaultPage() {
                   key={group.monthYear}
                   group={group}
                   onMomentClick={handleMomentClick}
+                  onDeleteRequest={handleDeleteRequest}
                 />
               ))}
             </div>
           )}
         </div>
       </div>
+
+      {/* Delete confirmation modal */}
+      <ConfirmDeleteModal
+        isOpen={!!momentToDelete}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        title="Delete Moment?"
+        message="This moment will be permanently removed."
+      />
     </div>
   );
 }

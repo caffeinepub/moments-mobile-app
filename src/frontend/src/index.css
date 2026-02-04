@@ -332,6 +332,90 @@ body {
 }
 
 /* ============================================
+   MOMENT FEELING CHECK PAGE - PILL STYLING
+   ============================================ */
+
+/* Feeling option pill - matching planned moment card aesthetic */
+.feeling-option-pill {
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: 9999px;
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  
+  /* Fully transparent interior */
+  background: transparent;
+  
+  /* Thin border - calm neutral palette */
+  border: 1.5px solid rgba(0, 0, 0, 0.12);
+  
+  box-shadow: none;
+  transition: all 0.25s ease;
+  font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+.feeling-option-pill:hover:not(:disabled) {
+  border-color: rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+.feeling-option-pill:active:not(:disabled) {
+  transform: scale(0.98);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.feeling-option-pill:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Feeling emoji */
+.feeling-option-emoji {
+  font-size: 32px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* Feeling label */
+.feeling-option-label {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  letter-spacing: -0.01em;
+}
+
+/* Feeling list custom scrollbar - thin and elegant */
+.feeling-list-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.feeling-list-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 10px;
+}
+
+.feeling-list-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+}
+
+.feeling-list-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+/* Firefox scrollbar styling */
+.feeling-list-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.03);
+}
+
+/* ============================================
    CONFIRM DELETE MODAL
    ============================================ */
 
@@ -1577,6 +1661,18 @@ body {
   }
 }
 
+/* Swipe area - enable touch interactions */
+.vault-viewer-swipe-area {
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+}
+
+.vault-viewer-swipe-area:active {
+  cursor: grabbing;
+}
+
 /* Close button - prominent and accessible */
 .vault-viewer-close-button {
   position: absolute;
@@ -1618,6 +1714,50 @@ body {
 }
 
 .vault-viewer-close-button:active {
+  transform: scale(0.95);
+}
+
+/* Music toggle button - top right */
+.vault-viewer-music-button {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 50;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  animation: vaultMusicButtonEnter 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.15s backwards;
+}
+
+@keyframes vaultMusicButtonEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.vault-viewer-music-button:hover {
+  background: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  transform: scale(1.05);
+}
+
+.vault-viewer-music-button:active {
   transform: scale(0.95);
 }
 
@@ -1738,4 +1878,53 @@ body {
   font-weight: 600;
   color: #ffffff;
   letter-spacing: 0.01em;
+}
+
+/* ============================================
+   EMOJI FLOAT OVERLAY - CORNER ORIGIN UPWARD FLOW
+   ============================================ */
+
+.emoji-float-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 5;
+}
+
+.emoji-float-item {
+  position: absolute;
+  bottom: 0;
+  left: 5%;
+  animation: emojiFloatFromCorner linear infinite;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+@keyframes emojiFloatFromCorner {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 0;
+  }
+  5% {
+    opacity: 0.9;
+  }
+  95% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(calc(var(--drift, 0) * 40px), -110vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .emoji-float-overlay {
+    display: none;
+  }
+  
+  .emoji-float-item {
+    animation: none;
+  }
 }

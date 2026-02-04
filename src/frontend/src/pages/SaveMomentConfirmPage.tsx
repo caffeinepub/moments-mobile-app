@@ -18,6 +18,7 @@ function SaveMomentConfirmPage() {
   const [selectedWho, setSelectedWho] = useState<string>('');
   const [reflection, setReflection] = useState<string>('');
   const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     const loadedDraft = loadDraft();
@@ -38,6 +39,8 @@ function SaveMomentConfirmPage() {
     if (!draft) return;
     
     setIsSaving(true);
+    setError('');
+    
     try {
       // Save confirmation data
       saveConfirmation({
@@ -48,8 +51,8 @@ function SaveMomentConfirmPage() {
       // Create moment ID
       const momentId = Date.now();
 
-      // Save moment to localStorage
-      saveMomentsPhoto({
+      // Save moment to localStorage with error handling
+      const result = saveMomentsPhoto({
         id: momentId,
         data: draft.photoDataUrl,
         timestamp: draft.timestamp,
@@ -58,6 +61,13 @@ function SaveMomentConfirmPage() {
         reflection: reflection.trim() || undefined
       });
 
+      if (!result.success) {
+        // Show error and stay on this screen
+        setError(result.error || 'Failed to save moment. Please try again.');
+        setIsSaving(false);
+        return;
+      }
+
       // Save moment ID for feeling check
       saveSavedMomentId(momentId);
 
@@ -65,13 +75,20 @@ function SaveMomentConfirmPage() {
       navigate({ to: '/feeling-check' });
     } catch (err) {
       console.error('Failed to save moment:', err);
+      setError('An unexpected error occurred. Please try again.');
       setIsSaving(false);
     }
+  };
+
+  const handleNavigateToMoments = () => {
+    navigate({ to: '/vault' });
   };
 
   if (!draft) {
     return null;
   }
+
+  const isVideo = draft.photoType.startsWith('video/');
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black overflow-hidden">
@@ -79,13 +96,22 @@ function SaveMomentConfirmPage() {
         className="relative w-full h-full max-w-[390px] max-h-[844px] overflow-hidden flex flex-col"
         style={{ background: '#f5f0e8' }}
       >
-        {/* Full-screen photo preview */}
+        {/* Full-screen media preview */}
         <div className="relative flex-1 overflow-hidden">
-          <img
-            src={draft.photoDataUrl}
-            alt="Moment preview"
-            className="w-full h-full object-cover"
-          />
+          {isVideo ? (
+            <video
+              src={draft.photoDataUrl}
+              className="w-full h-full object-cover"
+              controls
+              playsInline
+            />
+          ) : (
+            <img
+              src={draft.photoDataUrl}
+              alt="Moment preview"
+              className="w-full h-full object-cover"
+            />
+          )}
           
           {/* Overlay gradient for readability */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60"></div>
@@ -102,6 +128,21 @@ function SaveMomentConfirmPage() {
 
           {/* Bottom inputs section */}
           <div className="absolute bottom-0 left-0 right-0 p-6 space-y-4">
+            {/* Error message */}
+            {error && (
+              <div className="bg-red-500/90 backdrop-blur-sm text-white px-4 py-3 rounded-2xl text-sm font-medium">
+                <p className="mb-2">{error}</p>
+                {error.includes('delete') && (
+                  <button
+                    onClick={handleNavigateToMoments}
+                    className="underline text-white hover:opacity-80"
+                  >
+                    Go to Moments to delete
+                  </button>
+                )}
+              </div>
+            )}
+
             {/* Who was this with? */}
             <div>
               <label

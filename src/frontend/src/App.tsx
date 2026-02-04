@@ -10,6 +10,7 @@ import CalendarPage from './pages/CalendarPage';
 import VaultPage from './pages/VaultPage';
 import VaultMomentPage from './pages/VaultMomentPage';
 import ProfilePage from './pages/ProfilePage';
+import NotificationsPage from './pages/NotificationsPage';
 
 // Root component without forced redirects
 function RootComponent() {
@@ -86,6 +87,12 @@ const profileRoute = createRoute({
     component: ProfilePage
 });
 
+const notificationsRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/notifications',
+    component: NotificationsPage
+});
+
 const routeTree = rootRoute.addChildren([
     indexRoute, 
     welcomeRoute, 
@@ -97,7 +104,8 @@ const routeTree = rootRoute.addChildren([
     calendarRoute, 
     vaultRoute,
     vaultMomentRoute,
-    profileRoute
+    profileRoute,
+    notificationsRoute
 ]);
 
 const router = createRouter({ routeTree });

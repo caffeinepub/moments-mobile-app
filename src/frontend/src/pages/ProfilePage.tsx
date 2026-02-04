@@ -2,9 +2,11 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useProfile } from '../hooks/useProfile';
 import InlineToast from '../components/InlineToast';
+import { useBackSlideNavigation } from '../hooks/useBackSlideNavigation';
 
 function ProfilePage() {
   const navigate = useNavigate();
+  const { isExiting, handleBackWithSlide } = useBackSlideNavigation(() => navigate({ to: '/home' }));
   const { profile, updateProfile } = useProfile();
   const [displayName, setDisplayName] = useState(profile.displayName || '');
   const [location, setLocation] = useState(profile.location || '');
@@ -61,10 +63,6 @@ function ProfilePage() {
     }
   };
 
-  const handleClose = () => {
-    navigate({ to: '/home' });
-  };
-
   const handleSettingsClick = () => {
     navigate({ to: '/settings' });
   };
@@ -72,15 +70,15 @@ function ProfilePage() {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black overflow-hidden">
       <div
-        className="relative w-full h-full max-w-[390px] max-h-[844px] overflow-hidden flex flex-col"
+        className={`relative w-full h-full max-w-[390px] max-h-[844px] overflow-hidden flex flex-col ${isExiting ? 'slide-back-exit' : ''}`}
         style={{ background: '#f5f0e8' }}
       >
         {/* Header */}
         <header className="relative w-full px-8 pt-8 pb-4 flex items-center justify-between">
           <button
-            onClick={handleClose}
+            onClick={handleBackWithSlide}
             className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-200 transition-colors"
-            aria-label="Close"
+            aria-label="Back to home"
           >
             <i className="fa fa-arrow-left text-gray-700 text-xl"></i>
           </button>

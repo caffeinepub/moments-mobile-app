@@ -2,11 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-redesign-the-vault-overview-gallery-vaultpage-so-photo-cards-thumbnails-are-significantly-larger-on-mobile-and-no-longer-feel-cramped-e-g-fewer-columns-larger-tile-sizes-improved-spacing-and-clearer-hierarchy-between-month-header-and-grid",
-      "featureTitle": "Redesign the Vault overview gallery (VaultPage) so photo cards/thumbnails are significantly larger on mobile and no longer feel cramped (e.g., fewer columns, larger tile sizes, improved spacing, and clearer hierarchy between month header and grid).",
+      "featureId": "feature-add-a-4th-splash-screen-slide-in-frontend-src-pages-mobilesplashscreen-tsx-that-uses-the-provided-video-asset-gel-polish-manicure-1-mp4-replacing-the-prior-image-used-for-that-slide-the-video-must-appear-indistinguishable-from-an-image-no-visible-controls-or-hover-affordances-no-user-interaction-pointer-events-muted-looping-inline",
+      "featureTitle": "Add a 4th splash screen slide in `frontend/src/pages/MobileSplashScreen.tsx` that uses the provided video asset `Gel Polish Manicure (1).mp4`, replacing the prior image used for that slide; the video must appear indistinguishable from an image (no visible controls or hover affordances, no user interaction/pointer events, muted, looping, inline).",
       "files": [
-        "frontend/src/index.css",
-        "frontend/src/pages/VaultPage.tsx"
+        "frontend/src/pages/MobileSplashScreen.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -24,10 +23,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-improve-the-visual-styling-of-vault-overview-cards-tiles-to-feel-more-premium-and-intentional-refine-surface-treatment-borders-shadows-corner-radius-and-typography-consistency-while-keeping-the-current-app-s-warm-beige-baseline-background",
-      "featureTitle": "Improve the visual styling of Vault overview cards/tiles to feel more premium and intentional (refine surface treatment, borders/shadows, corner radius, and typography consistency) while keeping the current app’s warm/beige baseline background.",
+      "featureId": "feature-rename-the-user-facing-feature-label-vault-to-moments-everywhere-it-appears-in-the-ui-page-headers-navbar-labels-empty-states-aria-labels-and-any-other-visible-copy-without-changing-the-existing-route-paths-e-g-keep-vault-and-vault-momentid-unless-required-by-existing-routing-constraints",
+      "featureTitle": "Rename the user-facing feature label “Vault” to “Moments” everywhere it appears in the UI (page headers, navbar labels, empty states, aria labels, and any other visible copy), without changing the existing route paths (e.g., keep `/vault` and `/vault/$momentId` unless required by existing routing constraints).",
       "files": [
-        "frontend/src/index.css",
+        "frontend/src/pages/HomeScreen.tsx",
+        "frontend/src/pages/VaultMomentPage.tsx",
         "frontend/src/pages/VaultPage.tsx"
       ],
       "components": [
@@ -46,10 +46,55 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-richer-motion-to-the-vault-experience-smoother-entrance-animations-for-month-sections-and-tiles-improved-tap-press-feedback-on-tiles-and-a-more-polished-transition-feel-when-navigating-into-and-out-of-the-moment-viewer-vaultmomentpage",
-      "featureTitle": "Add richer motion to the Vault experience: smoother entrance animations for month sections and tiles, improved tap/press feedback on tiles, and a more polished transition feel when navigating into and out of the moment viewer (VaultMomentPage).",
+      "featureId": "feature-replace-the-home-bottom-navbar-calendar-icon-label-with-a-notifications-bell-icon-label-and-wire-it-to-the-app-s-notifications-inbox-screen-so-notifications-navigation-works-and-the-calendar-item-is-removed-from-the-navbar",
+      "featureTitle": "Replace the Home bottom navbar Calendar icon/label with a notifications bell icon/label and wire it to the app’s notifications inbox screen so notifications navigation works (and the calendar item is removed from the navbar).",
       "files": [
-        "frontend/src/index.css",
+        "frontend/src/App.tsx",
+        "frontend/src/pages/HomeScreen.tsx",
+        "frontend/src/pages/NotificationsPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "blob-storage@4.0.0",
+        "authorization@4.0.0",
+        "camera@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-remove-the-music-option-from-the-moments-formerly-vault-moment-viewer-ui-by-removing-the-music-toggle-control-and-disabling-any-background-music-initialization-auto-play-behavior-in-frontend-src-pages-vaultmomentpage-tsx",
+      "featureTitle": "Remove the music option from the Moments (formerly Vault) moment viewer UI by removing the music toggle control and disabling any background music initialization/auto-play behavior in `frontend/src/pages/VaultMomentPage.tsx`.",
+      "files": [
+        "frontend/src/pages/VaultMomentPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "blob-storage@4.0.0",
+        "authorization@4.0.0",
+        "camera@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-7"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-support-saving-and-viewing-video-moments-in-addition-to-image-moments-allow-selecting-video-files-from-the-gallery-upload-flow-persist-them-in-the-existing-local-first-moments-storage-and-render-videos-correctly-in-the-moments-grid-and-the-moment-detail-viewer",
+      "featureTitle": "Support saving and viewing video moments in addition to image moments: allow selecting video files from the gallery upload flow, persist them in the existing local-first moments storage, and render videos correctly in the Moments grid and the moment detail viewer.",
+      "files": [
+        "frontend/src/pages/CameraScreen.tsx",
+        "frontend/src/pages/SaveMomentConfirmPage.tsx",
         "frontend/src/pages/VaultMomentPage.tsx",
         "frontend/src/pages/VaultPage.tsx"
       ],
@@ -64,7 +109,58 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-6"
+        "REQ-8"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-enforce-a-maximum-of-10-stored-moments-combined-images-videos-in-local-moments-storage-and-provide-an-in-app-way-for-users-to-delete-existing-moments-to-free-space-including-when-a-storage-full-error-occurs",
+      "featureTitle": "Enforce a maximum of 10 stored moments (combined images + videos) in local moments storage, and provide an in-app way for users to delete existing moments to free space (including when a storage-full error occurs).",
+      "files": [
+        "frontend/src/pages/SaveMomentConfirmPage.tsx",
+        "frontend/src/pages/VaultMomentPage.tsx",
+        "frontend/src/pages/VaultPage.tsx",
+        "frontend/src/utils/momentsPhotosStorage.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "blob-storage@4.0.0",
+        "authorization@4.0.0",
+        "camera@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-9"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-consistent-slide-transition-animation-when-navigating-back-via-any-screen-s-back-arrow-and-equivalent-back-actions-so-that-returning-to-the-previous-screen-uses-a-smooth-slide-transition-across-the-app",
+      "featureTitle": "Add a consistent slide transition animation when navigating back via any screen’s back arrow (and equivalent back actions) so that returning to the previous screen uses a smooth slide transition across the app.",
+      "files": [
+        "frontend/src/hooks/useBackSlideNavigation.ts",
+        "frontend/src/pages/CalendarPage.tsx",
+        "frontend/src/pages/NotificationsPage.tsx",
+        "frontend/src/pages/ProfilePage.tsx",
+        "frontend/src/pages/SettingsPage.tsx",
+        "frontend/src/pages/VaultMomentPage.tsx",
+        "frontend/src/pages/VaultPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "blob-storage@4.0.0",
+        "authorization@4.0.0",
+        "camera@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-10"
       ],
       "confidence": "high"
     }

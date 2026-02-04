@@ -4,6 +4,7 @@ import { usePlannedMoments } from '../hooks/usePlannedMoments';
 import PlannedMomentBottomSheet from '../components/PlannedMomentBottomSheet';
 import InlineToast from '../components/InlineToast';
 import { ChevronLeft, ChevronRight, MoreVertical } from 'lucide-react';
+import { useBackSlideNavigation } from '../hooks/useBackSlideNavigation';
 
 interface PhotoMetadata {
   id: number;
@@ -24,6 +25,7 @@ interface CalendarDate {
 
 function CalendarPage() {
   const navigate = useNavigate();
+  const { isExiting, handleBackWithSlide } = useBackSlideNavigation(() => navigate({ to: '/home' }));
   const [currentDate] = useState(new Date());
   const [weekStartDate, setWeekStartDate] = useState(() => {
     const today = new Date();
@@ -142,10 +144,6 @@ function CalendarPage() {
     setWeekStartDate(newStart);
   };
 
-  const handleBack = () => {
-    navigate({ to: '/home' });
-  };
-
   const handleChangeDate = (newDate: Date) => {
     setSelectedDate(newDate);
   };
@@ -179,15 +177,15 @@ function CalendarPage() {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black overflow-hidden">
       <div
-        className="relative w-full h-full max-w-[390px] max-h-[844px] overflow-hidden flex flex-col"
+        className={`relative w-full h-full max-w-[390px] max-h-[844px] overflow-hidden flex flex-col ${isExiting ? 'slide-back-exit' : ''}`}
         style={{ background: '#ffffff' }}
       >
         {/* Header */}
         <header className="relative w-full px-4 pt-4 pb-2 flex items-center justify-between border-b border-gray-200">
           <button
-            onClick={handleBack}
+            onClick={handleBackWithSlide}
             className="w-8 h-8 flex items-center justify-center text-black hover:opacity-70 transition-opacity no-pulse"
-            aria-label="Back"
+            aria-label="Back to home"
           >
             <i className="fa fa-arrow-left text-base"></i>
           </button>

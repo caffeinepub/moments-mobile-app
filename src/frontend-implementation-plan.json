@@ -1,73 +1,216 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Vault gallery revamp: larger tiles, premium styling, richer motion",
+  "title": "Splash slide 4 video, Vault→Moments rename, notifications navbar fix, video moments + 10-cap w/ deletion, and global back-slide transitions",
   "requirements": [
     {
       "id": "REQ-4",
-      "summary": "Redesign Vault overview gallery layout so thumbnails are significantly larger on mobile with improved spacing and clearer month hierarchy, while preserving month grouping and tap-to-open behavior.",
+      "summary": "Add a 4th splash slide using the provided Gel Polish Manicure video and update splash sequencing to support 4 slides.",
       "acceptanceCriteria": [
-        "Vault overview thumbnails render at a noticeably larger size than the current 3-column grid (current code uses `grid grid-cols-3 gap-2`).",
-        "The Vault overview remains mobile-first and fits within the existing fixed viewport frame (max 390x844) without horizontal overflow.",
-        "Month grouping remains intact and still supports navigating to an individual moment by tapping a thumbnail."
+        "Splash slideshow shows 4 slides (not 3), with slide navigation and autoplay working through the 4th slide",
+        "The 4th slide renders `Gel Polish Manicure (1).mp4` as a looping, muted, inline video with no controls and no pointer interaction (hover does not reveal video UI)",
+        "The splash sequence logic (bounds checks, progress indicator/CTA behavior, and auth-based navigation) is updated so it no longer assumes there are only 3 slides"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/VaultPage.tsx",
+          "path": "frontend/src/pages/MobileSplashScreen.tsx",
           "operation": "modify",
-          "description": "Update the Vault overview grid from a cramped 3-column layout to a mobile-first larger-tile layout (e.g., fewer columns, increased gaps, improved padding) and refine the month section structure to create clearer hierarchy between the month header and its grid while keeping month grouping and tile navigation intact."
-        },
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Adjust Vault-specific CSS (e.g., month section spacing, grid/tile sizing helpers, and wrapper behavior) to support larger mobile tiles without introducing horizontal overflow inside the fixed 390x844 viewport frame."
+          "description": "Add a 4th card configuration using the `/assets/Gel Polish Manicure (1).mp4` video and update all slide-count assumptions (bounds checks, next/prev disable rules, autoplay stop condition, progress indicators, and auth-based navigation trigger) to support 4 total slides."
         }
       ]
     },
     {
       "id": "REQ-5",
-      "summary": "Improve Vault overview tile/card styling to feel more premium and consistent with the warm/beige baseline and existing typography.",
+      "summary": "Rename all user-visible 'Vault' labels to 'Moments' without changing existing route paths.",
       "acceptanceCriteria": [
-        "Vault thumbnail tiles have updated styling that is visually distinct from the current `.vault-thumbnail-tile` look and reads as a cohesive card system.",
-        "Typography for Vault headers/labels is consistent and uses the existing app font family (Bricolage Grotesque).",
-        "Styling changes are implemented via Vault-specific classes/components (no requirement to change backend behavior)."
+        "The header title in `frontend/src/pages/VaultPage.tsx` displays “Moments” instead of “Vault”",
+        "The Home bottom navbar item currently labeled “Vault” displays “Moments” instead",
+        "No user-visible text still says “Vault”"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Revise Vault-specific classes (notably `.vault-thumbnail-tile`, thumbnail wrapper/image, and month header/summary styling) to create a more intentional premium card system (surface treatment, border/shadow, corner radius, and typographic consistency) that still sits comfortably on the app’s warm/beige baseline."
-        },
-        {
           "path": "frontend/src/pages/VaultPage.tsx",
           "operation": "modify",
-          "description": "Align Vault month header and supporting labels to a consistent typographic system using the existing Bricolage Grotesque baseline (reduce inline style duplication where possible and apply Vault-specific classes for consistency)."
+          "description": "Update user-facing copy and aria labels from “Vault” to “Moments” while keeping navigation paths (e.g., `/vault`) unchanged."
+        },
+        {
+          "path": "frontend/src/pages/HomeScreen.tsx",
+          "operation": "modify",
+          "description": "Update the bottom navbar item label and aria-label from “Vault” to “Moments” while keeping navigation to `/vault` unchanged."
+        },
+        {
+          "path": "frontend/src/pages/VaultMomentPage.tsx",
+          "operation": "modify",
+          "description": "Update any remaining user-visible copy/aria labels that reference “Vault” (e.g., back button aria label) to “Moments” without changing route paths."
         }
       ]
     },
     {
       "id": "REQ-6",
-      "summary": "Add richer motion: smoother month/tiles entrances, clearer press feedback on tiles, and more polished transitions when entering/exiting VaultMomentPage.",
+      "summary": "Replace the Home bottom navbar Calendar item with a notifications bell that navigates to a notifications inbox screen.",
       "acceptanceCriteria": [
-        "Month sections animate in smoothly as they enter the viewport (building on the existing `useInView` usage and `.vault-month-section` / `.vault-month-visible`).",
-        "Vault tiles provide clear tap/press feedback (scale/opacity/shadow changes) that feels responsive on mobile.",
-        "Entering the moment viewer and returning to the Vault feels intentionally animated (e.g., backdrop/image/overlay animations) and does not introduce navigation glitches."
+        "The Home bottom navbar no longer displays a Calendar item",
+        "A bell icon (notifications) is present in the Home bottom navbar and navigates to the notifications inbox UI",
+        "Tapping the bell consistently opens the notifications inbox screen in the current app session"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/VaultPage.tsx",
+          "path": "frontend/src/pages/HomeScreen.tsx",
           "operation": "modify",
-          "description": "Enhance month section entrance behavior using the existing `useInView` pattern (e.g., tuning thresholds/root margins and applying a more polished visible state), and refine tile interaction handling so press/tap feedback is immediate and consistent on mobile."
+          "description": "Remove the Calendar navbar item and replace it with a Notifications bell item labeled in English; wire its click handler to navigate to the notifications inbox route."
+        },
+        {
+          "path": "frontend/src/pages/NotificationsPage.tsx",
+          "operation": "create",
+          "description": "Create a notifications inbox screen UI (read-only list/empty state is acceptable) with an in-header back arrow so the Home bell can navigate somewhere meaningful."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Register the notifications inbox route and wire it to `NotificationsPage` so the Home bell navigation consistently opens it."
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Remove the music option from the Moments (Vault) moment viewer and disable any background music initialization.",
+      "acceptanceCriteria": [
+        "The moment viewer no longer shows a music toggle button",
+        "No background music plays in the moment viewer"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/VaultMomentPage.tsx",
+          "operation": "modify",
+          "description": "Remove the music toggle control and delete/disable all background audio creation, interaction tracking for audio autoplay, and any audio playback side effects."
         },
         {
           "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "Upgrade Vault motion styles: improve `.vault-month-section` -> `.vault-month-visible` transitions; refine tile hover/active/pressed states for mobile (scale/opacity/shadow) with reduced-jank timing; and add Vault viewer enter/exit animation classes for the backdrop, image, and metadata overlay to create a more intentional transition feel."
+          "description": "Remove or repurpose any viewer styles that were exclusively used for the music toggle button so the UI remains consistent after the control is removed."
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "Enable selecting, saving, and viewing video moments alongside image moments in the existing local-first moments flow.",
+      "acceptanceCriteria": [
+        "Camera/gallery upload flow allows selecting video files (in addition to images) from the device",
+        "Saving a video moment persists it to the same local moments storage list with the correct MIME `type`",
+        "The Moments grid (`frontend/src/pages/VaultPage.tsx`) renders video moments without breaking layout (e.g., using a video element or a thumbnail-like preview)",
+        "The moment detail viewer (`frontend/src/pages/VaultMomentPage.tsx`) renders a playable video for video moments and an image for image moments"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/CameraScreen.tsx",
+          "operation": "modify",
+          "description": "Update the gallery upload input to allow video selection in addition to images; store the captured/uploaded file MIME type and support previewing uploaded videos appropriately."
+        },
+        {
+          "path": "frontend/src/pages/SaveMomentConfirmPage.tsx",
+          "operation": "modify",
+          "description": "Render the draft media as either an image or video based on MIME type; ensure saving persists the correct `type` into the existing local moments storage."
+        },
+        {
+          "path": "frontend/src/pages/VaultPage.tsx",
+          "operation": "modify",
+          "description": "Update the Moments grid tiles to render video moments safely (e.g., using a muted looping inline video preview without controls) while keeping layout consistent with image tiles."
         },
         {
           "path": "frontend/src/pages/VaultMomentPage.tsx",
           "operation": "modify",
-          "description": "Implement a polished enter/exit transition for the moment viewer: apply viewer animation classes on mount, and on back navigation trigger an exit animation state before navigating back to the Vault to avoid visual glitches (ensure the transition remains within the fixed viewport frame)."
+          "description": "Render moment media conditionally: show an `<img>` for image moments and a playable `<video>` for video moments based on the stored MIME type."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add/adjust styling so video previews and the detail viewer video use the same sizing/fit rules as images (grid tile cover behavior; viewer contain behavior)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "summary": "Enforce a 10-item cap for stored moments and add in-app deletion from the Moments UI with helpful storage-full guidance.",
+      "acceptanceCriteria": [
+        "Local moments storage prevents saving when there are already 10 moments and returns a clear English error message",
+        "Users can delete an existing moment from within the Moments UI (grid and/or detail viewer) and the UI updates immediately after deletion",
+        "If a save fails due to storage quota/full, the error message informs the user they can delete moments to free up space, and the user can navigate to the Moments screen to perform deletion"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/utils/momentsPhotosStorage.ts",
+          "operation": "modify",
+          "description": "Enforce a hard limit of 10 total moments (images + videos) before saving; return a clear English error when the cap is reached; add a delete capability for moments by ID and ensure storage update events fire so UIs refresh immediately."
+        },
+        {
+          "path": "frontend/src/pages/VaultPage.tsx",
+          "operation": "modify",
+          "description": "Add an in-grid delete affordance (with confirmation) for moments and refresh the grid immediately after deletion using existing storage update listeners."
+        },
+        {
+          "path": "frontend/src/pages/VaultMomentPage.tsx",
+          "operation": "modify",
+          "description": "Add a delete action in the moment detail viewer (with confirmation) to remove the current moment and return to the Moments list after successful deletion."
+        },
+        {
+          "path": "frontend/src/pages/SaveMomentConfirmPage.tsx",
+          "operation": "modify",
+          "description": "When saving fails due to storage cap/quota, display a clear English message that instructs the user to delete moments to free space and provide an in-app navigation action to go to the Moments screen (`/vault`) to delete."
+        },
+        {
+          "path": "frontend/src/components/ConfirmDeleteModal.tsx",
+          "operation": "modify",
+          "description": "Compose the existing modal as-is but extend it only if needed for Moments deletion UX (e.g., copy tweaks) without changing unrelated behavior."
+        }
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "summary": "Add a consistent slide-back transition animation for back-arrow (and equivalent) navigation across the app.",
+      "acceptanceCriteria": [
+        "Tapping the back arrow on screens that have a back arrow triggers a consistent slide-back transition before navigation completes",
+        "The transition is applied across all existing back-arrow screens (e.g., Calendar page, Moments page header back, moment viewer back, Settings/Profile back where applicable) without breaking navigation"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useBackSlideNavigation.ts",
+          "operation": "create",
+          "description": "Create a small reusable hook to coordinate a slide-back exit animation (state + timing) and then perform navigation, to keep behavior consistent across pages with back arrows."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add global CSS for a consistent slide-back exit transition (including reduced-motion handling) that pages can apply via a shared class when triggering back navigation."
+        },
+        {
+          "path": "frontend/src/pages/CalendarPage.tsx",
+          "operation": "modify",
+          "description": "Wire the back arrow to use the shared slide-back transition before navigating to the previous screen."
+        },
+        {
+          "path": "frontend/src/pages/VaultPage.tsx",
+          "operation": "modify",
+          "description": "Wire the header back arrow to use the shared slide-back transition before navigating back to Home."
+        },
+        {
+          "path": "frontend/src/pages/VaultMomentPage.tsx",
+          "operation": "modify",
+          "description": "Replace the current back navigation exit behavior with the shared slide-back transition so it matches other screens."
+        },
+        {
+          "path": "frontend/src/pages/SettingsPage.tsx",
+          "operation": "modify",
+          "description": "Wire the header back arrow to use the shared slide-back transition before navigating back to Home."
+        },
+        {
+          "path": "frontend/src/pages/ProfilePage.tsx",
+          "operation": "modify",
+          "description": "Wire the header back arrow to use the shared slide-back transition before navigating back to Home."
+        },
+        {
+          "path": "frontend/src/pages/NotificationsPage.tsx",
+          "operation": "modify",
+          "description": "Ensure the notifications inbox screen back arrow uses the same shared slide-back transition for consistency."
         }
       ]
     }

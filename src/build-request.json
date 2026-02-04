@@ -1,71 +1,159 @@
 {
   "kind": "build_request",
-  "title": "Revamp Vault gallery: larger cards, improved styling, richer motion",
+  "title": "Add 4th splash video slide, rename Vault to Moments, enable video moments, enforce 10-item cap with deletion, fix navbar notifications, and add global back-slide transitions",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-4",
-      "text": "Redesign the Vault overview gallery (VaultPage) so photo cards/thumbnails are significantly larger on mobile and no longer feel cramped (e.g., fewer columns, larger tile sizes, improved spacing, and clearer hierarchy between month header and grid).",
+      "text": "Add a 4th splash screen slide in `frontend/src/pages/MobileSplashScreen.tsx` that uses the provided video asset `Gel Polish Manicure (1).mp4`, replacing the prior image used for that slide; the video must appear indistinguishable from an image (no visible controls or hover affordances, no user interaction/pointer events, muted, looping, inline).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-3"
+          "msg-4",
+          "msg-5",
+          "msg-7"
         ],
         "quotes": [
-          "the vault is really lacking and the cards are way to smalll..and not styled visually well.. also not motion.."
+          "for the 4th slide in the spashscreen use this video and replcae it with the image used..but on hover nobody should know it a video",
+          "then this is the video for the 4th slide(gel polish)",
+          "its a video you just use it Gel Polish Manicure (1).mp4"
         ]
       },
       "acceptanceCriteria": [
-        "Vault overview thumbnails render at a noticeably larger size than the current 3-column grid (current code uses `grid grid-cols-3 gap-2`).",
-        "The Vault overview remains mobile-first and fits within the existing fixed viewport frame (max 390x844) without horizontal overflow.",
-        "Month grouping remains intact and still supports navigating to an individual moment by tapping a thumbnail."
+        "Splash slideshow shows 4 slides (not 3), with slide navigation and autoplay working through the 4th slide",
+        "The 4th slide renders `Gel Polish Manicure (1).mp4` as a looping, muted, inline video with no controls and no pointer interaction (hover does not reveal video UI)",
+        "The splash sequence logic (bounds checks, progress indicator/CTA behavior, and auth-based navigation) is updated so it no longer assumes there are only 3 slides"
       ]
     },
     {
       "id": "REQ-5",
-      "text": "Improve the visual styling of Vault overview cards/tiles to feel more premium and intentional (refine surface treatment, borders/shadows, corner radius, and typography consistency) while keeping the current app’s warm/beige baseline background.",
+      "text": "Rename the user-facing feature label “Vault” to “Moments” everywhere it appears in the UI (page headers, navbar labels, empty states, aria labels, and any other visible copy), without changing the existing route paths (e.g., keep `/vault` and `/vault/$momentId` unless required by existing routing constraints).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-3"
+          "msg-5",
+          "msg-7"
         ],
         "quotes": [
-          "not styled visually well"
+          "you should rename it to moments instead if vault",
+          "then all vault text changed to moments"
         ]
       },
       "acceptanceCriteria": [
-        "Vault thumbnail tiles have updated styling that is visually distinct from the current `.vault-thumbnail-tile` look and reads as a cohesive card system.",
-        "Typography for Vault headers/labels is consistent and uses the existing app font family (Bricolage Grotesque).",
-        "Styling changes are implemented via Vault-specific classes/components (no requirement to change backend behavior)."
+        "The header title in `frontend/src/pages/VaultPage.tsx` displays “Moments” instead of “Vault”",
+        "The Home bottom navbar item currently labeled “Vault” displays “Moments” instead",
+        "No user-visible text still says “Vault”"
       ]
     },
     {
       "id": "REQ-6",
-      "text": "Add richer motion to the Vault experience: smoother entrance animations for month sections and tiles, improved tap/press feedback on tiles, and a more polished transition feel when navigating into and out of the moment viewer (VaultMomentPage).",
+      "text": "Replace the Home bottom navbar Calendar icon/label with a notifications bell icon/label and wire it to the app’s notifications inbox screen so notifications navigation works (and the calendar item is removed from the navbar).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-3"
+          "msg-4",
+          "msg-5",
+          "msg-7"
         ],
         "quotes": [
-          "also not motion.."
+          "also the notification thing didnt work the calender on the navbar is still there",
+          "the navbar i want calender entirely remove replce with nofication bell icon"
         ]
       },
       "acceptanceCriteria": [
-        "Month sections animate in smoothly as they enter the viewport (building on the existing `useInView` usage and `.vault-month-section` / `.vault-month-visible`).",
-        "Vault tiles provide clear tap/press feedback (scale/opacity/shadow changes) that feels responsive on mobile.",
-        "Entering the moment viewer and returning to the Vault feels intentionally animated (e.g., backdrop/image/overlay animations) and does not introduce navigation glitches."
+        "The Home bottom navbar no longer displays a Calendar item",
+        "A bell icon (notifications) is present in the Home bottom navbar and navigates to the notifications inbox UI",
+        "Tapping the bell consistently opens the notifications inbox screen in the current app session"
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Remove the music option from the Moments (formerly Vault) moment viewer UI by removing the music toggle control and disabling any background music initialization/auto-play behavior in `frontend/src/pages/VaultMomentPage.tsx`.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4",
+          "msg-7"
+        ],
+        "quotes": [
+          "in the vault remove the music option",
+          "Vault: remove the music option from the UI"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The moment viewer no longer shows a music toggle button",
+        "No background music plays in the moment viewer"
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "text": "Support saving and viewing video moments in addition to image moments: allow selecting video files from the gallery upload flow, persist them in the existing local-first moments storage, and render videos correctly in the Moments grid and the moment detail viewer.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "also allow user to do viideos not only iamges"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Camera/gallery upload flow allows selecting video files (in addition to images) from the device",
+        "Saving a video moment persists it to the same local moments storage list with the correct MIME `type`",
+        "The Moments grid (`frontend/src/pages/VaultPage.tsx`) renders video moments without breaking layout (e.g., using a video element or a thumbnail-like preview)",
+        "The moment detail viewer (`frontend/src/pages/VaultMomentPage.tsx`) renders a playable video for video moments and an image for image moments"
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "text": "Enforce a maximum of 10 stored moments (combined images + videos) in local moments storage, and provide an in-app way for users to delete existing moments to free space (including when a storage-full error occurs).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4",
+          "msg-5"
+        ],
+        "quotes": [
+          "i saw storage full but doeasnt allow a user to delete their current..i think it could allow upto 10..",
+          "then vault is 10 combined"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Local moments storage prevents saving when there are already 10 moments and returns a clear English error message",
+        "Users can delete an existing moment from within the Moments UI (grid and/or detail viewer) and the UI updates immediately after deletion",
+        "If a save fails due to storage quota/full, the error message informs the user they can delete moments to free up space, and the user can navigate to the Moments screen to perform deletion"
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "text": "Add a consistent slide transition animation when navigating back via any screen’s back arrow (and equivalent back actions) so that returning to the previous screen uses a smooth slide transition across the app.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5",
+          "msg-7"
+        ],
+        "quotes": [
+          "also the way someone clicks a back key i want the page to slide as exsitng..on all back arrow..just for smoother appreance ...",
+          "every screen that happens to have a back arrow"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Tapping the back arrow on screens that have a back arrow triggers a consistent slide-back transition before navigation completes",
+        "The transition is applied across all existing back-arrow screens (e.g., Calendar page, Moments page header back, moment viewer back, Settings/Profile back where applicable) without breaking navigation"
       ]
     }
   ],
   "constraints": [
-    "Do not edit files under frontend immutable paths (frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui).",
-    "Keep backend architecture unchanged (single Motoko actor); this Vault revamp should be frontend-only unless strictly necessary."
+    "Do not edit files under `frontend/src/components/ui` (compose them only).",
+    "Do not edit any files listed in `frontend.immutablePaths` in SYSTEM_CONTEXT.",
+    "Backend must remain a single Motoko actor; only add `backend/migration.mo` if state upgrade handling is required (this request is expected to be frontend/local-first only unless existing backend storage is used for moments).",
+    "Use English for any user-facing text."
   ],
   "nonGoals": [
-    "Do not add new backend storage, indexing, or syncing for Vault moments as part of this request.",
-    "Do not introduce third-party animation libraries; use existing CSS/Tailwind/React patterns already in the codebase.",
-    "Do not change the camera capture flow or photo storage schema as part of the Vault styling/motion upgrade."
+    "Do not add any third-party authentication providers (Internet Identity only).",
+    "Do not introduce external databases or non-supported backend technologies.",
+    "Do not redesign unrelated screens beyond the requested text/icon/navigation/transition changes."
   ],
   "imageRequirements": {
     "required": [],

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { Plus } from 'lucide-react';
+import { Plus, Bell } from 'lucide-react';
 import HomeWeeklyCalendarStrip from '../components/HomeWeeklyCalendarStrip';
 import PlannedMomentBottomSheet from '../components/PlannedMomentBottomSheet';
 import PlannedMomentCard from '../components/PlannedMomentCard';
@@ -28,8 +28,8 @@ function HomeScreen() {
         navigate({ to: '/camera' });
     };
 
-    const handleCalendarClick = () => {
-        navigate({ to: '/calendar' });
+    const handleNotificationsClick = () => {
+        navigate({ to: '/notifications' });
     };
 
     const handleVaultClick = () => {
@@ -268,30 +268,31 @@ function HomeScreen() {
                                 </span>
                             </button>
 
-                            {/* Calendar */}
+                            {/* Notifications */}
                             <button 
-                                onClick={handleCalendarClick}
+                                onClick={handleNotificationsClick}
                                 className="flex flex-col items-center justify-center gap-0.5 min-w-[52px] transition-all duration-300 ease-in-out no-pulse"
-                                aria-label="Calendar"
-                                onMouseEnter={() => setHoveredNav('calendar')}
+                                aria-label="Notifications"
+                                onMouseEnter={() => setHoveredNav('notifications')}
                                 onMouseLeave={() => setHoveredNav(null)}
                             >
-                                <i 
-                                    className="fa-regular fa-calendar-days transition-colors duration-300 ease-in-out"
+                                <Bell 
+                                    className="transition-colors duration-300 ease-in-out"
                                     style={{ 
-                                        color: hoveredNav === 'calendar' ? '#ffa500' : '#000000',
-                                        fontSize: '15px'
+                                        color: hoveredNav === 'notifications' ? '#ffa500' : '#000000',
+                                        width: '15px',
+                                        height: '15px'
                                     }}
-                                ></i>
+                                />
                                 <span 
                                     className="text-xs font-medium transition-colors duration-300 ease-in-out"
                                     style={{ 
-                                        color: hoveredNav === 'calendar' ? '#ffa500' : '#000000',
+                                        color: hoveredNav === 'notifications' ? '#ffa500' : '#000000',
                                         fontFamily: "'Bricolage Grotesque', sans-serif",
                                         fontSize: '9px'
                                     }}
                                 >
-                                    Calendar
+                                    Notifications
                                 </span>
                             </button>
 
@@ -304,30 +305,30 @@ function HomeScreen() {
                                 <i className="fa-solid fa-camera text-black" style={{ fontSize: '20px' }}></i>
                             </button>
 
-                            {/* Vault */}
+                            {/* Moments (formerly Vault) */}
                             <button 
                                 onClick={handleVaultClick}
                                 className="flex flex-col items-center justify-center gap-0.5 min-w-[52px] transition-all duration-300 ease-in-out no-pulse"
-                                aria-label="Vault"
-                                onMouseEnter={() => setHoveredNav('vault')}
+                                aria-label="Moments"
+                                onMouseEnter={() => setHoveredNav('moments')}
                                 onMouseLeave={() => setHoveredNav(null)}
                             >
                                 <i 
                                     className="fa-solid fa-box-archive transition-colors duration-300 ease-in-out"
                                     style={{ 
-                                        color: hoveredNav === 'vault' ? '#ffa500' : '#000000',
+                                        color: hoveredNav === 'moments' ? '#ffa500' : '#000000',
                                         fontSize: '15px'
                                     }}
                                 ></i>
                                 <span 
                                     className="text-xs font-medium transition-colors duration-300 ease-in-out"
                                     style={{ 
-                                        color: hoveredNav === 'vault' ? '#ffa500' : '#000000',
+                                        color: hoveredNav === 'moments' ? '#ffa500' : '#000000',
                                         fontFamily: "'Bricolage Grotesque', sans-serif",
                                         fontSize: '9px'
                                     }}
                                 >
-                                    Vault
+                                    Moments
                                 </span>
                             </button>
 
