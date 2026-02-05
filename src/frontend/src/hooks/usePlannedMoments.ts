@@ -1,27 +1,25 @@
 import { useState, useEffect } from 'react';
 import {
   PlannedMoment,
-  SaveResult,
   loadPlannedMoments,
-  loadPlannedMomentsMostRecentFirst,
   savePlannedMoment,
-  deletePlannedMoment,
   getPlannedMomentsForDate,
   getDatesWithMoments,
-  getDateColorMap,
+  getDateSegmentColors,
+  getSortedDatesWithMoments,
   subscribeToStorageChanges,
 } from '../utils/plannedMomentsStorage';
 
 export function usePlannedMoments(selectedDate: Date | null) {
   const [moments, setMoments] = useState<PlannedMoment[]>([]);
-  const [allMoments, setAllMoments] = useState<PlannedMoment[]>([]);
   const [datesWithMoments, setDatesWithMoments] = useState<Set<string>>(new Set());
-  const [dateColorMap, setDateColorMap] = useState<Map<string, string>>(new Map());
+  const [dateSegmentColors, setDateSegmentColors] = useState<Map<string, string[]>>(new Map());
+  const [sortedDates, setSortedDates] = useState<string[]>([]);
 
   const refreshData = () => {
-    setAllMoments(loadPlannedMomentsMostRecentFirst());
     setDatesWithMoments(getDatesWithMoments());
-    setDateColorMap(getDateColorMap());
+    setDateSegmentColors(getDateSegmentColors());
+    setSortedDates(getSortedDatesWithMoments());
     if (selectedDate) {
       setMoments(getPlannedMomentsForDate(selectedDate));
     }
@@ -45,23 +43,16 @@ export function usePlannedMoments(selectedDate: Date | null) {
     }
   }, [selectedDate]);
 
-  const addMoment = (moment: Omit<PlannedMoment, 'id' | 'createdAt'>): SaveResult => {
-    const result = savePlannedMoment(moment);
-    // Data will be refreshed automatically via storage change subscription
-    return result;
-  };
-
-  const deleteMoment = (momentId: string) => {
-    deletePlannedMoment(momentId);
+  const addMoment = (moment: Omit<PlannedMoment, 'id' | 'createdAt'>) => {
+    const newMoment = savePlannedMoment(moment);
     // Data will be refreshed automatically via storage change subscription
   };
 
   return {
     moments,
-    allMoments,
     datesWithMoments,
-    dateColorMap,
+    dateSegmentColors,
+    sortedDates,
     addMoment,
-    deleteMoment,
   };
 }

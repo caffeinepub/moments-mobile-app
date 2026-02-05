@@ -24,17 +24,6 @@ export const UserRole = IDL.Variant({
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
-export const BuildStatus = IDL.Variant({
-  'production' : IDL.Null,
-  'draft' : IDL.Null,
-  'archived' : IDL.Null,
-});
-export const BuildVersion = IDL.Record({
-  'promotedBy' : IDL.Opt(IDL.Principal),
-  'status' : BuildStatus,
-  'version' : IDL.Nat,
-  'timestamp' : IDL.Int,
-});
 export const PhotoMetadata = IDL.Record({
   'id' : IDL.Nat,
   'owner' : IDL.Principal,
@@ -77,20 +66,12 @@ export const idlService = IDL.Service({
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-  'createDraftBuild' : IDL.Func([IDL.Nat], [], []),
   'deletePhoto' : IDL.Func([IDL.Nat], [IDL.Bool], []),
   'getBlob' : IDL.Func([IDL.Text], [IDL.Opt(IDL.Vec(IDL.Nat8))], ['query']),
-  'getBuildVersion' : IDL.Func([IDL.Nat], [IDL.Opt(BuildVersion)], ['query']),
   'getCallerMomentsPhotos' : IDL.Func([], [IDL.Vec(PhotoMetadata)], ['query']),
   'getCallerSettings' : IDL.Func([], [IDL.Opt(UserSettings)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-  'getCurrentDraftVersion' : IDL.Func([], [IDL.Opt(BuildVersion)], ['query']),
-  'getCurrentProductionVersion' : IDL.Func(
-      [],
-      [IDL.Opt(BuildVersion)],
-      ['query'],
-    ),
   'getUserMomentsPhotos' : IDL.Func(
       [IDL.Principal],
       [IDL.Vec(PhotoMetadata)],
@@ -102,8 +83,6 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
-  'listAllBuilds' : IDL.Func([], [IDL.Vec(BuildVersion)], ['query']),
-  'promoteBuildToProduction' : IDL.Func([IDL.Nat], [], []),
   'saveCallerSettings' : IDL.Func([UserSettings], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'storePhoto' : IDL.Func([IDL.Vec(IDL.Nat8)], [IDL.Text], []),
@@ -127,17 +106,6 @@ export const idlFactory = ({ IDL }) => {
     'admin' : IDL.Null,
     'user' : IDL.Null,
     'guest' : IDL.Null,
-  });
-  const BuildStatus = IDL.Variant({
-    'production' : IDL.Null,
-    'draft' : IDL.Null,
-    'archived' : IDL.Null,
-  });
-  const BuildVersion = IDL.Record({
-    'promotedBy' : IDL.Opt(IDL.Principal),
-    'status' : BuildStatus,
-    'version' : IDL.Nat,
-    'timestamp' : IDL.Int,
   });
   const PhotoMetadata = IDL.Record({
     'id' : IDL.Nat,
@@ -181,10 +149,8 @@ export const idlFactory = ({ IDL }) => {
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-    'createDraftBuild' : IDL.Func([IDL.Nat], [], []),
     'deletePhoto' : IDL.Func([IDL.Nat], [IDL.Bool], []),
     'getBlob' : IDL.Func([IDL.Text], [IDL.Opt(IDL.Vec(IDL.Nat8))], ['query']),
-    'getBuildVersion' : IDL.Func([IDL.Nat], [IDL.Opt(BuildVersion)], ['query']),
     'getCallerMomentsPhotos' : IDL.Func(
         [],
         [IDL.Vec(PhotoMetadata)],
@@ -193,12 +159,6 @@ export const idlFactory = ({ IDL }) => {
     'getCallerSettings' : IDL.Func([], [IDL.Opt(UserSettings)], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-    'getCurrentDraftVersion' : IDL.Func([], [IDL.Opt(BuildVersion)], ['query']),
-    'getCurrentProductionVersion' : IDL.Func(
-        [],
-        [IDL.Opt(BuildVersion)],
-        ['query'],
-      ),
     'getUserMomentsPhotos' : IDL.Func(
         [IDL.Principal],
         [IDL.Vec(PhotoMetadata)],
@@ -210,8 +170,6 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
-    'listAllBuilds' : IDL.Func([], [IDL.Vec(BuildVersion)], ['query']),
-    'promoteBuildToProduction' : IDL.Func([IDL.Nat], [], []),
     'saveCallerSettings' : IDL.Func([UserSettings], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'storePhoto' : IDL.Func([IDL.Vec(IDL.Nat8)], [IDL.Text], []),

@@ -1,4 +1,5 @@
 import { RouterProvider, createRouter, createRoute, createRootRoute, Outlet } from '@tanstack/react-router';
+import { useEffect, useRef } from 'react';
 import MobileSplashScreen from './pages/MobileSplashScreen';
 import WelcomePage from './pages/WelcomePage';
 import HomeScreen from './pages/HomeScreen';
@@ -10,10 +11,42 @@ import CalendarPage from './pages/CalendarPage';
 import VaultPage from './pages/VaultPage';
 import VaultMomentPage from './pages/VaultMomentPage';
 import ProfilePage from './pages/ProfilePage';
-import NotificationsPage from './pages/NotificationsPage';
+import {
+  logBuildInfo,
+  needsCacheRefresh,
+  performCacheRefresh,
+  storeCurrentBuildVersion,
+  verifyBuildVersion
+} from './utils/buildInfo';
 
-// Root component without forced redirects
+// Root component with build version guard
 function RootComponent() {
+    const hasCheckedBuild = useRef(false);
+
+    useEffect(() => {
+        // Only run once on mount
+        if (hasCheckedBuild.current) return;
+        hasCheckedBuild.current = true;
+
+        // Log build info for diagnostics
+        logBuildInfo();
+
+        // Verify we're running the correct build
+        if (!verifyBuildVersion()) {
+            console.warn('Build version mismatch detected in DOM!');
+        }
+
+        // Check if we need to refresh due to version change
+        if (needsCacheRefresh()) {
+            console.log('Stale build detected, performing cache refresh...');
+            performCacheRefresh();
+            return;
+        }
+
+        // Store current version for future checks
+        storeCurrentBuildVersion();
+    }, []);
+
     return <Outlet />;
 }
 
@@ -87,12 +120,6 @@ const profileRoute = createRoute({
     component: ProfilePage
 });
 
-const notificationsRoute = createRoute({
-    getParentRoute: () => rootRoute,
-    path: '/notifications',
-    component: NotificationsPage
-});
-
 const routeTree = rootRoute.addChildren([
     indexRoute, 
     welcomeRoute, 
@@ -104,8 +131,7 @@ const routeTree = rootRoute.addChildren([
     calendarRoute, 
     vaultRoute,
     vaultMomentRoute,
-    profileRoute,
-    notificationsRoute
+    profileRoute
 ]);
 
 const router = createRouter({ routeTree });

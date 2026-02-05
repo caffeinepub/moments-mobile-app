@@ -5,14 +5,14 @@ interface HomeWeeklyCalendarStripProps {
   selectedDate?: Date;
   onDateSelect?: (date: Date) => void;
   datesWithMoments?: Set<string>;
-  dateColorMap?: Map<string, string>;
+  dateSegmentColors?: Map<string, string[]>;
 }
 
 export default function HomeWeeklyCalendarStrip({ 
   selectedDate: propSelectedDate,
   onDateSelect,
   datesWithMoments = new Set(),
-  dateColorMap = new Map(),
+  dateSegmentColors = new Map(),
 }: HomeWeeklyCalendarStripProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(propSelectedDate || new Date());
@@ -114,30 +114,30 @@ export default function HomeWeeklyCalendarStrip({
           const dayInitial = dayInitials[index];
           const dateStr = formatDateToISO(date);
           const hasMoment = datesWithMoments.has(dateStr);
-          const momentColor = dateColorMap.get(dateStr);
+          const segmentColors = dateSegmentColors.get(dateStr) || [];
 
           return (
             <button
               key={index}
               onClick={() => handleDayClick(date)}
               className={`home-calendar-day-button no-pulse ${
-                isSelected 
-                  ? 'home-calendar-day-selected' 
-                  : hasMoment && momentColor
-                  ? 'home-calendar-day-with-moment'
-                  : 'home-calendar-day-inactive'
+                isSelected ? 'home-calendar-day-selected' : 'home-calendar-day-inactive'
               }`}
-              style={
-                isSelected && hasMoment && momentColor
-                  ? { backgroundColor: momentColor }
-                  : !isSelected && hasMoment && momentColor
-                  ? { backgroundColor: momentColor }
-                  : undefined
-              }
               aria-label={`${dayInitial} ${dayNumber}`}
             >
               <span className="home-calendar-day-initial">{dayInitial}</span>
               <span className="home-calendar-day-number">{dayNumber}</span>
+              {hasMoment && segmentColors.length > 0 && !isSelected && (
+                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-0.5">
+                  {segmentColors.slice(0, 3).map((color, idx) => (
+                    <div
+                      key={idx}
+                      className="w-1 h-1 rounded-full"
+                      style={{ backgroundColor: color }}
+                    />
+                  ))}
+                </div>
+              )}
             </button>
           );
         })}

@@ -4,563 +4,74 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  /* Light mode colors using OKLCH */
-  --background: oklch(98% 0.01 106);
-  --foreground: oklch(15% 0.01 106);
-  --card: oklch(100% 0 0);
-  --card-foreground: oklch(15% 0.01 106);
-  --popover: oklch(100% 0 0);
-  --popover-foreground: oklch(15% 0.01 106);
-  --primary: oklch(47% 0.14 262);
-  --primary-foreground: oklch(98% 0.01 106);
-  --secondary: oklch(96% 0.01 106);
-  --secondary-foreground: oklch(15% 0.01 106);
-  --muted: oklch(96% 0.01 106);
-  --muted-foreground: oklch(45% 0.01 106);
-  --accent: oklch(96% 0.01 106);
-  --accent-foreground: oklch(15% 0.01 106);
-  --destructive: oklch(58% 0.23 25);
-  --destructive-foreground: oklch(98% 0.01 106);
-  --border: oklch(90% 0.01 106);
-  --input: oklch(90% 0.01 106);
-  --ring: oklch(47% 0.14 262);
-  --radius: 0.5rem;
-  --chart-1: oklch(62% 0.18 15);
-  --chart-2: oklch(72% 0.15 165);
-  --chart-3: oklch(65% 0.12 60);
-  --chart-4: oklch(68% 0.14 285);
-  --chart-5: oklch(75% 0.11 45);
-  --beige: oklch(92% 0.02 85);
-  
-  /* Vault-specific design tokens */
-  --vault-surface: oklch(98% 0.01 85);
-  --vault-card: oklch(100% 0 0);
-  --vault-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
-  --vault-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
-  --vault-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
-  --vault-border: oklch(92% 0.01 85);
-}
-
-.dark {
-  /* Dark mode colors using OKLCH */
-  --background: oklch(15% 0.01 106);
-  --foreground: oklch(98% 0.01 106);
-  --card: oklch(15% 0.01 106);
-  --card-foreground: oklch(98% 0.01 106);
-  --popover: oklch(15% 0.01 106);
-  --popover-foreground: oklch(98% 0.01 106);
-  --primary: oklch(98% 0.01 106);
-  --primary-foreground: oklch(15% 0.01 106);
-  --secondary: oklch(22% 0.01 106);
-  --secondary-foreground: oklch(98% 0.01 106);
-  --muted: oklch(22% 0.01 106);
-  --muted-foreground: oklch(65% 0.01 106);
-  --accent: oklch(22% 0.01 106);
-  --accent-foreground: oklch(98% 0.01 106);
-  --destructive: oklch(58% 0.23 25);
-  --destructive-foreground: oklch(98% 0.01 106);
-  --border: oklch(22% 0.01 106);
-  --input: oklch(22% 0.01 106);
-  --ring: oklch(68% 0.14 262);
-  --chart-1: oklch(72% 0.18 15);
-  --chart-2: oklch(82% 0.15 165);
-  --chart-3: oklch(75% 0.12 60);
-  --chart-4: oklch(78% 0.14 285);
-  --chart-5: oklch(85% 0.11 45);
-}
-
-* {
-  @apply border-border;
-}
-
-body {
-  @apply bg-background text-foreground;
-  font-family: 'Bricolage Grotesque', sans-serif;
-}
-
-/* ============================================
-   GLASSMORPHIC CARD STYLE
-   ============================================ */
-
-.glass-card {
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
-}
-
-/* Home screen planning container - calm neutral surface */
-.home-planning-container {
-  background: transparent;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid #d0d0d0;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-}
-
-/* ============================================
-   HOME WEEKLY CALENDAR STRIP STYLES
-   ============================================ */
-
-/* Calendar strip container */
-.home-weekly-calendar-strip {
-  width: 100%;
-  padding: 16px 0;
-}
-
-/* Reschedule label - small gray text above month */
-.home-calendar-reschedule-label {
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 12px;
-  font-weight: 400;
-  color: #9ca3af;
-  letter-spacing: 0.02em;
-}
-
-/* Month title - centered, bold */
-.home-calendar-month-title {
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 28px;
-  font-weight: 700;
-  color: #1f2937;
-  letter-spacing: -0.02em;
-}
-
-/* Arrow navigation buttons - rounded, minimal */
-.home-calendar-arrow-button {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #f5f0e8;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #1f2937;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.home-calendar-arrow-button:hover {
-  background: #e8e2d8;
-}
-
-.home-calendar-arrow-button:active {
-  transform: scale(0.95);
-}
-
-/* Day button base */
-.home-calendar-day-button {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  padding: 12px 8px;
-  border-radius: 16px;
-  border: none;
-  background: transparent;
-  transition: all 0.25s ease;
-  cursor: pointer;
-  min-width: 44px;
-  position: relative;
-}
-
-/* Day initial (Sun, Mon, etc.) */
-.home-calendar-day-initial {
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-}
-
-/* Day number */
-.home-calendar-day-number {
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-/* Inactive day state - soft gray */
-.home-calendar-day-inactive {
-  color: #9ca3af;
-}
-
-.home-calendar-day-inactive:hover {
-  background: rgba(156, 163, 175, 0.1);
-}
-
-/* Day with planned moment - color-filled pill */
-.home-calendar-day-with-moment {
-  color: #1f2937;
-  padding: 12px 8px;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-}
-
-.home-calendar-day-with-moment:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
-  transform: translateY(-1px);
-}
-
-.home-calendar-day-with-moment:active {
-  transform: scale(0.97);
-}
-
-/* Selected day state - tall pill with dynamic color */
-.home-calendar-day-selected {
-  background: #1f2937;
-  color: #ffffff;
-  padding: 16px 12px;
-  border-radius: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.home-calendar-day-selected:hover {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-}
-
-.home-calendar-day-selected:active {
-  transform: scale(0.97);
-}
-
-/* ============================================
-   HOME PLANNED MOMENT CARD STYLES (PILL BORDER-ONLY)
-   ============================================ */
-
-/* Planned moment card - slimmer, more elongated pill with fully transparent interior and thin border only */
-.planned-moment-card-clear {
-  width: 100%;
-  padding: 8px 16px 8px 44px;
-  border-radius: 9999px;
-  position: relative;
-  cursor: default;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  
-  /* Fully transparent - no fill, no blur */
-  background: transparent;
-  
-  /* Thin border using moment color */
-  border: 1.5px solid var(--card-border-color, rgba(0, 0, 0, 0.1));
-  
-  box-shadow: none;
-  transition: all 0.25s ease;
-}
-
-.planned-moment-card-clear:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transform: translateY(-1px);
-}
-
-/* Left color dot with black ring - smaller and repositioned for slimmer pill */
-.planned-moment-card-color-dot {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 2px solid #000000;
-  flex-shrink: 0;
-  z-index: 1;
-}
-
-/* Card date label - primary line, dark text, smaller for slim pill */
-.planned-moment-card-date {
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: #1f2937;
-  letter-spacing: 0.01em;
-  line-height: 1.2;
-}
-
-/* Secondary lines - title and time, smaller for slim pill */
-.planned-moment-card-secondary-line {
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 11px;
-  font-weight: 400;
-  color: #6b7280;
-  line-height: 1.3;
-}
-
-/* ============================================
-   PLANNED MOMENT CARD IN-CARD ACTION ICONS
-   ============================================ */
-
-/* Right-aligned actions column - vertically stacked icons, tighter for slim pill */
-.planned-moment-card-actions-column {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  align-items: center;
-  flex-shrink: 0;
-  margin-left: auto;
-}
-
-/* Action icon buttons - share and trash, smaller for slim pill */
-.planned-moment-card-action-icon {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: transparent;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #6b7280;
-  font-size: 11px;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.planned-moment-card-action-icon:hover {
-  color: #1f2937;
-  background: rgba(0, 0, 0, 0.05);
-  transform: scale(1.1);
-}
-
-.planned-moment-card-action-icon:active {
-  transform: scale(0.95);
-}
-
-/* ============================================
-   MOMENT FEELING CHECK PAGE - PILL STYLING
-   ============================================ */
-
-/* Feeling option pill - matching planned moment card aesthetic */
-.feeling-option-pill {
-  width: 100%;
-  padding: 12px 20px;
-  border-radius: 9999px;
-  position: relative;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  
-  /* Fully transparent interior */
-  background: transparent;
-  
-  /* Thin border - calm neutral palette */
-  border: 1.5px solid rgba(0, 0, 0, 0.12);
-  
-  box-shadow: none;
-  transition: all 0.25s ease;
-  font-family: 'Bricolage Grotesque', sans-serif;
-}
-
-.feeling-option-pill:hover:not(:disabled) {
-  border-color: rgba(0, 0, 0, 0.25);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transform: translateY(-1px);
-}
-
-.feeling-option-pill:active:not(:disabled) {
-  transform: scale(0.98);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-}
-
-.feeling-option-pill:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Feeling emoji */
-.feeling-option-emoji {
-  font-size: 32px;
-  line-height: 1;
-  flex-shrink: 0;
-}
-
-/* Feeling label */
-.feeling-option-label {
-  font-size: 18px;
-  font-weight: 600;
-  color: #1f2937;
-  letter-spacing: -0.01em;
-}
-
-/* Feeling list custom scrollbar - thin and elegant */
-.feeling-list-scrollbar::-webkit-scrollbar {
-  width: 4px;
-}
-
-.feeling-list-scrollbar::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.03);
-  border-radius: 10px;
-}
-
-.feeling-list-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: 10px;
-}
-
-.feeling-list-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.25);
-}
-
-/* Firefox scrollbar styling */
-.feeling-list-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.03);
-}
-
-/* ============================================
-   CONFIRM DELETE MODAL
-   ============================================ */
-
-/* Modal backdrop */
-.confirm-delete-backdrop {
-  animation: confirmBackdropFadeIn 0.2s ease-out forwards;
-}
-
-@keyframes confirmBackdropFadeIn {
-  from {
-    opacity: 0;
+@layer base {
+  :root {
+    --background: oklch(98% 0.01 106);
+    --foreground: oklch(15% 0.02 106);
+    --card: oklch(100% 0 0);
+    --card-foreground: oklch(15% 0.02 106);
+    --popover: oklch(100% 0 0);
+    --popover-foreground: oklch(15% 0.02 106);
+    --primary: oklch(45% 0.15 264);
+    --primary-foreground: oklch(98% 0.01 106);
+    --secondary: oklch(95% 0.01 106);
+    --secondary-foreground: oklch(15% 0.02 106);
+    --muted: oklch(95% 0.01 106);
+    --muted-foreground: oklch(50% 0.02 106);
+    --accent: oklch(95% 0.01 106);
+    --accent-foreground: oklch(15% 0.02 106);
+    --destructive: oklch(55% 0.22 25);
+    --destructive-foreground: oklch(98% 0.01 106);
+    --border: oklch(90% 0.01 106);
+    --input: oklch(90% 0.01 106);
+    --ring: oklch(45% 0.15 264);
+    --radius: 0.5rem;
+    --chart-1: oklch(60% 0.15 12);
+    --chart-2: oklch(70% 0.15 160);
+    --chart-3: oklch(55% 0.15 0);
+    --chart-4: oklch(65% 0.15 60);
+    --chart-5: oklch(60% 0.15 330);
   }
-  to {
-    opacity: 1;
+
+  .dark {
+    --background: oklch(15% 0.02 106);
+    --foreground: oklch(98% 0.01 106);
+    --card: oklch(15% 0.02 106);
+    --card-foreground: oklch(98% 0.01 106);
+    --popover: oklch(15% 0.02 106);
+    --popover-foreground: oklch(98% 0.01 106);
+    --primary: oklch(70% 0.15 264);
+    --primary-foreground: oklch(15% 0.02 106);
+    --secondary: oklch(25% 0.02 106);
+    --secondary-foreground: oklch(98% 0.01 106);
+    --muted: oklch(25% 0.02 106);
+    --muted-foreground: oklch(65% 0.02 106);
+    --accent: oklch(25% 0.02 106);
+    --accent-foreground: oklch(98% 0.01 106);
+    --destructive: oklch(60% 0.22 25);
+    --destructive-foreground: oklch(98% 0.01 106);
+    --border: oklch(25% 0.02 106);
+    --input: oklch(25% 0.02 106);
+    --ring: oklch(70% 0.15 264);
+    --chart-1: oklch(65% 0.15 20);
+    --chart-2: oklch(70% 0.15 160);
+    --chart-3: oklch(60% 0.15 30);
+    --chart-4: oklch(70% 0.15 280);
+    --chart-5: oklch(65% 0.15 340);
   }
 }
 
-/* Modal container - glassmorphic */
-.confirm-delete-modal {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 16px;
-  padding: 20px;
-  max-width: 340px;
-  width: 90%;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  animation: confirmModalSlideIn 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-}
-
-@keyframes confirmModalSlideIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95) translateY(10px);
+@layer base {
+  * {
+    @apply border-border;
   }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Bricolage Grotesque', sans-serif;
   }
 }
 
-/* Modal title */
-.confirm-delete-title {
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 18px;
-  font-weight: 700;
-  color: #1f2937;
-  letter-spacing: -0.01em;
-}
-
-/* Modal message */
-.confirm-delete-message {
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  color: #6b7280;
-  line-height: 1.5;
-}
-
-/* Modal buttons */
-.confirm-delete-button {
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-weight: 600;
-  font-size: 14px;
-  padding: 10px 24px;
-  border-radius: 9999px;
-  border: 2px solid #000000;
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
-  transition: all 0.25s ease;
-  cursor: pointer;
-  min-width: 100px;
-}
-
-.confirm-delete-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-}
-
-.confirm-delete-button:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
-}
-
-/* Cancel button - neutral */
-.confirm-delete-button-cancel {
-  background-color: #e5e7eb;
-  color: #1f2937;
-}
-
-.confirm-delete-button-cancel:hover {
-  background-color: #d1d5db;
-}
-
-/* Delete button - destructive red */
-.confirm-delete-button-delete {
-  background-color: oklch(65% 0.20 25);
-  color: #ffffff;
-}
-
-.confirm-delete-button-delete:hover {
-  background-color: oklch(60% 0.22 25);
-}
-
-/* ============================================
-   HOME ADD PLANNING BUTTON (+ ICON)
-   ============================================ */
-
-/* Compact + icon button - camera-circle style */
-.home-add-planning-button {
-  background-color: #fbbf24;
-  color: #000000;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 2px solid #000000;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.home-add-planning-button:hover:not(:disabled) {
-  background-color: #f59e0b;
-  transform: scale(1.08);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18);
-}
-
-.home-add-planning-button:active:not(:disabled) {
-  transform: scale(0.95);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
-}
-
-.home-add-planning-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* ============================================
-   HOME SCROLLBAR - HIDDEN
-   ============================================ */
-
+/* Hide scrollbar for Home screen */
 .home-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -570,512 +81,436 @@ body {
   scrollbar-width: none;
 }
 
-/* ============================================
-   SPLASH SCREEN ANIMATIONS
-   ============================================ */
-
-/* Text slide-in animation from left to right */
-@keyframes slideInFromLeft {
-  0% {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
+/* Calendar scrollbar - thin and subtle */
+.calendar-scrollbar::-webkit-scrollbar {
+  width: 2px;
 }
 
-.slide-in-text {
-  animation: slideInFromLeft 0.6s ease-out forwards;
+.calendar-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-/* Per-card entrance animations for number and text lines */
-@keyframes slideInNumber {
-  0% {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
+.calendar-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
 }
 
-@keyframes slideInLine1 {
-  0% {
-    opacity: 0;
-    transform: translateX(-25px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
+.calendar-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
 }
 
-@keyframes slideInLine2 {
-  0% {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
+/* Disable pulsating animation for specific elements */
+.no-pulse {
+  animation: none !important;
 }
 
-.animate-slide-in-1 {
-  animation: slideInNumber 0.5s ease-out forwards;
-}
-
-.animate-slide-in-2 {
-  animation: slideInLine1 0.6s ease-out 0.1s forwards;
-  opacity: 0;
-}
-
-.animate-slide-in-3 {
-  animation: slideInLine2 0.7s ease-out 0.2s forwards;
-  opacity: 0;
-}
-
-/* Wave-like bounce animation for progress dots */
-@keyframes waveBounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-}
-
-.animate-wave-bounce-1 {
-  animation: waveBounce 1.5s ease-in-out infinite;
-  animation-delay: 0s;
-}
-
-.animate-wave-bounce-2 {
-  animation: waveBounce 1.5s ease-in-out infinite;
-  animation-delay: 0.2s;
-}
-
-.animate-wave-bounce-3 {
-  animation: waveBounce 1.5s ease-in-out infinite;
-  animation-delay: 0.4s;
-}
-
-/* Card transition states - clockwise rotation for forward with premium zoom settle */
-.card-hidden-clockwise {
-  opacity: 0;
-  transform: translateX(-120%) translateZ(-200px) rotateY(-25deg) scale(0.92);
-  pointer-events: none;
-}
-
-.card-entering-clockwise {
-  opacity: 0;
-  transform: translateX(120%) translateZ(-200px) rotateY(25deg) scale(0.92);
-  animation: enterClockwise 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.card-active-clockwise {
-  opacity: 1;
-  transform: translateX(0) translateZ(0) rotateY(0deg) scale(1.04);
-}
-
-.card-exiting-clockwise {
-  opacity: 1;
-  transform: translateX(0) translateZ(0) rotateY(0deg) scale(1.04);
-  animation: exitClockwise 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-@keyframes enterClockwise {
-  0% {
-    opacity: 0;
-    transform: translateX(120%) translateZ(-200px) rotateY(25deg) scale(0.92);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0) translateZ(0) rotateY(0deg) scale(1.04);
-  }
-}
-
-@keyframes exitClockwise {
-  0% {
-    opacity: 1;
-    transform: translateX(0) translateZ(0) rotateY(0deg) scale(1.04);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-120%) translateZ(-200px) rotateY(-25deg) scale(0.92);
-  }
-}
-
-/* Card transition states - backward (counter-clockwise) with premium zoom settle */
-.card-hidden-backward {
-  opacity: 0;
-  transform: translateX(120%) translateZ(-200px) rotateY(25deg) scale(0.92);
-  pointer-events: none;
-}
-
-.card-entering-backward {
-  opacity: 0;
-  transform: translateX(-120%) translateZ(-200px) rotateY(-25deg) scale(0.92);
-  animation: enterBackward 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.card-exiting-backward {
-  opacity: 1;
-  transform: translateX(0) translateZ(0) rotateY(0deg) scale(1.04);
-  animation: exitBackward 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-@keyframes enterBackward {
-  0% {
-    opacity: 0;
-    transform: translateX(-120%) translateZ(-200px) rotateY(-25deg) scale(0.92);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0) translateZ(0) rotateY(0deg) scale(1.04);
-  }
-}
-
-@keyframes exitBackward {
-  0% {
-    opacity: 1;
-    transform: translateX(0) translateZ(0) rotateY(0deg) scale(1.04);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(120%) translateZ(-200px) rotateY(25deg) scale(0.92);
-  }
-}
-
-/* ============================================
-   BUTTON STYLING - PRE-CALENDAR BASELINE
-   ============================================ */
-
-/* Primary yellow button - used on Splash (Sign In), Welcome (Get Started) */
-.yellow-button {
-  background-color: #fbbf24;
-  color: #000000;
-  font-weight: 600;
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 16px;
-  padding: 14px 32px;
-  border-radius: 50px;
-  border: 2px solid #000000;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.yellow-button:hover:not(:disabled) {
-  background-color: #f59e0b;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-}
-
-.yellow-button:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.yellow-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Small yellow button - used on Home promo card, Moments empty state */
-.yellow-button-small {
-  background-color: #fbbf24;
-  color: #000000;
-  font-weight: 600;
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 13px;
-  padding: 8px 20px;
-  border-radius: 50px;
-  border: 2px solid #000000;
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.yellow-button-small:hover:not(:disabled) {
-  background-color: #f59e0b;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-}
-
-.yellow-button-small:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
-}
-
-.yellow-button-small:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Yellow camera button - used on Camera screen and Home footer */
-.yellow-button-camera {
-  background-color: #fbbf24;
-  color: #000000;
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  border: 3px solid #000000;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.yellow-button-camera:hover:not(:disabled) {
-  background-color: #f59e0b;
-  transform: scale(1.05);
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
-}
-
-.yellow-button-camera:active:not(:disabled) {
-  transform: scale(0.98);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-}
-
-.yellow-button-camera:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Yellow footer camera button - smaller version for Home footer */
+/* Yellow button for footer camera */
 .yellow-button-footer {
-  background-color: #fbbf24;
-  color: #000000;
-  width: 52px;
-  height: 52px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  border: 2px solid #000000;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+  border: none;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
 }
 
-.yellow-button-footer:hover:not(:disabled) {
-  background-color: #f59e0b;
-  transform: scale(1.08);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18);
+.yellow-button-footer:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(255, 215, 0, 0.4);
 }
 
-.yellow-button-footer:active:not(:disabled) {
-  transform: scale(0.95);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+.yellow-button-footer:active {
+  transform: scale(0.98);
 }
 
-.yellow-button-footer:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* ============================================
-   OPT-IN BUTTON PULSE ANIMATION
-   ============================================ */
-
-/* Pulsating animation keyframes */
-@keyframes cameraPulse {
+/* Camera pulse animation */
+@keyframes camera-pulse {
   0%, 100% {
-    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
   }
   50% {
-    transform: scale(1.1);
+    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.6), 0 0 0 8px rgba(255, 215, 0, 0.1);
   }
 }
 
-/* 
- * Opt-in pulse animation - only applied to elements with .camera-pulse class.
- * All other buttons must explicitly add .no-pulse to avoid any animation.
- * Disabled buttons never animate.
- */
-.camera-pulse:not(:disabled) {
-  animation: cameraPulse 2s ease-in-out infinite;
+.camera-pulse {
+  animation: camera-pulse 2s ease-in-out infinite;
 }
 
-/* Contextual CTA button - themed per slide/page */
-.contextual-cta-button {
-  font-weight: 600;
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 16px;
-  padding: 14px 32px;
+/* Small yellow button for planning */
+.yellow-button-small {
+  padding: 10px 24px;
   border-radius: 50px;
-  border: 2px solid #000000;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  color: #000;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
   cursor: pointer;
-  background-color: var(--cta-bg, #fbbf24);
-  color: var(--cta-text, #000000);
-}
-
-.contextual-cta-button:hover:not(:disabled) {
-  background-color: var(--cta-bg-hover, #f59e0b);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-}
-
-.contextual-cta-button:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.contextual-cta-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Navigation control text styling - Splash Prev/Next with contextual theming */
-.nav-control-text {
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.2);
   font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 0.875rem;
+}
+
+.yellow-button-small:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+.yellow-button-small:active {
+  transform: translateY(0);
+}
+
+/* Home planning container */
+.home-planning-container {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Home calendar styles */
+.home-weekly-calendar-strip {
+  font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+.home-calendar-arrow-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #000;
+}
+
+.home-calendar-arrow-button:hover {
+  background: rgba(255, 255, 255, 0.7);
+  transform: scale(1.05);
+}
+
+.home-calendar-arrow-button:active {
+  transform: scale(0.95);
+}
+
+.home-calendar-reschedule-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.home-calendar-month-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #000;
+}
+
+.home-calendar-day-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 8px 4px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
   background: transparent;
   border: none;
-  padding: 8px 12px;
+  position: relative;
+  min-width: 40px;
+}
+
+.home-calendar-day-inactive {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.home-calendar-day-inactive:hover {
+  background: rgba(255, 255, 255, 0.6);
+  transform: translateY(-2px);
+}
+
+.home-calendar-day-selected {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.2);
+}
+
+.home-calendar-day-initial {
+  font-size: 9px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.home-calendar-day-selected .home-calendar-day-initial {
+  color: #000;
+}
+
+.home-calendar-day-number {
+  font-size: 16px;
+  font-weight: 700;
+  color: #000;
+}
+
+/* Calendar page styles */
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.calendar-nav-button {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  transition: opacity 0.2s ease;
-  color: var(--nav-text, #000000);
+  transition: all 0.2s ease;
+  border: none;
+  color: #000;
 }
 
-.nav-control-text:hover:not(:disabled) {
-  opacity: 0.7;
+.calendar-nav-button:hover {
+  background: rgba(0, 0, 0, 0.1);
+  transform: scale(1.05);
 }
 
-.nav-control-text:disabled {
-  opacity: 0.3;
+.calendar-week-nav-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  color: #000;
+}
+
+.calendar-week-nav-button:hover {
+  background: rgba(0, 0, 0, 0.1);
+  transform: scale(1.05);
+}
+
+/* Bottom sheet animations */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.bottom-sheet-backdrop {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.bottom-sheet-backdrop-close {
+  animation: fadeOut 0.3s ease-out;
+}
+
+.bottom-sheet-container {
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bottom-sheet-container-close {
+  animation: slideDown 0.4s cubic-bezier(0.7, 0, 0.84, 0);
+}
+
+.bottom-sheet-content {
+  touch-action: pan-y;
+}
+
+/* Compact mobile input styling for bottom sheet */
+.bottom-sheet-compact-input {
+  width: 100%;
+  padding: 8px 12px 8px 36px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  font-size: 13px;
+  color: #000;
+  transition: all 0.2s ease;
+}
+
+.bottom-sheet-compact-input:focus {
+  outline: none;
+  border-color: #ffd700;
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+}
+
+.bottom-sheet-compact-input::placeholder {
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+/* Bottom sheet action buttons */
+.bottom-sheet-action-button {
+  flex: 1;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  max-width: 140px;
+}
+
+.bottom-sheet-action-button-cancel {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.bottom-sheet-action-button-cancel:hover {
+  background: #e5e7eb;
+}
+
+.bottom-sheet-action-button-save {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  color: #000;
+  box-shadow: 0 2px 6px rgba(255, 215, 0, 0.2);
+}
+
+.bottom-sheet-action-button-save:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
+}
+
+.bottom-sheet-action-button-save:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
-/* Footer navigation button styling - Home footer icons */
-.footer-nav-button {
-  transition: color 0.3s ease;
+/* Planned dates row styles */
+.planned-dates-row-container {
+  padding: 0 16px;
 }
 
-.footer-nav-button:hover {
-  color: #ffa500;
+.planned-dates-row {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 8px 0;
 }
 
-/* ============================================
-   WELCOME PAGE ANIMATIONS
-   ============================================ */
-
-/* Welcome page card entrance - matching onboarding 3D motion */
-.welcome-card-container {
-  perspective: 1400px;
+.planned-dates-row::-webkit-scrollbar {
+  display: none;
 }
 
-.welcome-card-entering {
-  opacity: 0;
-  transform: translateX(120%) translateZ(-200px) rotateY(25deg) scale(0.92);
-  animation: welcomeCardEnter 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+/* Planned date pill */
+.planned-date-pill {
+  position: relative;
+  flex-shrink: 0;
+  height: 40px;
+  min-width: 100px;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-@keyframes welcomeCardEnter {
-  0% {
-    opacity: 0;
-    transform: translateX(120%) translateZ(-200px) rotateY(25deg) scale(0.92);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0) translateZ(0) rotateY(0deg) scale(1.04);
-  }
+.planned-date-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
 }
 
-/* Welcome page number animation */
-@keyframes welcomeNumber {
-  0% {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
+.planned-date-pill:active {
+  transform: translateY(0);
 }
 
-.welcome-number {
-  animation: welcomeNumber 0.5s ease-out forwards;
+.planned-date-pill:focus-visible {
+  outline: 2px solid #ffd700;
+  outline-offset: 2px;
 }
 
-/* Welcome page text animations */
-@keyframes welcomeWord1 {
-  0% {
-    opacity: 0;
-    transform: translateX(-25px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
+.planned-date-pill-segments {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: row;
 }
 
-@keyframes welcomeWord2 {
-  0% {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
+.planned-date-pill-segment {
+  height: 100%;
+  transition: all 0.2s ease;
 }
 
-.welcome-word-1 {
-  animation: welcomeWord1 0.6s ease-out 0.1s forwards;
-  opacity: 0;
+.planned-date-pill-label {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  padding: 0 16px;
 }
 
-.welcome-word-2 {
-  animation: welcomeWord2 0.7s ease-out 0.2s forwards;
-  opacity: 0;
-}
-
-/* ============================================
-   CALENDAR PAGE SPECIFIC
-   ============================================ */
-
-/* Thin mobile scrollbar styling for Settings, Calendar, and Moments pages */
-.calendar-scrollbar::-webkit-scrollbar,
-.settings-scrollbar::-webkit-scrollbar,
-.moments-scrollbar::-webkit-scrollbar {
-  width: 4px;
-}
-
-.calendar-scrollbar::-webkit-scrollbar-track,
-.settings-scrollbar::-webkit-scrollbar-track,
-.moments-scrollbar::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-.calendar-scrollbar::-webkit-scrollbar-thumb,
-.settings-scrollbar::-webkit-scrollbar-thumb,
-.moments-scrollbar::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 10px;
-}
-
-.calendar-scrollbar::-webkit-scrollbar-thumb:hover,
-.settings-scrollbar::-webkit-scrollbar-thumb:hover,
-.moments-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
-}
-
-/* Hide scrollbar for horizontal week strip */
+/* Hide scrollbar utility */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
@@ -1083,848 +518,4 @@ body {
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
-}
-
-/* Fade in up animation for calendar selected date info */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 0.3s ease-out forwards;
-}
-
-/* Calendar navigation buttons - small circular style matching camera button */
-.calendar-nav-button {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 2px solid #000000;
-  background-color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #000000;
-  transition: all 0.25s ease;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-}
-
-.calendar-nav-button:hover {
-  background-color: #f3f4f6;
-  transform: scale(1.05);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
-}
-
-.calendar-nav-button:active {
-  transform: scale(0.95);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
-}
-
-/* Calendar week navigation buttons - small circular style */
-.calendar-week-nav-button {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 2px solid #000000;
-  background-color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #000000;
-  transition: all 0.25s ease;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-}
-
-.calendar-week-nav-button:hover {
-  background-color: #f3f4f6;
-  transform: scale(1.08);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
-}
-
-.calendar-week-nav-button:active {
-  transform: scale(0.95);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
-}
-
-/* ============================================
-   BOTTOM SHEET ANIMATIONS & STYLES
-   ============================================ */
-
-/* Bottom sheet backdrop fade-in - clean eased */
-.bottom-sheet-backdrop {
-  animation: backdropFadeIn 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-}
-
-@keyframes backdropFadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-/* Bottom sheet backdrop fade-out */
-.bottom-sheet-backdrop-close {
-  animation: backdropFadeOut 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-}
-
-@keyframes backdropFadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-/* Bottom sheet slide-up animation - clean eased translate */
-.bottom-sheet-container {
-  animation: sheetSlideUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-}
-
-@keyframes sheetSlideUp {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
-
-/* Bottom sheet slide-down animation - clean eased translate */
-.bottom-sheet-container-close {
-  animation: sheetSlideDown 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-}
-
-@keyframes sheetSlideDown {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(100%);
-  }
-}
-
-/* Bottom sheet content subtle scale */
-.bottom-sheet-content {
-  animation: sheetContentScale 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-}
-
-@keyframes sheetContentScale {
-  from {
-    opacity: 0.95;
-    transform: scale(0.99);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* Bottom sheet compact input styling - mobile-optimized with reduced padding */
-.bottom-sheet-compact-input {
-  width: 100%;
-  padding: 8px 14px 8px 36px;
-  border: 1px solid oklch(88% 0.01 106);
-  border-radius: 12px;
-  background: oklch(100% 0 0);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-  font-size: 14px;
-  transition: all 0.2s ease;
-  outline: none;
-  min-height: 38px;
-}
-
-.bottom-sheet-compact-input:focus {
-  border-color: oklch(75% 0.02 106);
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.08);
-}
-
-.bottom-sheet-compact-input::placeholder {
-  color: oklch(60% 0.01 106);
-}
-
-/* Bottom sheet pill input styling - matching search bar theme (legacy, kept for compatibility) */
-.bottom-sheet-pill-input {
-  width: 100%;
-  padding: 10px 16px;
-  border: 1px solid oklch(88% 0.01 106);
-  border-radius: 9999px;
-  background: oklch(100% 0 0);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-  font-size: 14px;
-  transition: all 0.2s ease;
-  outline: none;
-}
-
-.bottom-sheet-pill-input:focus {
-  border-color: oklch(75% 0.02 106);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-}
-
-.bottom-sheet-pill-input::placeholder {
-  color: oklch(60% 0.01 106);
-}
-
-/* Bottom sheet action buttons - Get Started style pills */
-.bottom-sheet-action-button {
-  font-weight: 600;
-  font-size: 14px;
-  padding: 10px 24px;
-  border-radius: 9999px;
-  border: 2px solid #000000;
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
-  transition: all 0.25s ease;
-  cursor: pointer;
-  min-width: 100px;
-}
-
-.bottom-sheet-action-button:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-}
-
-.bottom-sheet-action-button:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
-}
-
-.bottom-sheet-action-button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* Cancel button - red theme */
-.bottom-sheet-action-button-cancel {
-  background-color: oklch(65% 0.20 25);
-  color: #ffffff;
-}
-
-.bottom-sheet-action-button-cancel:hover:not(:disabled) {
-  background-color: oklch(60% 0.22 25);
-}
-
-/* Save button - green theme */
-.bottom-sheet-action-button-save {
-  background-color: oklch(65% 0.18 145);
-  color: #ffffff;
-}
-
-.bottom-sheet-action-button-save:hover:not(:disabled) {
-  background-color: oklch(60% 0.20 145);
-}
-
-/* With Who pills - segmented/pill style */
-.with-who-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: 9999px;
-  border: 1.5px solid oklch(88% 0.01 106);
-  background: oklch(100% 0 0);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-  transition: all 0.25s ease;
-  cursor: pointer;
-  color: oklch(45% 0.01 106);
-}
-
-.with-who-pill:hover {
-  border-color: oklch(80% 0.02 106);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-}
-
-.with-who-pill:active {
-  transform: scale(0.98);
-}
-
-/* Selected state - filled with color */
-.with-who-pill-selected {
-  color: #ffffff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-}
-
-.with-who-pill-selected:hover {
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-}
-
-/* ============================================
-   VAULT PAGE STYLES - PREMIUM REVAMP
-   ============================================ */
-
-/* Vault header */
-.vault-header {
-  position: relative;
-  width: 100%;
-  padding: 24px 24px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: linear-gradient(to bottom, rgba(245, 240, 232, 1) 0%, rgba(245, 240, 232, 0.95) 100%);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  z-index: 10;
-}
-
-.vault-back-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-}
-
-.vault-back-button:hover {
-  background: rgba(255, 255, 255, 1);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
-  transform: translateY(-1px);
-}
-
-.vault-back-button:active {
-  transform: scale(0.96);
-}
-
-.vault-page-title {
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  color: #1f2937;
-  letter-spacing: -0.02em;
-}
-
-/* Vault scrollbar - thin and elegant */
-.vault-scrollbar::-webkit-scrollbar {
-  width: 4px;
-}
-
-.vault-scrollbar::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.03);
-  border-radius: 10px;
-}
-
-.vault-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: 10px;
-}
-
-.vault-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.25);
-}
-
-/* Vault content wrapper */
-.vault-content {
-  display: flex;
-  flex-direction: column;
-  gap: 48px;
-  padding-top: 24px;
-}
-
-/* Vault empty state */
-.vault-empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  text-align: center;
-  padding: 32px;
-}
-
-.vault-empty-title {
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 20px;
-  font-weight: 600;
-  color: #6b7280;
-  margin-bottom: 8px;
-}
-
-.vault-empty-subtitle {
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  color: #9ca3af;
-}
-
-/* ============================================
-   VAULT MONTH SECTION - ENHANCED HIERARCHY
-   ============================================ */
-
-.vault-month-section {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
-              transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.vault-month-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Month header with improved spacing and hierarchy */
-.vault-month-header {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.08);
-}
-
-.vault-month-title {
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 22px;
-  font-weight: 700;
-  color: #1f2937;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-}
-
-.vault-month-count {
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  color: #6b7280;
-  letter-spacing: 0.01em;
-}
-
-/* ============================================
-   VAULT GRID - 2 COLUMNS, LARGER TILES
-   ============================================ */
-
-.vault-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-}
-
-/* ============================================
-   VAULT TILE - PREMIUM CARD STYLING
-   ============================================ */
-
-.vault-tile {
-  position: relative;
-  background: var(--vault-card);
-  border: 1px solid var(--vault-border);
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: var(--vault-shadow-sm);
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-  opacity: 0;
-  transform: scale(0.92) translateY(10px);
-  animation: vaultTileEnter 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  will-change: transform, opacity, box-shadow;
-}
-
-@keyframes vaultTileEnter {
-  0% {
-    opacity: 0;
-    transform: scale(0.92) translateY(10px);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-.vault-tile:hover {
-  transform: scale(1.04) translateY(-4px);
-  box-shadow: var(--vault-shadow-lg);
-  border-color: rgba(0, 0, 0, 0.12);
-}
-
-.vault-tile:active {
-  transform: scale(0.98) translateY(-2px);
-  box-shadow: var(--vault-shadow-md);
-  transition-duration: 0.15s;
-}
-
-/* Tile wrapper - maintains aspect ratio */
-.vault-tile-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 3 / 4;
-  overflow: hidden;
-}
-
-/* Tile image */
-.vault-tile-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.vault-tile:hover .vault-tile-image {
-  transform: scale(1.05);
-}
-
-/* Subtle gradient overlay for depth */
-.vault-tile-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 40%;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.15) 0%, transparent 100%);
-  opacity: 0;
-  transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  pointer-events: none;
-}
-
-.vault-tile:hover .vault-tile-overlay {
-  opacity: 1;
-}
-
-/* Feeling indicator - enhanced styling */
-.vault-tile-feeling {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  z-index: 2;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.vault-tile:hover .vault-tile-feeling {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
-}
-
-/* ============================================
-   VAULT VIEWER - MOMENT DETAIL VIEW
-   ============================================ */
-
-.vault-viewer-container {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  background: #000000;
-  animation: vaultViewerEnter 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  z-index: 100;
-}
-
-@keyframes vaultViewerEnter {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.vault-viewer-exiting {
-  animation: vaultViewerExit 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-@keyframes vaultViewerExit {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-/* Swipe area - enable touch interactions */
-.vault-viewer-swipe-area {
-  touch-action: pan-y;
-  user-select: none;
-  -webkit-user-select: none;
-  cursor: grab;
-}
-
-.vault-viewer-swipe-area:active {
-  cursor: grabbing;
-}
-
-/* Close button - prominent and accessible */
-.vault-viewer-close-button {
-  position: absolute;
-  top: 24px;
-  left: 24px;
-  z-index: 50;
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-  animation: vaultCloseButtonEnter 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.1s backwards;
-}
-
-@keyframes vaultCloseButtonEnter {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.vault-viewer-close-button:hover {
-  background: rgba(255, 255, 255, 0.35);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-  transform: scale(1.05);
-}
-
-.vault-viewer-close-button:active {
-  transform: scale(0.95);
-}
-
-/* Music toggle button - top right */
-.vault-viewer-music-button {
-  position: absolute;
-  top: 24px;
-  right: 24px;
-  z-index: 50;
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-  animation: vaultMusicButtonEnter 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.15s backwards;
-}
-
-@keyframes vaultMusicButtonEnter {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.vault-viewer-music-button:hover {
-  background: rgba(255, 255, 255, 0.35);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-  transform: scale(1.05);
-}
-
-.vault-viewer-music-button:active {
-  transform: scale(0.95);
-}
-
-/* Viewer image - crisp full-screen display */
-.vault-viewer-image {
-  max-width: 100%;
-  max-height: 85vh;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  object-position: center;
-  border-radius: 12px;
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
-  animation: vaultImageEnter 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-@keyframes vaultImageEnter {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.vault-viewer-image-exit {
-  animation: vaultImageExit 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-@keyframes vaultImageExit {
-  from {
-    opacity: 1;
-    transform: scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.92);
-  }
-}
-
-/* Metadata overlay - gradient bottom section */
-.vault-viewer-metadata {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.7) 60%, transparent 100%);
-  padding: 48px 32px 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  animation: vaultMetadataEnter 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.2s backwards;
-}
-
-@keyframes vaultMetadataEnter {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.vault-viewer-metadata-exit {
-  animation: vaultMetadataExit 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-@keyframes vaultMetadataExit {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-}
-
-.vault-viewer-timestamp {
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.8);
-  letter-spacing: 0.01em;
-}
-
-.vault-viewer-who {
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 18px;
-  font-weight: 600;
-  color: #ffffff;
-  letter-spacing: -0.01em;
-}
-
-.vault-viewer-reflection {
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 16px;
-  font-weight: 400;
-  font-style: italic;
-  color: rgba(255, 255, 255, 0.95);
-  line-height: 1.5;
-}
-
-.vault-viewer-feeling {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding-top: 8px;
-}
-
-.vault-viewer-feeling-label {
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 15px;
-  font-weight: 600;
-  color: #ffffff;
-  letter-spacing: 0.01em;
-}
-
-/* ============================================
-   EMOJI FLOAT OVERLAY - CORNER ORIGIN UPWARD FLOW
-   ============================================ */
-
-.emoji-float-overlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-  z-index: 5;
-}
-
-.emoji-float-item {
-  position: absolute;
-  bottom: 0;
-  left: 5%;
-  animation: emojiFloatFromCorner linear infinite;
-  opacity: 0;
-  will-change: transform, opacity;
-}
-
-@keyframes emojiFloatFromCorner {
-  0% {
-    transform: translate(0, 0) rotate(0deg);
-    opacity: 0;
-  }
-  5% {
-    opacity: 0.9;
-  }
-  95% {
-    opacity: 0.7;
-  }
-  100% {
-    transform: translate(calc(var(--drift, 0) * 40px), -110vh) rotate(360deg);
-    opacity: 0;
-  }
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  .emoji-float-overlay {
-    display: none;
-  }
-  
-  .emoji-float-item {
-    animation: none;
-  }
 }

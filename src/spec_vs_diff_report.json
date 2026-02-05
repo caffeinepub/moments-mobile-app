@@ -1,85 +1,75 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-04T15:01:58.657Z",
-  "summary": "BuildRequest is promotion-only with an explicit constraint of no code changes. The diff introduces multiple code and documentation changes, adds backend build-management logic, and updates/notes many frontend/UI behaviors. It does not provide confirmation that production now serves Draft Version 140 nor a live URL/environment identifier proving the promotion completed.",
+  "generatedAt": "2026-02-05T00:37:09.185Z",
+  "summary": "The diff adds frontend-side build/version diagnostics and cache-busting for “146” (meta tags + runtime checks), but it does not provide evidence of promoting Draft 146 to be the platform’s live deployment or preventing rollback to 125 at the deployment/platform level. The diff summary also indicates multiple unrelated UI/product and auth-flow changes beyond the stated non-goals/constraints.",
   "missing_requirements": [
     {
-      "id": "REQ-4",
-      "requirement": "Promote the currently deployed draft build (Draft Version 140) to the live production deployment so end users receive the latest version.",
-      "reason": "The diff shows added documentation and backend helper methods, but no evidence of an actual production promotion having been executed or production being updated to serve version 140.",
+      "id": "REQ-13",
+      "requirement": "Promote Draft Version 146 to be the active live deployment and ensure the app no longer reverts back to Version 125 after deployment completes.",
+      "reason": "The changes shown are limited to frontend runtime version checks (meta tag + localStorage + reload query param). There is no evidence in the diff summary of any deployment configuration, release/promotion mechanism, or platform setting that would set/lock the live deployment to 146 or prevent rollback to 125.",
       "evidence": [
-        "frontend/DEPLOYMENT_PROMOTION.md",
-        "frontend/DEPLOYMENT_STATUS.md",
-        "backend/main.mo"
+        "frontend/src/utils/buildInfo.ts",
+        "frontend/src/App.tsx",
+        "frontend/index.html"
       ]
     },
     {
-      "id": "REQ-4",
-      "requirement": "Live/production environment serves the same app version as Draft Version 140.",
-      "reason": "No diff evidence demonstrates that production is now serving v140; the status doc explicitly says promotion is pending and production version is 'Awaiting promotion of v140'.",
+      "id": "REQ-14",
+      "requirement": "Remove Version 125 from being the active live deployment (i.e., ensure Version 125 is no longer the live version once 146 is live).",
+      "reason": "No evidence in the diff summary shows any action that deactivates/removes 125 as the live deployment on the platform (e.g., deployment manifest, release channel change, pipeline config). Frontend cache-busting does not demonstrate that users will be served 146 build artifacts instead of 125 by the hosting platform.",
       "evidence": [
-        "frontend/DEPLOYMENT_STATUS.md"
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "requirement": "Provide a live URL (or environment identifier) confirming the production deployment completed successfully.",
-      "reason": "The deployment status doc leaves the live URL as 'To be provided after promotion' and does not include an environment identifier confirming completion.",
-      "evidence": [
-        "frontend/DEPLOYMENT_STATUS.md"
+        "frontend/src/utils/buildInfo.ts",
+        "frontend/src/App.tsx",
+        "frontend/index.html"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Backend 'Build Deployment Management' system added/modified (build version types/state, admin-only promoteBuildToProduction, queries for production/draft version, build listing, initialization of draft v140).",
-      "reason": "The BuildRequest explicitly states no code changes are requested; only a deployment/promotion is requested.",
+      "description": "Runtime build-version guard, diagnostics logging, and cache-refresh behavior tied to localStorage and a query-param reload mechanism.",
+      "reason": "The request is about making Draft 146 the live deployment and preventing rollback to 125; it does not ask for implementing a client-side build verification or cache-busting system.",
       "evidence": [
-        "backend/main.mo"
-      ]
-    },
-    {
-      "description": "Added deployment process documentation and a release record document with a long list of product features and verification checklist.",
-      "reason": "Not requested; BuildRequest asks to promote an already-deployed draft to production and provide confirmation, not to add new documentation or feature inventories.",
-      "evidence": [
-        "frontend/DEPLOYMENT_PROMOTION.md",
-        "frontend/DEPLOYMENT_STATUS.md"
-      ]
-    },
-    {
-      "description": "Frontend/UI behavior changes described across many files (splash slideshow changes, styling tokens, new components/animations, dependency changes, route/page behavior updates).",
-      "reason": "Non-goal explicitly forbids implementing new features or UI changes; diff summary indicates many such changes were made.",
-      "evidence": [
-        "frontend-file-summaries.txt",
-        "frontend/package.json",
+        "frontend/src/utils/buildInfo.ts",
         "frontend/src/App.tsx",
-        "frontend/src/pages/MobileSplashScreen.tsx",
-        "frontend/src/index.css",
-        "frontend/index.html",
-        "frontend/src/components/HamburgerMenu.tsx",
-        "frontend/src/components/SignInOverlay.tsx",
-        "frontend/src/pages/WelcomePage.tsx",
-        "frontend/src/pages/HomeScreen.tsx",
-        "frontend/src/pages/CameraScreen.tsx",
-        "frontend/src/pages/SettingsPage.tsx",
-        "frontend/src/pages/CalendarPage.tsx"
+        "frontend/index.html"
       ]
     },
     {
-      "description": "Project metadata/state update describing broader system features and backend wiring.",
-      "reason": "Not requested as part of a promotion-only request; also conflicts with 'no code changes' constraint if it reflects additional implementation work.",
+      "description": "Multiple UI/product changes (onboarding/splash animations and theming, welcome page redesign, home screen planning/calendar/nav changes, settings styling, calendar multi-segment indicators, moments page TikTok-style scrolling/music, planned-moments storage utilities, etc.).",
+      "reason": "Non-goal explicitly says not to implement new product features/UI changes beyond what’s required to make 146 live; the diff summary lists many feature/UI modifications unrelated to deployment promotion.",
       "evidence": [
-        "project_state.json"
+        "frontend-file-summaries.txt"
+      ]
+    },
+    {
+      "description": "Internet Identity/authentication hook changes (delegation validity checks, avoiding re-login prompts).",
+      "reason": "Non-goal explicitly says not to change authentication behavior or Internet Identity flows; the diff summary indicates changes to the Internet Identity hook behavior.",
+      "evidence": [
+        "frontend-file-summaries.txt (\"frontend/src/hooks/useInternetIdentity.ts\": \"...properly handles already-authenticated users...preventing unnecessary authentication prompts.\")"
+      ]
+    },
+    {
+      "description": "Added a placeholder React Query hooks file.",
+      "reason": "Not requested by the BuildRequest; also introduces additional structure unrelated to promoting a deployment version.",
+      "evidence": [
+        "frontend-file-summaries.txt (\"frontend/src/hooks/useQueries.ts\": \"Placeholder file...\")"
+      ]
+    },
+    {
+      "description": "Tailwind config and global CSS changes (design tokens, fonts, styling updates).",
+      "reason": "Not requested and falls under UI/design changes beyond what’s required for promoting 146 as live.",
+      "evidence": [
+        "frontend-file-summaries.txt (\"frontend/src/index.css\" and \"frontend/tailwind.config.js\")"
       ]
     }
   ],
-  "confidence": 0.74,
+  "confidence": 0.72,
   "changed_files": [
-    "backend/main.mo",
     "frontend-file-summaries.txt",
-    "frontend/DEPLOYMENT_PROMOTION.md",
-    "frontend/DEPLOYMENT_STATUS.md",
+    "frontend/index.html",
+    "frontend/src/App.tsx",
+    "frontend/src/utils/buildInfo.ts",
     "project_state.json"
   ]
 }

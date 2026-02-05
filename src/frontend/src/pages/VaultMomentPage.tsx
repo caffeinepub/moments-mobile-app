@@ -1,24 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from '@tanstack/react-router';
-import { 
-  getMomentById, 
-  MomentsPhoto, 
-  getPreviousMomentId, 
-  getNextMomentId
-} from '../utils/momentsPhotosStorage';
+import { getMomentById, MomentsPhoto } from '../utils/momentsPhotosStorage';
 import { formatRelativeTime } from '../utils/timeFormat';
-import { getFeelingEmoji } from '../utils/momentFeelings';
-import EmojiFloatOverlay from '../components/EmojiFloatOverlay';
-import { useSwipeGesture } from '../hooks/useSwipeGesture';
 
 function VaultMomentPage() {
   const navigate = useNavigate();
   const params = useParams({ from: '/vault/$momentId' });
   const [moment, setMoment] = useState<MomentsPhoto | null>(null);
-  const [isExiting, setIsExiting] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Load moment
   useEffect(() => {
     const momentId = parseInt(params.momentId, 10);
     if (isNaN(momentId)) {
@@ -36,117 +25,78 @@ function VaultMomentPage() {
   }, [params.momentId, navigate]);
 
   const handleBack = () => {
-    setIsExiting(true);
-    setTimeout(() => {
-      navigate({ to: '/vault' });
-    }, 350);
+    navigate({ to: '/vault' });
   };
-
-  const navigateToMoment = (momentId: number) => {
-    // Use replace to keep back button working correctly
-    navigate({ to: '/vault/$momentId', params: { momentId: momentId.toString() }, replace: true });
-  };
-
-  const handleSwipeLeft = () => {
-    if (!moment) return;
-    const nextId = getNextMomentId(moment.id);
-    if (nextId !== null) {
-      navigateToMoment(nextId);
-    }
-  };
-
-  const handleSwipeRight = () => {
-    if (!moment) return;
-    const prevId = getPreviousMomentId(moment.id);
-    if (prevId !== null) {
-      navigateToMoment(prevId);
-    }
-  };
-
-  const { attachListeners } = useSwipeGesture({
-    onSwipeLeft: handleSwipeLeft,
-    onSwipeRight: handleSwipeRight,
-    threshold: 50,
-    preventScroll: true,
-  });
-
-  useEffect(() => {
-    if (containerRef.current) {
-      return attachListeners(containerRef.current);
-    }
-  }, [attachListeners]);
 
   if (!moment) {
     return null;
   }
 
   return (
-    <div className={`vault-viewer-container ${isExiting ? 'vault-viewer-exiting' : ''}`}>
+    <div className="fixed inset-0 flex items-center justify-center overflow-hidden vault-viewer-backdrop">
       <div
-        ref={containerRef}
-        className="relative w-full h-full max-w-[390px] max-h-[844px] overflow-hidden flex flex-col vault-viewer-swipe-area"
+        className="relative w-full h-full max-w-[390px] max-h-[844px] overflow-hidden flex flex-col"
         style={{ background: '#000000' }}
       >
         {/* Close button */}
         <button
           onClick={handleBack}
-          className="vault-viewer-close-button"
-          aria-label="Back to moments"
+          className="absolute top-6 left-6 z-50 w-12 h-12 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/30 transition-all vault-close-button"
+          aria-label="Back to vault"
         >
           <i className="fa fa-arrow-left text-xl"></i>
         </button>
 
-        {/* Full-screen media container */}
+        {/* Full-screen photo container */}
         <div className="relative flex-1 flex items-center justify-center p-4">
-          {moment.type.startsWith('video/') ? (
-            <video
-              src={moment.data}
-              className={`vault-viewer-image ${isExiting ? 'vault-viewer-image-exit' : ''}`}
-              controls
-              playsInline
-              preload="auto"
-            />
-          ) : (
-            <img
-              src={moment.data}
-              alt="Moment"
-              className={`vault-viewer-image ${isExiting ? 'vault-viewer-image-exit' : ''}`}
-            />
-          )}
-
-          {/* Floating emoji overlay */}
-          {moment.feeling && (
-            <EmojiFloatOverlay emoji={getFeelingEmoji(moment.feeling)} count={12} />
-          )}
+          <img
+            src={moment.data}
+            alt="Moment"
+            className="vault-enlarged-image"
+          />
 
           {/* Metadata overlay at bottom */}
-          <div className={`vault-viewer-metadata ${isExiting ? 'vault-viewer-metadata-exit' : ''}`}>
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-8 space-y-3">
             {/* Timestamp */}
-            <p className="vault-viewer-timestamp">
+            <p
+              className="text-white text-sm opacity-90"
+              style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
+            >
               {formatRelativeTime(moment.timestamp)}
             </p>
 
             {/* Who */}
             {moment.who && (
-              <p className="vault-viewer-who">
+              <p
+                className="text-white text-base font-semibold"
+                style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
+              >
                 With {moment.who}
               </p>
             )}
 
             {/* Reflection */}
             {moment.reflection && (
-              <p className="vault-viewer-reflection">
+              <p
+                className="text-white text-base italic"
+                style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
+              >
                 "{moment.reflection}"
               </p>
             )}
 
             {/* Feeling */}
             {moment.feeling && (
-              <div className="vault-viewer-feeling">
+              <div className="flex items-center gap-2 pt-2">
                 <span className="text-2xl">
-                  {getFeelingEmoji(moment.feeling)}
+                  {moment.feeling === 'Meaningful' && '❤️'}
+                  {moment.feeling === 'Good' && '🙂'}
+                  {moment.feeling === 'Okay' && '😐'}
                 </span>
-                <span className="vault-viewer-feeling-label">
+                <span
+                  className="text-white text-sm font-medium"
+                  style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
+                >
                   {moment.feeling}
                 </span>
               </div>

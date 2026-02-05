@@ -1,443 +1,516 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 60,
-  "summary": "Moments is a mobile-first React + TypeScript single-page app for planning small real-world moments (via a weekly calendar strip and “Plan a Moment” bottom sheet) and capturing private photo memories (camera → save confirmation → feeling check). The app is primarily local-first (planned moments, photo moments, user profile, and notifications stored in browser storage) with reactive UI updates via storage listeners and custom DOM events. It integrates Dfinity Internet Identity for authentication and includes a Motoko backend canister with role-based access control (admin bootstrap via environment token) plus profile/settings and photo APIs with blob storage wiring.",
+  "projectStateVersion": 8,
+  "summary": "Moments is being refined into a minimal, planning-first + capture-and-store app (non-social). The Home experience is centered on a single-row weekly calendar and a simple “Start Planning” flow that opens a bottom sheet planner; saved plans appear as pill-shaped planned cards below the calendar. Planned dates are color-coded with a deterministic pastel per date (one plan per day), and the calendar’s selected date pill matches the plan’s border color; deleting a plan removes its date color. Camera capture remains core for saving moments; the Vault is being treated as a private Moments gallery (photos/videos), with improved viewing (enlarged) and motion, and storage constrained by a local media limit. Bottom navigation is being adjusted to remove the Calendar tab and replace it with a Notifications bell icon (icon-only / static).",
   "existing_features": [
     {
       "id": "IF-1",
-      "title": "Client-side routing across app screens",
+      "title": "Client-side routing across primary app screens",
       "synonyms": [
         "TanStack Router",
         "SPA navigation"
       ],
-      "description": "Defines routes for splash (/), welcome (/welcome), home (/home), camera (/camera), save moment confirmation (/save-moment), feeling check (/feeling-check), calendar (/calendar), vault (/vault), vault detail (/vault/$momentId), profile (/profile), and settings (/settings).",
+      "description": "Defines top-level routes for splash (/), welcome (/welcome), home (/home), camera (/camera), save confirmation (/save-moment), feeling check (/feeling-check), calendar (/calendar), vault (/vault), vault detail (/vault/$momentId), profile (/profile), and settings (/settings).",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-2",
-      "title": "React Query provider setup",
+      "title": "Mobile-first fixed viewport page layout",
       "synonyms": [
-        "QueryClientProvider",
-        "TanStack React Query"
+        "390x844 viewport container",
+        "Mobile-centered UI"
       ],
-      "description": "Initializes a shared QueryClient and wraps the app to enable cached queries and shared invalidation patterns.",
+      "description": "Pages render as fixed full-screen overlays with a centered mobile viewport (max 390x844) to maintain consistent composition on desktop and mobile.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-3",
-      "title": "Internet Identity authentication provider and hook",
+      "title": "Animated onboarding splash slideshow (3 cards)",
       "synonyms": [
-        "AuthClient integration",
-        "InternetIdentityProvider"
+        "Onboarding carousel",
+        "3D card transitions"
       ],
-      "description": "Manages identity hydration on mount, login/logout, and exposes status flags (initializing/idle/logging-in/success/loginError) plus error state.",
+      "description": "Implements a 3-slide splash experience with per-slide theming, timed auto-advance, manual Prev/Next controls, and direction-aware 3D transitions.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-4",
-      "title": "Backend actor creation and caching per principal",
+      "title": "Splash cards support mixed media (video + images)",
       "synonyms": [
-        "useActor",
-        "authenticated actor"
+        "Video slide",
+        "Eager-loaded splash assets"
       ],
-      "description": "Creates anonymous or authenticated backend actors depending on Internet Identity state, caches them with React Query keyed by principal, and triggers backend access-control initialization using a secret token from the URL hash.",
+      "description": "Slide 1 renders an autoplaying looping muted MP4; slides 2–3 render images with eager loading/priority hints and per-card layout adjustments.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-5",
-      "title": "Secure secret parameter extraction from URL hash with session persistence and scrubbing",
+      "title": "Preloading of splash and welcome media assets",
       "synonyms": [
-        "getSecretParameter",
-        "URL hash scrubbing"
+        "HTML preload hints",
+        "Faster onboarding"
       ],
-      "description": "Utilities to extract sensitive parameters from the URL hash fragment, persist them in sessionStorage, and scrub them from the address bar via history.replaceState.",
+      "description": "index.html preloads the splash video, splash images, and the welcome image to reduce perceived loading during onboarding.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-6",
-      "title": "Mobile-first fixed viewport frame layout",
+      "title": "Internet Identity authentication provider and hook",
       "synonyms": [
-        "390×844 container",
-        "phone frame UI"
+        "InternetIdentityProvider",
+        "AuthClient integration"
       ],
-      "description": "Pages render within a centered viewport constrained to typical mobile dimensions with a full-screen backdrop for consistent layout across devices.",
+      "description": "Provides identity state on reload, login/logout actions, delegation validity checks to avoid redundant logins, and explicit status flags (initializing/idle/logging-in/success/loginError).",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-7",
-      "title": "Animated onboarding splash slideshow (3 slides)",
+      "title": "Auth-aware splash CTA and post-auth navigation",
       "synonyms": [
-        "onboarding carousel",
-        "3D transitions"
+        "Smart Sign In button",
+        "Continue when authenticated"
       ],
-      "description": "Implements a 3-slide onboarding experience with long-duration 3D enter/exit transitions, autoplay progression, and Prev/Next navigation controls.",
+      "description": "On slide 3, CTA adapts to auth state (Loading/Connecting/Continue/Sign In). If identity exists, navigates to /welcome; otherwise initiates Internet Identity login. Also auto-navigates when identity becomes available while on slide 3.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-8",
-      "title": "Splash cards support video and image media with preloading",
+      "title": "Welcome screen with coordinated entrance animations",
       "synonyms": [
-        "mixed media slides",
-        "autoplay video slide"
+        "Post-login welcome page",
+        "Get Started CTA"
       ],
-      "description": "Splash cards can render an autoplaying, muted looping video (playsInline) or eager-loaded images; index.html preloads splash assets for instant display.",
+      "description": "Renders an animated welcome card consistent with onboarding motion and provides a Get Started button that navigates to /home.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-9",
-      "title": "Auth-aware onboarding CTA (Sign In / Continue) and auto-navigation",
+      "title": "React Query global setup",
       "synonyms": [
-        "smart sign-in",
-        "contextual CTA"
+        "QueryClientProvider",
+        "Client caching layer"
       ],
-      "description": "Final onboarding slide CTA adapts to auth state: shows Loading/Connecting, triggers login when unauthenticated, continues to /welcome when authenticated, and auto-navigates to /welcome if already authenticated on slide 3.",
+      "description": "Creates a global QueryClient and wraps the app to enable query caching and invalidation patterns.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-10",
-      "title": "Welcome page with entrance animations",
+      "title": "Backend actor creation and caching keyed by principal",
       "synonyms": [
-        "post-login welcome",
-        "Get Started"
+        "useActor",
+        "Authenticated/anonymous actor"
       ],
-      "description": "Animated welcome card matching onboarding motion language; provides Get Started CTA routing to /home.",
+      "description": "Creates an anonymous backend actor when unauthenticated and an authenticated actor when identity exists; caches via React Query using principal in the query key and invalidates/refetches other queries when the actor changes.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-11",
-      "title": "Home planning dashboard with weekly strip, planning CTA, planned-moment list, and bottom navigation",
+      "title": "Secret token extraction from URL hash with session persistence",
       "synonyms": [
-        "HomeScreen",
-        "planning-first home"
+        "Admin token in hash",
+        "URL secret cleanup"
       ],
-      "description": "Home shows logo header, a search input stub, a weekly calendar strip, a planning CTA (Start Planning / +), and a list of planned moments. Includes a floating bottom navigation bar that hides while the planner sheet is open.",
+      "description": "Utilities read parameters from query string or hash; sensitive secrets are read from the hash fragment, persisted to sessionStorage, and removed from the URL via history.replaceState to reduce leakage.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-12",
-      "title": "Home weekly calendar strip with week navigation and planned-day filled pills",
+      "title": "RBAC bootstrap on authenticated actor creation",
       "synonyms": [
-        "HomeWeeklyCalendarStrip",
-        "week selector"
+        "_initializeAccessControlWithSecret",
+        "Admin bootstrap secret"
       ],
-      "description": "Renders a Sunday-start week row with prev/next week arrows; planned dates are shown as color-filled pills using dateColorMap, and selecting a booked day uses that same planned color instead of default black styling.",
-      "reqIds": [
-        "REQ-2"
-      ],
+      "description": "After creating an authenticated backend actor, the frontend calls _initializeAccessControlWithSecret with a secret token (e.g., caffeineAdminToken) to register the caller in the backend access-control system.",
+      "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-13",
-      "title": "Home layout spacing refinement for more room for planned-moment cards",
+      "title": "Local planned moments persistence with change events",
       "synonyms": [
-        "calendar strip spacing adjustment"
+        "plannedMomentsStorage",
+        "Local planner data"
       ],
-      "description": "Adjusts Home spacing to position the weekly calendar strip slightly higher and create more vertical space for planned-moment cards below.",
-      "reqIds": [
-        "REQ-3"
-      ],
+      "description": "Stores planned moments in localStorage with generated IDs and createdAt timestamps; emits a custom 'plannedMomentsChanged' event for immediate same-tab updates and also listens to 'storage' for cross-tab changes.",
+      "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-14",
-      "title": "Planner bottom sheet for creating planned moments",
+      "title": "Deterministic planned-moment color palette assignment",
       "synonyms": [
-        "PlannedMomentBottomSheet",
-        "plan-a-moment"
+        "getColorForDate",
+        "Palette hashing"
       ],
-      "description": "Slide-up bottom sheet (~75vh) with open/close animations, required time picker, optional title, native date-picker reschedule support, and save/cancel actions. Automatically assigns a deterministic date-based color when saving and keeps the sheet open on duplicate-date errors.",
+      "description": "Assigns a deterministic OKLCH palette color based on date string hashing (used when saving planned moments so colors persist per moment).",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-15",
-      "title": "Planned moments local persistence (CRUD) with reactive updates",
+      "title": "Up to 3 planned-moment color segments per date",
       "synonyms": [
-        "plannedMomentsStorage",
-        "plannedMomentsChanged event"
+        "Date segment colors map",
+        "Multi-moment per-day visualization"
       ],
-      "description": "Stores planned moments in localStorage with generated IDs and createdAt timestamps; supports create, delete, load, get-by-date, date set/color map helpers, and publishes same-tab change events plus cross-tab storage subscriptions.",
-      "reqIds": [],
+      "description": "Derives a date→colors map (up to 3 colors per date) by grouping planned moments per date and selecting colors deterministically by sorted time order.",
+      "reqIds": [
+        "REQ-8"
+      ],
       "version": 1
     },
     {
       "id": "IF-16",
-      "title": "Deterministic date→color assignment for planned moments",
+      "title": "Immediate planned-date indicator updates after saving planned moments",
       "synonyms": [
-        "getColorForDate",
-        "pastel OKLCH palette"
+        "Planned-date pill updates",
+        "Reactive planned-date marking"
       ],
-      "description": "Uses a muted OKLCH palette and a deterministic hash of ISO date strings to consistently map each date to a color across sessions (used in calendar strip and plan styling).",
-      "reqIds": [],
+      "description": "Planned moment saves dispatch a custom event to refresh hooks/components so date indicators update immediately and remain marked as long as at least one planned moment exists for that date.",
+      "reqIds": [
+        "REQ-7"
+      ],
       "version": 1
     },
     {
       "id": "IF-17",
-      "title": "One planned moment per day enforcement",
+      "title": "Planned moments hook for reactive UI state",
       "synonyms": [
-        "duplicate-date prevention",
-        "one-per-day rule"
+        "usePlannedMoments",
+        "Planner state adapter"
       ],
-      "description": "savePlannedMoment rejects saving another plan on the same ISO date with a 'duplicate-date' error; UI surfaces a friendly toast and keeps the bottom sheet open.",
+      "description": "Exposes planned moments for an optional selected date plus datesWithMoments, dateSegmentColors, and a sorted list of dates with moments; auto-refreshes via storage/custom event subscriptions.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-18",
-      "title": "Planned moment pill card UI with share/delete actions",
+      "title": "Planned moment creation bottom sheet",
       "synonyms": [
-        "PlannedMomentCard",
-        "pill card"
+        "PlannedMomentBottomSheet",
+        "Plan a Moment sheet"
       ],
-      "description": "Renders planned moments as pill-shaped transparent cards with a thin border colored by the moment/date color, a left color dot with a black ring, and in-card share + trash actions.",
+      "description": "Bottom sheet with open/close animations, compact time/title inputs, Save/Cancel actions, optional rescheduling via native date picker, and automatic per-date palette color assignment on save.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-19",
-      "title": "Clipboard-based planned moment sharing",
+      "title": "Calendar page weekly view with planned and photo indicators",
       "synonyms": [
-        "copy share text",
-        "plannedMomentShareText"
+        "CalendarPage",
+        "Weekly strip"
       ],
-      "description": "Generates formatted share text for planned moments (date/time/title + optional profile display name) and copies it to clipboard using Clipboard API with textarea/document.execCommand fallback; shows toast feedback.",
+      "description": "Renders a week strip with month and week navigation; indicates planned moments using up to 3 segment colors and indicates photo moments with a gray dot; opens the planner bottom sheet on date click and lists planned moments for the selected date.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-20",
-      "title": "Planned moment deletion with confirmation modal",
+      "title": "Home weekly calendar strip with multi-segment indicators",
       "synonyms": [
-        "ConfirmDeleteModal",
-        "delete confirm"
+        "HomeWeeklyCalendarStrip",
+        "Week row selector"
       ],
-      "description": "Provides an in-app confirm/cancel modal before deleting a planned moment from localStorage.",
+      "description": "Reusable component rendering Sun–Sat, previous/next week controls, selected-day styling, and up to 3 colored dot indicators for dates with planned moments (using dateSegmentColors).",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-21",
-      "title": "Inline toast notifications",
+      "title": "Segmented planned date pill UI component",
       "synonyms": [
-        "InlineToast",
-        "in-app feedback"
+        "PlannedDatePill",
+        "Multi-segment pill"
       ],
-      "description": "Reusable toast with auto-dismiss and fade/slide transitions; supports bottom or side placement for feedback such as copy success or duplicate-date warnings.",
-      "reqIds": [],
+      "description": "Clickable pill that formats an ISO date into a short label (e.g., Jan 15) and renders a multi-segment background (up to 3 colors) representing planned moments.",
+      "reqIds": [
+        "REQ-8"
+      ],
       "version": 1
     },
     {
       "id": "IF-22",
-      "title": "Calendar page weekly view with planned/photo indicators and planner integration",
+      "title": "Home planned-dates horizontal row",
       "synonyms": [
-        "CalendarPage",
-        "weekly strip"
+        "HomePlannedDatesRow",
+        "Swipeable planned-date pills"
       ],
-      "description": "Displays a weekly date strip with week and month navigation; indicates planned moments and photo moments by checking local storage; opens the planner bottom sheet on date selection and supports rescheduling via native date picker.",
-      "reqIds": [],
+      "description": "Displays a single-line horizontally scrollable row of planned-date pills (touch/trackpad swipe/scroll) reusing the same up-to-3 segment color logic as the calendar.",
+      "reqIds": [
+        "REQ-9"
+      ],
       "version": 1
     },
     {
       "id": "IF-23",
-      "title": "Browser camera hook (stream lifecycle + capture)",
+      "title": "Optional auto-drift animation for Home planned-dates row",
       "synonyms": [
-        "useCamera",
-        "getUserMedia management"
+        "Gentle drift",
+        "Auto-scroll with pause-on-interaction"
       ],
-      "description": "Encapsulates camera support detection, getUserMedia constraints, stream cleanup, facing-mode switching, retry, and photo capture via canvas→Blob→File with configurable quality/format.",
-      "reqIds": [],
+      "description": "Applies a subtle auto-drift scrolling effect that pauses while users interact (pointer/touch/wheel/scroll) and resumes after an idle delay.",
+      "reqIds": [
+        "REQ-10"
+      ],
       "version": 1
     },
     {
       "id": "IF-24",
-      "title": "Camera capture/review flow with gallery upload",
+      "title": "Home screen planning-first dashboard",
       "synonyms": [
-        "CameraScreen",
-        "capture then confirm"
+        "HomeScreen",
+        "Planning hub"
       ],
-      "description": "Provides live preview, capture/retake, switch camera, optional gallery upload, and advances to the save confirmation screen after storing a session draft of the captured image.",
+      "description": "Home includes a logo header, a search input stub, the planned-dates row, a weekly calendar strip, and a planning prompt with a Start Planning CTA that opens the planner bottom sheet.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-25",
-      "title": "Session draft storage for camera → confirm → feeling flow",
+      "title": "Updated Home bottom navigation with Notifications tab (non-navigating)",
       "synonyms": [
-        "pendingMomentDraftStorage",
-        "sessionStorage drafts"
+        "Footer nav reorder",
+        "Bell icon notifications"
       ],
-      "description": "Stores captured photo draft, confirmation inputs, and the saved moment ID in sessionStorage; supports clearing draft on retake/completion.",
-      "reqIds": [],
+      "description": "Home footer nav is reordered to Home → Vault → Camera → Notifications → Profile; Calendar tab is removed and replaced with a Notifications bell icon that does not navigate to any screen.",
+      "reqIds": [
+        "REQ-11",
+        "REQ-12"
+      ],
       "version": 1
     },
     {
       "id": "IF-26",
-      "title": "Save moment confirmation screen (who + reflection)",
+      "title": "Camera hook for getUserMedia lifecycle and photo capture",
       "synonyms": [
-        "SaveMomentConfirmPage",
-        "post-capture confirmation"
+        "useCamera",
+        "MediaStream management"
       ],
-      "description": "Shows captured photo, allows selecting who and entering an optional reflection, saves the moment to localStorage, stores the moment ID for follow-up, and routes to the feeling check screen.",
+      "description": "Encapsulates camera support detection, stream lifecycle cleanup, facing-mode switching, retry handling, and photo capture via canvas→Blob→File with categorized errors.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-27",
-      "title": "Post-save feeling check-in for a moment",
+      "title": "Camera screen: capture or upload, review, then continue",
       "synonyms": [
-        "MomentFeelingCheckPage",
-        "emotional check-in"
+        "CameraScreen",
+        "Capture flow"
       ],
-      "description": "Prompts “How did this feel?” with Meaningful/Good/Okay options, updates the saved moment record with the selected feeling, clears the session draft, then routes back to /home.",
+      "description": "Full-screen camera UI that auto-starts the camera, supports capture, retake, switch camera, retry on errors, and gallery upload. Converts captured/uploaded image to base64 draft and navigates to /save-moment.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-28",
-      "title": "Local photo moments storage utilities",
+      "title": "Session-based draft storage for multi-step capture flow",
       "synonyms": [
-        "momentsPhotosStorage",
-        "local photo registry"
+        "pendingMomentDraftStorage",
+        "Session draft persistence"
       ],
-      "description": "Stores photo moments in localStorage (id, data URL, timestamp, MIME type, who, reflection, feeling) and provides load/update/get-by-id helpers; emits a same-tab update event on writes.",
+      "description": "Uses sessionStorage to persist a photo draft, confirmation fields (who/reflection), and the saved moment ID across camera → confirm → feeling screens, and supports clearing all draft state.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-29",
-      "title": "Photo moments hook with reactive refresh",
+      "title": "Save moment confirmation screen (who + reflection) with local persistence",
       "synonyms": [
-        "useMomentsPhotos",
-        "storage/event listeners"
+        "SaveMomentConfirmPage",
+        "Post-capture confirmation"
       ],
-      "description": "Loads all photo moments and the most recent photo, refreshing on storage events filtered by key and a custom moments_photos_updated event for same-tab updates.",
+      "description": "Shows a captured photo preview, lets the user pick who it was with and add an optional reflection, saves the moment locally, stores its ID for the feeling step, supports retake, and navigates to /feeling-check.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-30",
-      "title": "Vault gallery grouped by month with animated thumbnail grid",
+      "title": "Post-save feeling check-in for a moment",
       "synonyms": [
-        "VaultPage",
-        "memory vault"
+        "MomentFeelingCheckPage",
+        "Emotional check-in"
       ],
-      "description": "Groups photo moments by month/year, shows a 3-column thumbnail grid (limited to 6 per month) with entrance animations and optional feeling badges; navigates to per-moment view.",
+      "description": "Prompts for one of three feelings (Meaningful/Good/Okay), updates the stored moment record, clears session draft state, and returns to /home.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-31",
-      "title": "Vault moment detail viewer with metadata overlay",
+      "title": "Local moments photo storage utilities with update events",
       "synonyms": [
-        "VaultMomentPage",
-        "full-screen viewer"
+        "momentsPhotosStorage",
+        "Local photo moments registry"
       ],
-      "description": "Full-screen moment viewer with close/back control and bottom gradient overlay showing relative time, who, reflection, and feeling.",
+      "description": "Stores photo moments (data URL, timestamp, type, who, reflection, feeling) in localStorage; supports load, update by ID, getMostRecentPhoto, and dispatches a same-tab 'moments_photos_updated' event.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-32",
-      "title": "IntersectionObserver in-view hook",
+      "title": "Moments photos hook with reactive refresh",
       "synonyms": [
-        "useInView",
-        "viewport detection"
+        "useMomentsPhotos",
+        "Storage/event listeners"
       ],
-      "description": "Reusable hook to detect when elements enter the viewport with configurable threshold/rootMargin and trigger-once behavior (used for Vault animations).",
+      "description": "Loads photos and tracks the most recent photo; stays in sync via filtered 'storage' events (moments_photos) and the custom 'moments_photos_updated' event.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-33",
+      "title": "Vault gallery grouped by month with in-view animations",
+      "synonyms": [
+        "VaultPage",
+        "Memory vault grid"
+      ],
+      "description": "Groups saved moments by month/year, renders a 3-column thumbnail grid (limited to 6 per month) with IntersectionObserver-based entrance animations, and navigates to a detail viewer on tap. Shows a feeling badge on thumbnails when available.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-34",
+      "title": "Vault moment detail viewer with metadata overlay",
+      "synonyms": [
+        "VaultMomentPage",
+        "Full-screen moment view"
+      ],
+      "description": "Displays a single moment full-screen with a close/back control, contained image scaling, relative time formatting, and a bottom gradient overlay for who/reflection/feeling.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-35",
+      "title": "IntersectionObserver-based in-view hook",
+      "synonyms": [
+        "useInView",
+        "Viewport detection"
+      ],
+      "description": "Hook that detects when an element enters the viewport (threshold/rootMargin), optionally trigger-once, used for Vault month/thumbnail entrance animations.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-36",
       "title": "Relative time formatting utility",
       "synonyms": [
         "formatRelativeTime",
-        "timestamp labels"
+        "Timestamp labels"
       ],
       "description": "Formats timestamps into compact relative labels (seconds/minutes/hours/days) and falls back to a short date for older moments.",
       "reqIds": [],
       "version": 1
     },
     {
-      "id": "IF-34",
+      "id": "IF-37",
       "title": "Local-first profile storage with invite code generation",
       "synonyms": [
         "profileStorage",
-        "invite code"
+        "Invite code"
       ],
-      "description": "Stores user profile data in localStorage, ensures an invite code exists (generating one if missing), and emits a profile_updated event on save.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-35",
-      "title": "Auto-geolocation hook (once per session)",
-      "synonyms": [
-        "useAutoGeolocation",
-        "session-gated geolocation"
-      ],
-      "description": "Requests browser geolocation at most once per session when profile location/coordinates are missing; calls onSuccess with coordinates on grant and logs errors without throwing.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-36",
-      "title": "Profile state hook with reactive updates",
-      "synonyms": [
-        "useProfile",
-        "profile adapter"
-      ],
-      "description": "Manages profile state, persists updates to localStorage, auto-requests geolocation when needed, and refreshes on storage/profile_updated events.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-37",
-      "title": "Profile management screen",
-      "synonyms": [
-        "ProfilePage",
-        "edit profile"
-      ],
-      "description": "Edits display name/location, supports profile photo upload (FileReader→data URL), copies invite code to clipboard with fallback, shows toast feedback, and navigates to Settings or Home.",
+      "description": "Stores a user profile in localStorage, ensures an invite code exists (generating if missing), and dispatches 'profile_updated' for same-tab updates.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-38",
-      "title": "Settings screen with logout",
+      "title": "Auto-geolocation hook (once per session)",
       "synonyms": [
-        "SettingsPage",
-        "sign out"
+        "useAutoGeolocation",
+        "Session-gated geolocation"
       ],
-      "description": "Settings UI with grouped placeholder items and a logout action that clears Internet Identity state and routes to the splash screen (/).",
+      "description": "Requests browser geolocation at most once per session (sessionStorage-gated); invokes onSuccess with coordinates if granted and logs denials/errors without throwing.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-39",
-      "title": "Backend RBAC with admin bootstrap secret",
+      "title": "Profile hook with auto-geolocation and reactive updates",
       "synonyms": [
-        "AccessControl",
-        "MixinAuthorization",
-        "roles"
+        "useProfile",
+        "Profile state adapter"
       ],
-      "description": "Motoko RBAC supports roles (#admin/#user/#guest), initialization via env var CAFFEINE_ADMIN_TOKEN plus a user-provided token, admin-only role assignment, and endpoints to query caller role/admin status.",
+      "description": "Manages profile state, automatically requests geolocation when location/coordinates are missing, persists coordinates and a formatted location string, and listens for 'profile_updated' and 'storage' to refresh state.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-40",
+      "title": "Profile management screen (edit fields, upload photo, copy invite code)",
+      "synonyms": [
+        "ProfilePage"
+      ],
+      "description": "UI to edit display name/location, upload a profile picture (FileReader→data URL), copy invite code to clipboard with fallback, show inline toast feedback, and navigate to Settings or Home.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-41",
+      "title": "Inline toast notification component",
+      "synonyms": [
+        "InlineToast",
+        "In-app confirmations"
+      ],
+      "description": "Reusable toast component with auto-dismiss and fade/slide-out animation for lightweight confirmations (e.g., profile saved, invite code copied).",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-42",
+      "title": "Settings screen with logout",
+      "synonyms": [
+        "SettingsPage",
+        "Sign out"
+      ],
+      "description": "Renders compact grouped settings sections (mostly placeholders) and supports logout by clearing Internet Identity state and routing back to splash (/).",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-43",
+      "title": "Moment feed card UI component",
+      "synonyms": [
+        "MomentsImageCard",
+        "Glassmorphic moment card"
+      ],
+      "description": "Presentational card that renders a moment image with profile avatar/name/location, a timestamp label, and quiet metadata display for who/reflection/feeling (no social actions).",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-44",
+      "title": "Reserved module for future React Query backend hooks",
+      "synonyms": [
+        "useQueries placeholder"
+      ],
+      "description": "Placeholder module reserved for future backend query hooks; currently exports nothing.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-45",
+      "title": "Backend role-based access control (RBAC) with admin bootstrap secret",
+      "synonyms": [
+        "AccessControl",
+        "MixinAuthorization"
+      ],
+      "description": "Motoko RBAC supports roles (#admin/#user/#guest), initialization using an environment secret (CAFFEINE_ADMIN_TOKEN) plus user-provided token, admin role assignment, and endpoints to query caller role/admin status.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-46",
       "title": "Backend user profile API with authorization checks",
       "synonyms": [
         "getCallerUserProfile",
@@ -449,7 +522,7 @@
       "version": 1
     },
     {
-      "id": "IF-41",
+      "id": "IF-47",
       "title": "Backend user settings API with authorization checks",
       "synonyms": [
         "getCallerSettings",
@@ -460,312 +533,130 @@
       "version": 1
     },
     {
-      "id": "IF-42",
-      "title": "Backend photo metadata registry per user (index only)",
+      "id": "IF-48",
+      "title": "Backend moments photo metadata registry (per-user index)",
       "synonyms": [
         "storePhoto metadata",
         "getCallerMomentsPhotos",
         "deletePhoto"
       ],
-      "description": "Maintains a per-user list of photo metadata records (id/owner/timestamp/blobId) with authenticated store/list and owner-only delete behavior; blob persistence is not yet implemented.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-43",
-      "title": "Backend blob-storage maintenance and authorization endpoints (mixin)",
-      "synonyms": [
-        "MixinStorage",
-        "gateway allowlist",
-        "cycles refill"
-      ],
-      "description": "Exposes endpoints to update authorized gateway principals, check blob liveness, list dead blobs for deletion (authorized callers), confirm deletion + trigger GC, create an upload certificate stub, and refill cycles via a cashier principal.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-44",
-      "title": "Reserved module for future backend query hooks",
-      "synonyms": [
-        "useQueries placeholder"
-      ],
-      "description": "Placeholder file reserved for future React Query hooks that interact with the backend; currently exports nothing.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-45",
-      "title": "Hamburger menu component with app navigation/actions",
-      "synonyms": [
-        "HamburgerMenu",
-        "app menu"
-      ],
-      "description": "Implements the previously-empty HamburgerMenu component to provide a functional in-app menu for navigation and/or common actions.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-46",
-      "title": "Sign-in overlay component for authentication UX",
-      "synonyms": [
-        "SignInOverlay",
-        "auth overlay"
-      ],
-      "description": "Implements the previously-empty SignInOverlay component to support an in-app sign-in prompt/overlay tied to Internet Identity authentication state.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-47",
-      "title": "Moments page implementation",
-      "synonyms": [
-        "MomentsPage",
-        "moments screen"
-      ],
-      "description": "Implements the previously-empty MomentsPage route to render its intended UI instead of being an unimplemented placeholder.",
-      "reqIds": [],
-      "version": 1
-    },
-    {
-      "id": "IF-48",
-      "title": "Backend photo blob persistence and blob retrieval wired",
-      "synonyms": [
-        "storePhoto blob put",
-        "getBlob implementation"
-      ],
-      "description": "Completes backend wiring so photo uploads persist the provided blob into blob storage and blob retrieval is implemented (getBlob no longer returns a constant null placeholder). Also corrects photo metadata timestamp handling during storePhoto.",
+      "description": "Maintains a per-user list of photo metadata records (id/owner/timestamp/blobId) with authenticated store/list and owner-only delete behavior; actual blob persistence is not yet implemented.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-49",
-      "title": "Local notifications storage utilities with reactive updates",
+      "title": "Backend blob-storage maintenance and authorization endpoints",
       "synonyms": [
-        "notificationsStorage",
-        "local notification inbox"
+        "MixinStorage",
+        "Dead blob pruning",
+        "Cycles refill",
+        "Gateway principal allowlist"
       ],
-      "description": "Stores notifications locally (including read/unread state and received timestamps), provides CRUD helpers, and triggers same-tab and cross-tab reactive refresh via custom events and storage listeners.",
+      "description": "Provides endpoints to update authorized gateway principals, check blob liveness, list and confirm deletion of dead blobs (authorized callers), trigger GC after pruning, create a certificate stub response, and refill cycles via a cashier principal.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "feature-promote-draft-version-146-to-be-the-active-live-deployment-and-ensure-the-app-no-longer-reverts-back-to-version-125-after-deployment-completes",
+      "title": "Promote Draft Version 146 to be the active live deployment and ensure the app no longer reverts back to Version 125 after deployment completes.",
       "reqIds": [
-        "AR-2",
-        "AR-3"
+        "REQ-13"
       ],
       "version": 1
     },
     {
-      "id": "IF-50",
-      "title": "Floating notification chat-bubble popups near logo",
-      "synonyms": [
-        "NotificationPopupHost",
-        "NotificationChatBubble",
-        "useNotificationPopups"
-      ],
-      "description": "Displays small, auto-dismissing chat-bubble notification popups near the Moments logo; uses the current character/avatar image and reads from locally stored notifications.",
+      "id": "feature-remove-version-125-from-being-the-active-live-deployment-i-e-ensure-version-125-is-no-longer-the-live-version-once-146-is-live",
+      "title": "Remove Version 125 from being the active live deployment (i.e., ensure Version 125 is no longer the live version once 146 is live).",
       "reqIds": [
-        "AR-2",
-        "AR-3"
-      ],
-      "version": 1
-    },
-    {
-      "id": "IF-51",
-      "title": "Notifications inbox page with unread badge and timestamps",
-      "synonyms": [
-        "NotificationsPage",
-        "useNotifications",
-        "navbar unread badge"
-      ],
-      "description": "Adds a dedicated Notifications inbox screen that lists notifications with received timestamps and supports unread count badge display from local storage (in addition to floating popups).",
-      "reqIds": [
-        "AR-1",
-        "AR-3"
-      ],
-      "version": 1
-    },
-    {
-      "id": "IF-52",
-      "title": "Consistent back-navigation slide transition across routes",
-      "synonyms": [
-        "back slide navigation",
-        "useBackSlideNavigation",
-        "pop transition animation"
-      ],
-      "description": "Implements a consistent slide transition animation when navigating back (history pop / back action) to smooth route changes across the app.",
-      "reqIds": [
-        "AR-9"
-      ],
-      "version": 1
-    },
-    {
-      "id": "IF-53",
-      "title": "Onboarding splash updates (slide removal + updated Get Started video media)",
-      "synonyms": [
-        "MobileSplashScreen updates",
-        "onboarding slide sequence"
-      ],
-      "description": "Updates the onboarding/splash sequence to remove the “capture every moment” slide and updates the Get Started slide media to use the provided video with intended scaling/fit behavior.",
-      "reqIds": [
-        "AR-16",
-        "AR-19"
-      ],
-      "version": 1
-    },
-    {
-      "id": "IF-54",
-      "title": "Navbar cleanup and notifications icon styling update",
-      "synonyms": [
-        "remove calendar icon",
-        "bell icon",
-        "BsFillBellFill"
-      ],
-      "description": "Updates the bottom navbar to remove/replace the calendar icon and uses react-icons BsFillBellFill for notifications with default black styling and yellow hover/active styling to match the app’s icon style; aligns notifications navigation/UI behavior with intended usage.",
-      "reqIds": [
-        "AR-8",
-        "AR-17"
-      ],
-      "version": 1
-    },
-    {
-      "id": "IF-55",
-      "title": "Duplicate-date error toast rendered within phone frame and styled as compact red warning",
-      "synonyms": [
-        "duplicate-date toast fix",
-        "InlineToast styling"
-      ],
-      "description": "Ensures the duplicate-date warning toast appears within the mobile phone frame viewport (not off-screen) and is styled as a small red in-app warning.",
-      "reqIds": [
-        "AR-14"
-      ],
-      "version": 1
-    },
-    {
-      "id": "IF-56",
-      "title": "Moment viewer no longer exposes delete controls",
-      "synonyms": [
-        "Vault/Moments viewer delete removed",
-        "no delete option"
-      ],
-      "description": "Removes the delete option entirely from the moment/image viewer UI so no delete controls are shown while viewing a moment.",
-      "reqIds": [
-        "AR-18"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-promote-the-currently-deployed-draft-build-draft-version-140-to-the-live-production-deployment-so-end-users-receive-the-latest-version",
-      "title": "Promote the currently deployed draft build (Draft Version 140) to the live production deployment so end users receive the latest version.",
-      "reqIds": [
-        "REQ-4"
+        "REQ-14"
       ],
       "version": 1
     }
   ],
   "new_feature_requests": [
     {
-      "id": "AR-5",
-      "summary": "Vault: remove the music option from the UI",
+      "id": "AR-1",
+      "summary": "Home planning flow: single-row weekly calendar on Home + “Start Planning” opens slide-up planner; saved planned moments render below calendar as pill cards; start button shrinks to + after first plan",
       "reqIds": [],
-      "status": "pending"
+      "status": "in_progress"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Planned moment color system: deterministic muted pastel per date; one planned moment per day; date pill color matches card border; deletion removes date color; show friendly in-frame warning if user tries to plan twice on same date",
+      "reqIds": [],
+      "status": "in_progress"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Planner bottom-sheet UI polish: smooth eased translate open/close; hide navbar while open; improve date/time inputs; add date-change arrow; keep UI compact and mobile-friendly",
+      "reqIds": [],
+      "status": "in_progress"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Bottom navbar change: remove Calendar icon/tab and replace with Notifications bell icon (icon-only, no feature/UI behind it for now); order Home → Moments/Vault → Camera → Notifications → Profile",
+      "reqIds": [],
+      "status": "in_progress"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Local media storage limit: increase to 10 combined items; block new saves when limit reached (until user deletes)",
+      "reqIds": [],
+      "status": "in_progress"
     },
     {
       "id": "AR-6",
-      "summary": "Support saving and viewing videos in the Vault (not images only)",
+      "summary": "Profile persistence fix: ensure profile fields (name/photo/country) save reliably in localStorage when leaving page",
       "reqIds": [],
-      "status": "pending"
+      "status": "in_progress"
     },
     {
       "id": "AR-7",
-      "summary": "Handle local storage full: allow users to delete existing moments/media and enforce a max of ~10 stored items",
+      "summary": "Moments/Vault improvements: support videos (not only images), remove music option in viewer, improve gallery card sizing/styling/motion, and ensure tap opens a clear enlarged view (square media)",
       "reqIds": [],
-      "status": "pending"
+      "status": "in_progress"
     },
     {
-      "id": "AR-10",
-      "summary": "Rename the Vault feature/labeling to “Moments” (user-facing rename)",
+      "id": "AR-8",
+      "summary": "Splash onboarding maintenance: ensure slide media renders correctly (incl. fixing/removing non-rendering Slide 3 asset) and keep slide motion consistent across slides",
       "reqIds": [],
-      "status": "pending"
+      "status": "blocked"
     },
     {
-      "id": "AR-11",
-      "summary": "Personalized local notifications: create notification types/templates (e.g., first moment created, prompt to set up profile, calendar full) and trigger them on specific in-app actions; show as chat-bubble popups with customized message text",
+      "id": "AR-9",
+      "summary": "Deployment/version control: resolve issue where newer drafts (e.g., 146) fail to become live and app reverts to older live version (e.g., 125)",
       "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-12",
-      "summary": "Notifications UI: use the provided avatar image \"Cheerful boy with headphones waving.png\" for the floating chat-bubble notification popups",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-20",
-      "summary": "Onboarding splash: Slide 3 should use its original/old correct image (revert Slide 3 only; no video changes requested)",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-21",
-      "summary": "Personalized notifications: implement ~5 notification types/templates triggered by specific in-app conditions; show as chat-bubble popups that auto-disappear after a few seconds and are saved locally for the Notifications tab/inbox",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-22",
-      "summary": "Home planning UX: single-row weekly calendar on Home with slide-up planner; planned-moment cards list below; per-date deterministic pastel color coding (calendar pill matches card); enforce one planned moment per day with in-frame warning; share (copy-to-clipboard) + delete (confirm) actions",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-23",
-      "summary": "Navbar update: remove Calendar tab/icon entirely and replace with Notifications bell; nav order Home → Moments/Vault → Camera → Notifications → Profile",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-24",
-      "summary": "Onboarding/splash: restore correct Slide 3 image; Slide 4 (Get Started slide) uses provided video asset as the media; remove the “capture every moment” slide if present",
-      "reqIds": [],
-      "status": "pending"
+      "status": "blocked"
     }
   ],
   "architectural_notes": [
-    "Frontend is a React + TypeScript SPA using TanStack Router for navigation and TanStack React Query for shared caching (notably backend actor caching keyed by principal).",
-    "UI is mobile-first and consistently rendered inside a centered phone-sized viewport (max ~390×844) over a full-screen backdrop to preserve a mobile layout on desktop.",
-    "Styling uses Tailwind utilities plus extensive custom CSS (OKLCH design tokens, custom animations for onboarding, bottom sheets, modals, and toasts).",
-    "Local-first persistence: planned moments, photo moments, and profile are stored in localStorage; the capture flow uses sessionStorage for draft state between screens.",
-    "Same-tab data reactivity is implemented via custom DOM events (e.g., plannedMomentsChanged, moments_photos_updated, profile_updated) in addition to the browser storage event for cross-tab updates.",
-    "Authentication is provided via a custom Internet Identity context/provider built on AuthClient; actor creation is identity-aware and initialized with an admin secret read from the URL hash (scrubbed after extraction).",
-    "Backend is a Motoko canister composed via mixins (authorization + blob-storage maintenance endpoints). RBAC is first-user-admin bootstrapped via env var CAFFEINE_ADMIN_TOKEN and a user-provided secret.",
-    "Repository now includes a reusable build-template scaffold (React + Tailwind + shadcn/ui + ICP canister YAMLs) with deploy/build scripts (Dockerfile, icp.yaml, deploy.sh) and asset maintenance utilities (resize/prune images).",
-    "Notifications are local-first: notifications are persisted in browser storage with unread state and timestamps, surfaced via floating chat-bubble popups near the logo and a dedicated inbox page with unread badge; updates propagate via storage listeners and custom events.",
-    "Back-navigation (history pop) transitions are handled via a dedicated hook (useBackSlideNavigation) to apply consistent slide animations on route back actions."
+    "Frontend is a React SPA using TanStack Router; each route renders a fixed full-screen overlay with a centered mobile viewport (max 390x844).",
+    "Local-first persistence: planned moments, photo moments, and user profiles are stored in localStorage; the camera→confirm→feeling flow uses sessionStorage as a multi-step draft buffer.",
+    "Cross-component synchronization uses the browser 'storage' event (cross-tab) plus same-tab custom events (e.g., 'plannedMomentsChanged', 'moments_photos_updated', 'profile_updated').",
+    "Planned-moment visualization is driven by per-moment stored colors and a derived date→segmentColors map (up to 3 colors per date), enabling immediate UI updates after save.",
+    "Internet Identity authentication is encapsulated in a provider/hook using @dfinity/auth-client with delegation validity checks and long-lived TTL configuration.",
+    "React Query is used for global caching and for an identity-keyed backend actor (useActor) that triggers invalidation/refetch of dependent queries when the actor changes.",
+    "Styling combines Tailwind with extensive custom CSS (OKLCH tokens, glassmorphic surfaces, bespoke animations for onboarding/welcome, bottom sheets, and vault reveals).",
+    "Camera functionality is encapsulated in a hook managing MediaStream lifecycle, facing-mode switching, and canvas-based capture to File.",
+    "Backend Motoko canister composes capabilities via mixins: authorization (RBAC) and blob-storage maintenance helpers gated by environment variables.",
+    "Codebase favors small dedicated hooks (usePlannedMoments, useMomentsPhotos, useProfile, useAutoGeolocation, useInView) for side effects and state adapters."
   ],
   "known_issues": [
-    "Two global CSS entrypoints exist (frontend/index.css and frontend/src/index.css). The app imports frontend/src/index.css via src/main.tsx; the other file can drift and cause confusion.",
-    "CameraScreen flash toggle is UI-only; the camera hook does not implement torch/flash control.",
-    "Backend canister state (maps/counters/roles) is not stable; data will be lost on upgrade without stable variables and preupgrade/postupgrade handling.",
-    "backend/blob-storage/Storage.mo references env var CAFFFEINE_STORAGE_CASHIER_PRINCIPAL (likely misspelled), increasing deployment misconfiguration risk.",
-    "backend/blob-storage/Storage.mo refillCashier computes Nat.sub(currentBalance, reservedCycles); if currentBalance < reservedCycles this can trap due to Nat underflow.",
-    "authorization/access-control.mo traps for unregistered users in getUserRole; callers must ensure initialization occurs for new principals before permission checks.",
-    "Local storage can become full; current UX does not allow users to delete existing stored items to recover space.",
-    "Deployments intermittently fail; requires investigation of build/deploy pipeline stability (redeploy often fails even without code changes)."
+    "backend/main.mo: storePhoto does not persist the provided blob into blob storage (comment indicates missing put call) and sets metadata timestamp to 0.",
+    "backend/main.mo: getBlob is a placeholder that always returns null (blob retrieval not implemented).",
+    "backend/blob-storage/Storage.mo expects env var 'CAFFFEINE_STORAGE_CASHIER_PRINCIPAL' (note the spelling) and traps if unset; deployments must match exactly.",
+    "backend/authorization/access-control.mo: getUserRole traps with \"User is not registered\" until initialization occurs; callers must ensure _initializeAccessControlWithSecret runs for authenticated principals.",
+    "frontend/src/pages/CalendarPage.tsx defines a PhotoMetadata interface with 'dataUrl', but momentsPhotosStorage persists 'data'; currently it only uses timestamps, but the model is inconsistent.",
+    "frontend/src/utils/plannedMomentsStorage.ts subscribeToStorageChanges listens to all 'storage' events without filtering by key, causing unnecessary refresh callbacks.",
+    "frontend/src/pages/CameraScreen.tsx has a flash toggle UI state, but useCamera does not implement torch/flash control (UI-only).",
+    "frontend/src/components/HamburgerMenu.tsx and frontend/src/components/SignInOverlay.tsx are empty placeholders.",
+    "frontend/src/pages/MomentsPage.tsx is empty/unimplemented.",
+    "frontend/src/components/HomePlannedDatesRow.tsx runs a continuous requestAnimationFrame loop for auto-drift without pausing based on page visibility, which may impact battery/CPU on mobile."
   ],
   "isFixRequest": true,
-  "generatedImages": [
-    {
-      "filename": "frontend/public/assets/generated/notif-avatar-boy.dim_256x256.png",
-      "description": "Generated notification avatar image used in notification UI.",
-      "targetWidth": 256,
-      "targetHeight": 256
-    },
-    {
-      "filename": "frontend/public/assets/generated/notif-avatar-boy-small.dim_96x96.png",
-      "description": "Small generated notification avatar image variant.",
-      "targetWidth": 96,
-      "targetHeight": 96
-    }
-  ],
   "gameProjectType": "none",
-  "projectName": "Moments Mobile App",
-  "clarification_mode": "instant",
+  "projectName": "Moments",
+  "clarification_mode": "pro",
   "clarification_rounds": 0
 }

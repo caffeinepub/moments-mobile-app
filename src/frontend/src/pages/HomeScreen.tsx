@@ -1,55 +1,39 @@
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { Plus } from 'lucide-react';
-import { BsFillBellFill } from 'react-icons/bs';
 import HomeWeeklyCalendarStrip from '../components/HomeWeeklyCalendarStrip';
+import HomePlannedDatesRow from '../components/HomePlannedDatesRow';
 import PlannedMomentBottomSheet from '../components/PlannedMomentBottomSheet';
-import PlannedMomentCard from '../components/PlannedMomentCard';
-import InlineToast from '../components/InlineToast';
-import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
-import NotificationPopupBubble from '../components/NotificationPopupBubble';
 import { usePlannedMoments } from '../hooks/usePlannedMoments';
-import { useProfile } from '../hooks/useProfile';
-import { useNotificationPopups } from '../hooks/useNotificationPopups';
-import { PlannedMoment } from '../utils/plannedMomentsStorage';
-import { generatePlannedMomentShareText } from '../utils/plannedMomentShareText';
 
 function HomeScreen() {
     const navigate = useNavigate();
     const [hoveredNav, setHoveredNav] = useState<string | null>(null);
-    const [selectedNav, setSelectedNav] = useState<string>('home');
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
     const [isNavbarVisible, setIsNavbarVisible] = useState(true);
-    const [toastMessage, setToastMessage] = useState<string | null>(null);
-    const [toastPlacement, setToastPlacement] = useState<'bottom' | 'side'>('bottom');
-    const [toastVariant, setToastVariant] = useState<'success' | 'warning'>('success');
-    const [momentToDelete, setMomentToDelete] = useState<PlannedMoment | null>(null);
 
-    const { allMoments, datesWithMoments, dateColorMap, addMoment, deleteMoment } = usePlannedMoments(null);
-    const { profile } = useProfile();
-    const { popups, dismissPopup } = useNotificationPopups();
+    const { datesWithMoments, dateSegmentColors, sortedDates, addMoment } = usePlannedMoments(null);
 
     const handleCameraClick = () => {
         navigate({ to: '/camera' });
     };
 
-    const handleNotificationsClick = () => {
-        setSelectedNav('notifications');
-        navigate({ to: '/notifications' });
-    };
-
     const handleVaultClick = () => {
-        setSelectedNav('moments');
         navigate({ to: '/vault' });
     };
 
     const handleProfileClick = () => {
-        setSelectedNav('profile');
         navigate({ to: '/profile' });
     };
 
     const handleDateSelect = (date: Date) => {
+        setSelectedDate(date);
+        setIsBottomSheetOpen(true);
+    };
+
+    const handlePlannedDateClick = (dateStr: string) => {
+        const [year, month, day] = dateStr.split('-').map(Number);
+        const date = new Date(year, month - 1, day);
         setSelectedDate(date);
         setIsBottomSheetOpen(true);
     };
@@ -67,70 +51,6 @@ function HomeScreen() {
         setSelectedDate(newDate);
     };
 
-    const handleDuplicateDate = () => {
-        setToastPlacement('side');
-        setToastVariant('warning');
-        setToastMessage('You can only have one moment per day');
-    };
-
-    const handleShare = async (moment: PlannedMoment) => {
-        const shareText = generatePlannedMomentShareText(moment, profile.displayName);
-
-        // Always copy to clipboard (no native share)
-        try {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                await navigator.clipboard.writeText(shareText);
-                setToastPlacement('bottom');
-                setToastVariant('success');
-                setToastMessage('Copied to clipboard');
-            } else {
-                // Fallback for browsers without Clipboard API
-                const textArea = document.createElement('textarea');
-                textArea.value = shareText;
-                textArea.style.position = 'fixed';
-                textArea.style.left = '-999999px';
-                textArea.style.top = '-999999px';
-                document.body.appendChild(textArea);
-                textArea.focus();
-                textArea.select();
-                try {
-                    document.execCommand('copy');
-                    setToastPlacement('bottom');
-                    setToastVariant('success');
-                    setToastMessage('Copied to clipboard');
-                } catch (err) {
-                    console.error('Fallback copy failed:', err);
-                    setToastPlacement('bottom');
-                    setToastVariant('warning');
-                    setToastMessage('Failed to copy');
-                }
-                document.body.removeChild(textArea);
-            }
-        } catch (error) {
-            console.error('Copy failed:', error);
-            setToastPlacement('bottom');
-            setToastVariant('warning');
-            setToastMessage('Failed to copy');
-        }
-    };
-
-    const handleDeleteRequest = (moment: PlannedMoment) => {
-        setMomentToDelete(moment);
-    };
-
-    const handleConfirmDelete = () => {
-        if (momentToDelete) {
-            deleteMoment(momentToDelete.id);
-            setMomentToDelete(null);
-        }
-    };
-
-    const handleCancelDelete = () => {
-        setMomentToDelete(null);
-    };
-
-    const hasMoments = allMoments.length > 0;
-
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black overflow-hidden">
             {/* Mobile viewport container with beige background */}
@@ -143,7 +63,7 @@ function HomeScreen() {
                 {/* Scrollable content area - hide scrollbar */}
                 <div className="flex-1 overflow-y-auto pb-24 home-scrollbar">
                     {/* Header Navigation */}
-                    <header className="relative w-full px-8 pt-4 pb-2">
+                    <header className="relative w-full px-8 pt-6 pb-3">
                         <div className="flex items-center justify-center">
                             {/* Center: Logo Image */}
                             <img 
@@ -154,21 +74,8 @@ function HomeScreen() {
                         </div>
                     </header>
 
-                    {/* Notification popups - positioned near logo */}
-                    {popups.length > 0 && (
-                        <div className="notification-popup-container">
-                            {popups.map((popup) => (
-                                <NotificationPopupBubble
-                                    key={popup.id}
-                                    message={popup.message}
-                                    onDismiss={() => dismissPopup(popup.id)}
-                                />
-                            ))}
-                        </div>
-                    )}
-
                     {/* Search Bar */}
-                    <div className="px-12 mt-2">
+                    <div className="px-12 mt-3">
                         <div 
                             className="relative w-full flex items-center gap-2.5 px-4 py-2.5"
                             style={{
@@ -191,18 +98,29 @@ function HomeScreen() {
                         </div>
                     </div>
 
+                    {/* Planned Dates Row - Swipeable Pills */}
+                    {sortedDates.length > 0 && (
+                        <div className="mt-6">
+                            <HomePlannedDatesRow
+                                sortedDates={sortedDates}
+                                dateSegmentColors={dateSegmentColors}
+                                onDateClick={handlePlannedDateClick}
+                            />
+                        </div>
+                    )}
+
                     {/* Weekly Calendar Strip - Planning First */}
-                    <div className="mt-5 px-6">
+                    <div className="mt-8 px-6">
                         <HomeWeeklyCalendarStrip 
                             selectedDate={selectedDate}
                             onDateSelect={handleDateSelect}
                             datesWithMoments={datesWithMoments}
-                            dateColorMap={dateColorMap}
+                            dateSegmentColors={dateSegmentColors}
                         />
                     </div>
 
                     {/* Planning Content Area */}
-                    <div className="mt-6 px-10">
+                    <div className="mt-8 px-10">
                         <div
                             className="home-planning-container"
                             style={{
@@ -219,38 +137,13 @@ function HomeScreen() {
                             >
                                 Create space for the moments that matter most
                             </p>
-                            
-                            {!hasMoments ? (
-                                <button
-                                    onClick={handleStartPlanning}
-                                    className="yellow-button-small mx-auto block no-pulse"
-                                >
-                                    Start Planning
-                                </button>
-                            ) : (
-                                <button
-                                    onClick={handleStartPlanning}
-                                    className="home-add-planning-button mx-auto block no-pulse"
-                                    aria-label="Add new planned moment"
-                                >
-                                    <Plus size={20} strokeWidth={2.5} />
-                                </button>
-                            )}
+                            <button
+                                onClick={handleStartPlanning}
+                                className="yellow-button-small mx-auto block no-pulse"
+                            >
+                                Start Planning
+                            </button>
                         </div>
-
-                        {/* Saved Planning Cards */}
-                        {hasMoments && (
-                            <div className="mt-6 flex flex-col gap-3">
-                                {allMoments.map((moment) => (
-                                    <PlannedMomentCard 
-                                        key={moment.id} 
-                                        moment={moment}
-                                        onShare={handleShare}
-                                        onDelete={handleDeleteRequest}
-                                    />
-                                ))}
-                            </div>
-                        )}
                     </div>
                 </div>
 
@@ -279,14 +172,14 @@ function HomeScreen() {
                                 <i 
                                     className="fa-solid fa-house transition-colors duration-300 ease-in-out"
                                     style={{ 
-                                        color: selectedNav === 'home' ? '#ffa500' : hoveredNav === 'home' ? '#ffa500' : '#000000',
+                                        color: hoveredNav === 'home' ? '#ffa500' : '#000000',
                                         fontSize: '15px'
                                     }}
                                 ></i>
                                 <span 
                                     className="text-xs font-medium transition-colors duration-300 ease-in-out"
                                     style={{ 
-                                        color: selectedNav === 'home' ? '#ffa500' : hoveredNav === 'home' ? '#ffa500' : '#000000',
+                                        color: hoveredNav === 'home' ? '#ffa500' : '#000000',
                                         fontFamily: "'Bricolage Grotesque', sans-serif",
                                         fontSize: '9px'
                                     }}
@@ -295,31 +188,30 @@ function HomeScreen() {
                                 </span>
                             </button>
 
-                            {/* Notifications */}
+                            {/* Vault */}
                             <button 
-                                onClick={handleNotificationsClick}
+                                onClick={handleVaultClick}
                                 className="flex flex-col items-center justify-center gap-0.5 min-w-[52px] transition-all duration-300 ease-in-out no-pulse"
-                                aria-label="Notifications"
-                                onMouseEnter={() => setHoveredNav('notifications')}
+                                aria-label="Vault"
+                                onMouseEnter={() => setHoveredNav('vault')}
                                 onMouseLeave={() => setHoveredNav(null)}
                             >
-                                <BsFillBellFill 
-                                    className="transition-colors duration-300 ease-in-out"
+                                <i 
+                                    className="fa-solid fa-box-archive transition-colors duration-300 ease-in-out"
                                     style={{ 
-                                        color: selectedNav === 'notifications' ? '#ffa500' : hoveredNav === 'notifications' ? '#ffa500' : '#000000',
-                                        width: '15px',
-                                        height: '15px'
+                                        color: hoveredNav === 'vault' ? '#ffa500' : '#000000',
+                                        fontSize: '15px'
                                     }}
-                                />
+                                ></i>
                                 <span 
                                     className="text-xs font-medium transition-colors duration-300 ease-in-out"
                                     style={{ 
-                                        color: selectedNav === 'notifications' ? '#ffa500' : hoveredNav === 'notifications' ? '#ffa500' : '#000000',
+                                        color: hoveredNav === 'vault' ? '#ffa500' : '#000000',
                                         fontFamily: "'Bricolage Grotesque', sans-serif",
                                         fontSize: '9px'
                                     }}
                                 >
-                                    Notifications
+                                    Vault
                                 </span>
                             </button>
 
@@ -332,30 +224,33 @@ function HomeScreen() {
                                 <i className="fa-solid fa-camera text-black" style={{ fontSize: '20px' }}></i>
                             </button>
 
-                            {/* Moments (formerly Vault) */}
+                            {/* Notifications - Bell Icon (no navigation) */}
                             <button 
-                                onClick={handleVaultClick}
                                 className="flex flex-col items-center justify-center gap-0.5 min-w-[52px] transition-all duration-300 ease-in-out no-pulse"
-                                aria-label="Moments"
-                                onMouseEnter={() => setHoveredNav('moments')}
+                                aria-label="Notifications"
+                                onMouseEnter={() => setHoveredNav('notifications')}
                                 onMouseLeave={() => setHoveredNav(null)}
                             >
-                                <i 
-                                    className="fa-solid fa-box-archive transition-colors duration-300 ease-in-out"
+                                <img 
+                                    src="/assets/generated/notification-bell.dim_24x24.png"
+                                    alt="Notifications"
+                                    className="transition-opacity duration-300 ease-in-out"
                                     style={{ 
-                                        color: selectedNav === 'moments' ? '#ffa500' : hoveredNav === 'moments' ? '#ffa500' : '#000000',
-                                        fontSize: '15px'
+                                        width: '15px',
+                                        height: '15px',
+                                        opacity: hoveredNav === 'notifications' ? 0.7 : 1,
+                                        filter: hoveredNav === 'notifications' ? 'brightness(0) saturate(100%) invert(56%) sepia(89%) saturate(1574%) hue-rotate(360deg) brightness(102%) contrast(104%)' : 'none'
                                     }}
-                                ></i>
+                                />
                                 <span 
                                     className="text-xs font-medium transition-colors duration-300 ease-in-out"
                                     style={{ 
-                                        color: selectedNav === 'moments' ? '#ffa500' : hoveredNav === 'moments' ? '#ffa500' : '#000000',
+                                        color: hoveredNav === 'notifications' ? '#ffa500' : '#000000',
                                         fontFamily: "'Bricolage Grotesque', sans-serif",
                                         fontSize: '9px'
                                     }}
                                 >
-                                    Moments
+                                    Notifications
                                 </span>
                             </button>
 
@@ -370,14 +265,14 @@ function HomeScreen() {
                                 <i 
                                     className="fa-solid fa-user transition-colors duration-300 ease-in-out"
                                     style={{ 
-                                        color: selectedNav === 'profile' ? '#ffa500' : hoveredNav === 'profile' ? '#ffa500' : '#000000',
+                                        color: hoveredNav === 'profile' ? '#ffa500' : '#000000',
                                         fontSize: '15px'
                                     }}
                                 ></i>
                                 <span 
                                     className="text-xs font-medium transition-colors duration-300 ease-in-out"
                                     style={{ 
-                                        color: selectedNav === 'profile' ? '#ffa500' : hoveredNav === 'profile' ? '#ffa500' : '#000000',
+                                        color: hoveredNav === 'profile' ? '#ffa500' : '#000000',
                                         fontFamily: "'Bricolage Grotesque', sans-serif",
                                         fontSize: '9px'
                                     }}
@@ -398,26 +293,6 @@ function HomeScreen() {
                 onSave={addMoment}
                 onVisibilityChange={handleBottomSheetVisibilityChange}
                 onChangeDate={handleChangeDate}
-                onDuplicateDate={handleDuplicateDate}
-            />
-
-            {/* Toast notification */}
-            {toastMessage && (
-                <InlineToast
-                    message={toastMessage}
-                    placement={toastPlacement}
-                    variant={toastVariant}
-                    onClose={() => setToastMessage(null)}
-                />
-            )}
-
-            {/* Delete confirmation modal */}
-            <ConfirmDeleteModal
-                isOpen={!!momentToDelete}
-                onConfirm={handleConfirmDelete}
-                onCancel={handleCancelDelete}
-                title="Delete Moment?"
-                message="This planned moment will be permanently removed."
             />
         </div>
     );

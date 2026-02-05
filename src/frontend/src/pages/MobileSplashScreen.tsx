@@ -39,7 +39,7 @@ function SplashCard({ backgroundColor, number, mediaSrc, textLine1, textLine2, i
                 {isVideo ? (
                     <video 
                         src={mediaSrc}
-                        className={`w-full h-auto object-contain object-bottom ${isThirdCard ? 'scale-110' : ''}`}
+                        className="w-full h-auto object-contain object-bottom"
                         autoPlay
                         loop
                         muted
@@ -53,7 +53,7 @@ function SplashCard({ backgroundColor, number, mediaSrc, textLine1, textLine2, i
                     <img 
                         src={mediaSrc}
                         alt="Character" 
-                        className={`w-full h-auto object-contain ${isSecondCard ? 'object-bottom scale-[1.15] translate-y-[8%]' : 'object-bottom'}`}
+                        className={`w-full h-auto object-contain ${isSecondCard ? 'object-bottom scale-[1.15] translate-y-[8%]' : isThirdCard ? 'object-bottom' : 'object-bottom'}`}
                         loading="eager"
                         decoding="async"
                         fetchPriority="high"
@@ -113,11 +113,11 @@ function MobileSplashScreen() {
         { 
             backgroundColor: '#4e985d', 
             number: '03', 
-            mediaSrc: '/assets/image-51.png',
+            mediaSrc: '/assets/Untitled design (2).png',
             textLine1: 'Create Memories',
             textLine2: 'Not doom scrolling',
             isSecondCard: false,
-            isThirdCard: false,
+            isThirdCard: true,
             isVideo: false,
             bgColor: '#c8e6d0',
             dotColor: '#4e985d',
@@ -141,12 +141,12 @@ function MobileSplashScreen() {
             return;
         }
 
-        // If user is authenticated and on last slide, navigate to welcome
-        if (identity && currentIndex === cards.length - 1) {
+        // If user is authenticated and on slide 3, navigate to welcome
+        if (identity && currentIndex === 2) {
             hasNavigatedRef.current = true;
             navigate({ to: '/welcome' });
         }
-    }, [identity, currentIndex, navigate, isInitializing, cards.length]);
+    }, [identity, currentIndex, navigate, isInitializing]);
 
     // Cleanup function for all timeouts
     const clearAllTimeouts = useCallback(() => {
@@ -162,8 +162,8 @@ function MobileSplashScreen() {
 
     // Core transition function - handles all slide transitions
     const transitionToSlide = useCallback((newIndex: number, direction: 'forward' | 'backward') => {
-        // Prevent invalid transitions (now 3 slides: 0-2)
-        if (newIndex < 0 || newIndex >= cards.length || newIndex === currentIndex || isTransitioning) {
+        // Prevent invalid transitions
+        if (newIndex < 0 || newIndex > 2 || newIndex === currentIndex || isTransitioning) {
             return;
         }
 
@@ -182,12 +182,12 @@ function MobileSplashScreen() {
             setIsTransitioning(false);
             transitionTimeoutRef.current = null;
         }, animationDuration);
-    }, [currentIndex, isTransitioning, clearAllTimeouts, cards.length]);
+    }, [currentIndex, isTransitioning, clearAllTimeouts]);
 
-    // Auto-play functionality with extended first slide duration and stopping on last card
+    // Auto-play functionality with extended first slide duration and stopping on third card
     useEffect(() => {
         // Don't auto-play if on last slide or currently transitioning
-        if (currentIndex >= cards.length - 1 || isTransitioning) {
+        if (currentIndex >= 2 || isTransitioning) {
             return;
         }
 
@@ -204,7 +204,7 @@ function MobileSplashScreen() {
                 autoPlayTimeoutRef.current = null;
             }
         };
-    }, [currentIndex, isTransitioning, transitionToSlide, cards.length]);
+    }, [currentIndex, isTransitioning, transitionToSlide]);
 
     // Cleanup on unmount
     useEffect(() => {
@@ -260,7 +260,7 @@ function MobileSplashScreen() {
 
     // Handle forward navigation
     const handleNextClick = () => {
-        if (currentIndex >= cards.length - 1 || isTransitioning) return;
+        if (currentIndex >= 2 || isTransitioning) return;
         transitionToSlide(currentIndex + 1, 'forward');
     };
 
@@ -363,7 +363,7 @@ function MobileSplashScreen() {
                         {/* Next text - bottom-right corner */}
                         <button
                             onClick={handleNextClick}
-                            disabled={currentIndex >= cards.length - 1 || isTransitioning}
+                            disabled={currentIndex >= 2 || isTransitioning}
                             className="nav-control-text"
                             style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
                         >
@@ -371,8 +371,8 @@ function MobileSplashScreen() {
                         </button>
                     </div>
 
-                    {/* Progress Dots (Slides 1-2) or Sign In Button (Slide 3) - with higher z-index */}
-                    {currentIndex < cards.length - 1 ? (
+                    {/* Progress Dots (Slides 1 & 2) or Sign In Button (Slide 3) - with higher z-index */}
+                    {currentIndex < 2 ? (
                         <div className="flex gap-2 items-center justify-center z-50">
                             <div 
                                 className="w-2 h-2 rounded-full animate-wave-bounce-1 transition-colors duration-500"
@@ -385,10 +385,6 @@ function MobileSplashScreen() {
                             <div 
                                 className="w-2 h-2 rounded-full animate-wave-bounce-3 transition-colors duration-500"
                                 style={{ backgroundColor: getDotColor() }}
-                            ></div>
-                            <div 
-                                className="w-2 h-2 rounded-full animate-wave-bounce-1 transition-colors duration-500"
-                                style={{ backgroundColor: getDotColor(), animationDelay: '0.6s' }}
                             ></div>
                         </div>
                     ) : (

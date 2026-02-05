@@ -2,9 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { usePlannedMoments } from '../hooks/usePlannedMoments';
 import PlannedMomentBottomSheet from '../components/PlannedMomentBottomSheet';
-import InlineToast from '../components/InlineToast';
 import { ChevronLeft, ChevronRight, MoreVertical } from 'lucide-react';
-import { useBackSlideNavigation } from '../hooks/useBackSlideNavigation';
 
 interface PhotoMetadata {
   id: number;
@@ -20,12 +18,11 @@ interface CalendarDate {
   isSelected: boolean;
   hasPhotoMoments: boolean;
   hasPlannedMoments: boolean;
-  plannedMomentColor?: string;
+  plannedSegmentColors: string[];
 }
 
 function CalendarPage() {
   const navigate = useNavigate();
-  const { isExiting, handleBackWithSlide } = useBackSlideNavigation(() => navigate({ to: '/home' }));
   const [currentDate] = useState(new Date());
   const [weekStartDate, setWeekStartDate] = useState(() => {
     const today = new Date();
@@ -37,17 +34,16 @@ function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [weekDates, setWeekDates] = useState<CalendarDate[]>([]);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const { moments: plannedMoments, datesWithMoments, dateColorMap, addMoment } = usePlannedMoments(selectedDate);
+  const { moments: plannedMoments, datesWithMoments, dateSegmentColors, addMoment } = usePlannedMoments(selectedDate);
 
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
   useEffect(() => {
     generateWeekDates();
-  }, [weekStartDate, datesWithMoments, dateColorMap]);
+  }, [weekStartDate, datesWithMoments, dateSegmentColors]);
 
   const generateWeekDates = () => {
     const dates: CalendarDate[] = [];
@@ -61,7 +57,7 @@ function CalendarPage() {
       const hasPhotoMoments = checkIfDateHasPhotoMoments(date);
       const hasPlannedMoments = checkIfDateHasPlannedMoments(date);
       const dateStr = formatDateToISO(date);
-      const plannedMomentColor = dateColorMap.get(dateStr);
+      const plannedSegmentColors = dateSegmentColors.get(dateStr) || [];
 
       dates.push({
         date: date.getDate(),
@@ -71,7 +67,7 @@ function CalendarPage() {
         isSelected,
         hasPhotoMoments,
         hasPlannedMoments,
-        plannedMomentColor,
+        plannedSegmentColors,
       });
     }
 
@@ -144,12 +140,12 @@ function CalendarPage() {
     setWeekStartDate(newStart);
   };
 
-  const handleChangeDate = (newDate: Date) => {
-    setSelectedDate(newDate);
+  const handleBack = () => {
+    navigate({ to: '/home' });
   };
 
-  const handleDuplicateDate = () => {
-    setToastMessage('You can only have one moment per day');
+  const handleChangeDate = (newDate: Date) => {
+    setSelectedDate(newDate);
   };
 
   const formatTime = (time: string): string => {
@@ -177,15 +173,15 @@ function CalendarPage() {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black overflow-hidden">
       <div
-        className={`relative w-full h-full max-w-[390px] max-h-[844px] overflow-hidden flex flex-col ${isExiting ? 'slide-back-exit' : ''}`}
+        className="relative w-full h-full max-w-[390px] max-h-[844px] overflow-hidden flex flex-col"
         style={{ background: '#ffffff' }}
       >
         {/* Header */}
         <header className="relative w-full px-4 pt-4 pb-2 flex items-center justify-between border-b border-gray-200">
           <button
-            onClick={handleBackWithSlide}
+            onClick={handleBack}
             className="w-8 h-8 flex items-center justify-center text-black hover:opacity-70 transition-opacity no-pulse"
-            aria-label="Back to home"
+            aria-label="Back"
           >
             <i className="fa fa-arrow-left text-base"></i>
           </button>
@@ -265,29 +261,39 @@ function CalendarPage() {
                         borderRadius: dateInfo.isToday && !dateInfo.isSelected ? '12px' : dateInfo.isSelected ? '50%' : '0',
                       }}
                     >
-                      {dateInfo.hasPlannedMoments && dateInfo.plannedMomentColor && !dateInfo.isSelected && !dateInfo.isToday && (
-                        <div
-                          className="absolute inset-0 rounded-full"
-                          style={{
-                            border: `2px solid ${dateInfo.plannedMomentColor}`,
-                            width: '32px',
-                            height: '32px',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                          }}
-                        />
+                      {dateInfo.hasPlannedMoments && dateInfo.plannedSegmentColors.length > 0 && !dateInfo.isSelected && !dateInfo.isToday && (
+                        <div className="absolute inset-0 rounded-full flex" style={{ width: '32px', height: '32px', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', overflow: 'hidden' }}>
+                          {dateInfo.plannedSegmentColors.slice(0, 3).map((color, idx) => (
+                            <div
+                              key={idx}
+                              style={{
+                                backgroundColor: color,
+                                width: `${100 / Math.min(dateInfo.plannedSegmentColors.length, 3)}%`,
+                                height: '100%',
+                                opacity: 0.3,
+                              }}
+                            />
+                          ))}
+                        </div>
                       )}
                       {dateInfo.date}
                     </div>
                     {(dateInfo.hasPhotoMoments || dateInfo.hasPlannedMoments) && (
                       <div className="flex gap-0.5 mt-1">
-                        {dateInfo.hasPlannedMoments && (
-                          <div
-                            className={`w-1 h-1 rounded-full transition-colors ${
-                              dateInfo.isToday || dateInfo.isSelected ? 'bg-white' : 'bg-orange-500'
-                            }`}
-                          ></div>
+                        {dateInfo.hasPlannedMoments && dateInfo.plannedSegmentColors.length > 0 && (
+                          <div className="flex gap-0.5">
+                            {dateInfo.plannedSegmentColors.slice(0, 3).map((color, idx) => (
+                              <div
+                                key={idx}
+                                className={`w-1 h-1 rounded-full transition-colors ${
+                                  dateInfo.isToday || dateInfo.isSelected ? 'bg-white' : ''
+                                }`}
+                                style={{
+                                  backgroundColor: dateInfo.isToday || dateInfo.isSelected ? 'white' : color,
+                                }}
+                              />
+                            ))}
+                          </div>
                         )}
                         {dateInfo.hasPhotoMoments && (
                           <div
@@ -370,17 +376,6 @@ function CalendarPage() {
           selectedDate={selectedDate}
           onSave={addMoment}
           onChangeDate={handleChangeDate}
-          onDuplicateDate={handleDuplicateDate}
-        />
-      )}
-
-      {/* Toast notification */}
-      {toastMessage && (
-        <InlineToast
-          message={toastMessage}
-          placement="side"
-          variant="warning"
-          onClose={() => setToastMessage(null)}
         />
       )}
     </div>

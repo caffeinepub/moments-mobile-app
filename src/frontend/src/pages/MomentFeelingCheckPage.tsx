@@ -1,25 +1,18 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { loadSavedMomentId, clearDraft } from '../utils/pendingMomentDraftStorage';
-import { updateMomentsPhoto } from '../utils/momentsPhotosStorage';
-import { FEELING_OPTIONS, MomentFeeling } from '../utils/momentFeelings';
-import { useGentleAutoScroll } from '../hooks/useGentleAutoScroll';
-import { addNotification } from '../utils/localNotificationsStorage';
+import { updateMomentsPhoto, MomentFeeling } from '../utils/momentsPhotosStorage';
+
+const FEELING_OPTIONS: { value: MomentFeeling; label: string; icon: string }[] = [
+  { value: 'Meaningful', label: 'Meaningful', icon: '❤️' },
+  { value: 'Good', label: 'Good', icon: '🙂' },
+  { value: 'Okay', label: 'Okay', icon: '😐' }
+];
 
 function MomentFeelingCheckPage() {
   const navigate = useNavigate();
   const [momentId, setMomentId] = useState<number | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [error, setError] = useState<string>('');
-  const [isFirstFeeling, setIsFirstFeeling] = useState(false);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  // Enable gentle auto-scroll
-  useGentleAutoScroll(scrollContainerRef, {
-    speed: 25,
-    idleDelay: 2500,
-    enabled: true,
-  });
 
   useEffect(() => {
     const id = loadSavedMomentId();
@@ -29,44 +22,25 @@ function MomentFeelingCheckPage() {
       return;
     }
     setMomentId(id);
-    
-    // Check if this is the first feeling check
-    const triggersData = localStorage.getItem('notification_triggers');
-    const triggers = triggersData ? JSON.parse(triggersData) : {};
-    setIsFirstFeeling(!triggers['first-feeling-check']);
   }, [navigate]);
 
   const handleSelectFeeling = async (feeling: MomentFeeling) => {
     if (!momentId) return;
     
     setIsUpdating(true);
-    setError('');
-    
     try {
       // Update the moment with the selected feeling
-      const result = updateMomentsPhoto(momentId, { feeling });
-
-      if (!result.success) {
-        setError(result.error || 'Failed to save feeling. Please try again.');
-        setIsUpdating(false);
-        return;
-      }
-
-      // Trigger notification for first feeling check
-      if (isFirstFeeling) {
-        addNotification('first-feeling-check');
-      }
+      updateMomentsPhoto(momentId, { feeling });
 
       // Clear draft data
       clearDraft();
 
-      // Navigate to vault to show the newly saved moment
+      // Navigate to home
       setTimeout(() => {
-        navigate({ to: `/vault/${momentId}` });
+        navigate({ to: '/home' });
       }, 300);
     } catch (err) {
       console.error('Failed to update moment feeling:', err);
-      setError('An unexpected error occurred. Please try again.');
       setIsUpdating(false);
     }
   };
@@ -81,7 +55,7 @@ function MomentFeelingCheckPage() {
         className="relative w-full h-full max-w-[390px] max-h-[844px] overflow-hidden flex flex-col items-center justify-center"
         style={{ background: '#f5f0e8' }}
       >
-        <div className="px-8 text-center space-y-8 w-full max-w-md">
+        <div className="px-8 text-center space-y-8">
           {/* Question */}
           <h1
             className="text-3xl font-bold text-gray-900"
@@ -90,27 +64,18 @@ function MomentFeelingCheckPage() {
             How did this feel?
           </h1>
 
-          {/* Error message */}
-          {error && (
-            <div className="bg-red-500 text-white px-4 py-3 rounded-2xl text-sm font-medium">
-              {error}
-            </div>
-          )}
-
-          {/* Feeling options - scrollable list with custom scrollbar and auto-scroll */}
-          <div 
-            ref={scrollContainerRef}
-            className="max-h-[60vh] overflow-y-auto space-y-3 px-2 feeling-list-scrollbar"
-          >
+          {/* Feeling options */}
+          <div className="space-y-4">
             {FEELING_OPTIONS.map((option) => (
               <button
                 key={option.value}
                 onClick={() => handleSelectFeeling(option.value)}
                 disabled={isUpdating}
-                className="feeling-option-pill"
+                className="w-full px-8 py-5 rounded-2xl bg-white border-2 border-gray-200 hover:border-yellow-400 hover:bg-yellow-50 transition-all disabled:opacity-50 flex items-center justify-center gap-4"
+                style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
               >
-                <span className="feeling-option-emoji">{option.emoji}</span>
-                <span className="feeling-option-label">{option.label}</span>
+                <span className="text-4xl">{option.icon}</span>
+                <span className="text-xl font-semibold text-gray-900">{option.label}</span>
               </button>
             ))}
           </div>

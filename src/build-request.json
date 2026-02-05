@@ -1,32 +1,51 @@
 {
   "kind": "build_request",
-  "title": "Deploy current draft to live",
+  "title": "Make Draft 146 the live deployment (prevent rollback to 125)",
   "priority": "high",
   "requirements": [
     {
-      "id": "REQ-4",
-      "text": "Promote the currently deployed draft build (Draft Version 140) to the live production deployment so end users receive the latest version.",
+      "id": "REQ-13",
+      "text": "Promote Draft Version 146 to be the active live deployment and ensure the app no longer reverts back to Version 125 after deployment completes.",
       "target": "unknown",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-1"
         ],
         "quotes": [
-          "deploy live now"
+          "yes build..thanks"
         ]
       },
       "acceptanceCriteria": [
-        "Live/production environment serves the same app version as Draft Version 140",
-        "A live URL (or environment identifier) is provided confirming the production deployment completed successfully"
+        "After the deployment completes, the live/active version reported by the platform is 146 (not 125).",
+        "Refreshing the app and/or reloading the deployment status page does not cause the live version to revert back to 125.",
+        "A subsequent no-op redeploy does not change the live version away from 146 unless explicitly requested."
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "text": "Remove Version 125 from being the active live deployment (i.e., ensure Version 125 is no longer the live version once 146 is live).",
+      "target": "unknown",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "i want it live like delete the current 125 from been live and make 146 live"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Version 125 is not the currently live/active deployment after promotion of 146.",
+        "Users accessing the app receive the 146 build artifacts (UI/behavior matches Draft 146), not 125."
       ]
     }
   ],
   "constraints": [
-    "No code changes are requested; this is a deployment/promotion-only request."
+    "Do not modify any files under frontend/immutablePaths (frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui).",
+    "Backend must remain a single-actor Motoko canister with all logic in backend/main.mo; only add backend/migration.mo if an upgrade requires state migration."
   ],
   "nonGoals": [
-    "Implementing new features or UI changes",
-    "Backend schema/state migrations"
+    "Do not implement new product features (UI changes, planning flow changes, vault changes, etc.) beyond what is required to make 146 the live version.",
+    "Do not change authentication behavior or Internet Identity flows."
   ],
   "imageRequirements": {
     "required": [],

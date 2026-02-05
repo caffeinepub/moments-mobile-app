@@ -1,7 +1,5 @@
 // Local-first storage for planned moments (separate from photo moments)
 
-import { addNotification } from './localNotificationsStorage';
-
 export interface PlannedMoment {
   id: string;
   date: string; // ISO date string (YYYY-MM-DD)
@@ -12,24 +10,18 @@ export interface PlannedMoment {
   createdAt: number;
 }
 
-export interface SaveResult {
-  success: boolean;
-  moment?: PlannedMoment;
-  error?: 'duplicate-date' | 'unknown';
-}
-
 const STORAGE_KEY = 'plannedMoments';
 const STORAGE_EVENT_NAME = 'plannedMomentsChanged';
 
-// New muted/pastel OKLCH color palette for planned moments
+// Color palette for planned moments - vibrant, distinct colors
 const COLOR_PALETTE = [
-  'oklch(90% 0.04 25)',   // Very soft coral/peach
-  'oklch(92% 0.03 60)',   // Very soft yellow/cream
-  'oklch(91% 0.03 120)',  // Very soft mint green
-  'oklch(89% 0.04 180)',  // Very soft sky blue
-  'oklch(90% 0.05 250)',  // Very soft lavender
-  'oklch(92% 0.04 320)',  // Very soft pink
-  'oklch(91% 0.03 40)',   // Very soft apricot
+  'oklch(65% 0.20 25)',   // Red/coral
+  'oklch(65% 0.18 40)',   // Orange/amber
+  'oklch(70% 0.15 85)',   // Yellow
+  'oklch(65% 0.18 145)',  // Green
+  'oklch(65% 0.18 220)',  // Blue
+  'oklch(65% 0.20 280)',  // Purple
+  'oklch(70% 0.18 330)',  // Pink/magenta
 ];
 
 // Deterministic color selection based on date string
@@ -60,30 +52,8 @@ export function loadPlannedMoments(): PlannedMoment[] {
   }
 }
 
-export function loadPlannedMomentsMostRecentFirst(): PlannedMoment[] {
+export function savePlannedMoment(moment: Omit<PlannedMoment, 'id' | 'createdAt'>): PlannedMoment {
   const moments = loadPlannedMoments();
-  return moments.sort((a, b) => b.createdAt - a.createdAt);
-}
-
-// Check if a date already has a planned moment
-function hasPlannedMomentOnDate(dateStr: string): boolean {
-  const moments = loadPlannedMoments();
-  return moments.some(m => m.date === dateStr);
-}
-
-// Save with one-per-day enforcement
-export function savePlannedMoment(moment: Omit<PlannedMoment, 'id' | 'createdAt'>): SaveResult {
-  // Check for existing moment on this date
-  if (hasPlannedMomentOnDate(moment.date)) {
-    return {
-      success: false,
-      error: 'duplicate-date',
-    };
-  }
-
-  const moments = loadPlannedMoments();
-  const isFirstMoment = moments.length === 0;
-  
   const newMoment: PlannedMoment = {
     ...moment,
     id: `moment_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -95,31 +65,7 @@ export function savePlannedMoment(moment: Omit<PlannedMoment, 'id' | 'createdAt'
   // Emit change event for immediate UI updates
   emitStorageChange();
   
-  // Trigger notification for first planned moment
-  if (isFirstMoment) {
-    addNotification('first-planned-moment');
-  }
-  
-  return {
-    success: true,
-    moment: newMoment,
-  };
-}
-
-export function deletePlannedMoment(momentId: string): boolean {
-  const moments = loadPlannedMoments();
-  const filteredMoments = moments.filter(m => m.id !== momentId);
-  
-  if (filteredMoments.length === moments.length) {
-    return false; // Moment not found
-  }
-  
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(filteredMoments));
-  
-  // Emit change event for immediate UI updates
-  emitStorageChange();
-  
-  return true;
+  return newMoment;
 }
 
 export function getPlannedMomentsForDate(date: Date): PlannedMoment[] {
@@ -135,17 +81,36 @@ export function getDatesWithMoments(): Set<string> {
   return new Set(moments.map(m => m.date));
 }
 
-export function getDateColorMap(): Map<string, string> {
+// Get up to 3 color segments per date (deterministic)
+export function getDateSegmentColors(): Map<string, string[]> {
   const moments = loadPlannedMoments();
-  const colorMap = new Map<string, string>();
+  const segmentMap = new Map<string, string[]>();
   
-  // Use deterministic color per date
-  const datesWithMoments = new Set(moments.map(m => m.date));
-  datesWithMoments.forEach(date => {
-    colorMap.set(date, getColorForDate(date));
+  // Group moments by date
+  const momentsByDate = new Map<string, PlannedMoment[]>();
+  moments.forEach(moment => {
+    const existing = momentsByDate.get(moment.date) || [];
+    existing.push(moment);
+    momentsByDate.set(moment.date, existing);
   });
   
-  return colorMap;
+  // For each date, pick up to 3 colors deterministically
+  momentsByDate.forEach((dateMoments, date) => {
+    // Sort by time for deterministic selection
+    const sorted = dateMoments.sort((a, b) => a.time.localeCompare(b.time));
+    // Take up to 3 colors
+    const colors = sorted.slice(0, 3).map(m => m.color);
+    segmentMap.set(date, colors);
+  });
+  
+  return segmentMap;
+}
+
+// Get sorted list of dates with planned moments
+export function getSortedDatesWithMoments(): string[] {
+  const moments = loadPlannedMoments();
+  const dateSet = new Set(moments.map(m => m.date));
+  return Array.from(dateSet).sort();
 }
 
 function formatDateToISO(date: Date): string {
@@ -155,14 +120,9 @@ function formatDateToISO(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
-// Subscribe to storage changes - filtered to only planned moments key
+// Subscribe to storage changes
 export function subscribeToStorageChanges(callback: () => void): () => void {
-  const handleStorageChange = (e: StorageEvent) => {
-    // Only trigger callback if the changed key matches our storage key
-    if (e.key === STORAGE_KEY || e.key === null) {
-      callback();
-    }
-  };
+  const handleStorageChange = () => callback();
   const handleCustomEvent = () => callback();
   
   // Listen to both storage events (cross-tab) and custom events (same-tab)

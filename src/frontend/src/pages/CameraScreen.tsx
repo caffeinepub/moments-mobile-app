@@ -130,21 +130,12 @@ function CameraScreen() {
                 {/* Camera preview or captured photo */}
                 <div className="flex-1 relative overflow-hidden">
                     {capturedPhoto ? (
-                        // Show captured photo or video
-                        capturedPhotoType.startsWith('video/') ? (
-                            <video
-                                src={capturedPhoto}
-                                className="w-full h-full object-cover"
-                                controls
-                                playsInline
-                            />
-                        ) : (
-                            <img
-                                src={capturedPhoto}
-                                alt="Captured"
-                                className="w-full h-full object-cover"
-                            />
-                        )
+                        // Show captured photo
+                        <img
+                            src={capturedPhoto}
+                            alt="Captured"
+                            className="w-full h-full object-cover"
+                        />
                     ) : (
                         <>
                             {/* Live camera feed */}
@@ -260,7 +251,7 @@ function CameraScreen() {
                             <label className="text-white text-sm cursor-pointer hover:opacity-70 transition-opacity">
                                 <input
                                     type="file"
-                                    accept="image/*,video/*"
+                                    accept="image/*"
                                     onChange={handleFileUpload}
                                     className="hidden"
                                 />

@@ -2,12 +2,9 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useProfile } from '../hooks/useProfile';
 import InlineToast from '../components/InlineToast';
-import { useBackSlideNavigation } from '../hooks/useBackSlideNavigation';
-import { addNotification } from '../utils/localNotificationsStorage';
 
 function ProfilePage() {
   const navigate = useNavigate();
-  const { isExiting, handleBackWithSlide } = useBackSlideNavigation(() => navigate({ to: '/home' }));
   const { profile, updateProfile } = useProfile();
   const [displayName, setDisplayName] = useState(profile.displayName || '');
   const [location, setLocation] = useState(profile.location || '');
@@ -17,8 +14,6 @@ function ProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSave = () => {
-    const isFirstSave = !profile.displayName && displayName.trim();
-    
     updateProfile({
       displayName: displayName.trim() || undefined,
       location: location.trim() || undefined,
@@ -26,12 +21,6 @@ function ProfilePage() {
     });
     setToastMessage('Profile saved successfully');
     setShowToast(true);
-    
-    // Trigger notification for first profile save
-    if (isFirstSave) {
-      addNotification('first-profile-save');
-    }
-    
     setTimeout(() => {
       navigate({ to: '/home' });
     }, 1500);
@@ -72,6 +61,10 @@ function ProfilePage() {
     }
   };
 
+  const handleClose = () => {
+    navigate({ to: '/home' });
+  };
+
   const handleSettingsClick = () => {
     navigate({ to: '/settings' });
   };
@@ -79,15 +72,15 @@ function ProfilePage() {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black overflow-hidden">
       <div
-        className={`relative w-full h-full max-w-[390px] max-h-[844px] overflow-hidden flex flex-col ${isExiting ? 'slide-back-exit' : ''}`}
+        className="relative w-full h-full max-w-[390px] max-h-[844px] overflow-hidden flex flex-col"
         style={{ background: '#f5f0e8' }}
       >
         {/* Header */}
         <header className="relative w-full px-8 pt-8 pb-4 flex items-center justify-between">
           <button
-            onClick={handleBackWithSlide}
+            onClick={handleClose}
             className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-200 transition-colors"
-            aria-label="Back to home"
+            aria-label="Close"
           >
             <i className="fa fa-arrow-left text-gray-700 text-xl"></i>
           </button>

@@ -1,25 +1,56 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Promote Draft Version 140 to production (deployment-only)",
+  "title": "Frontend build-version pinning and cache-bust safeguards to keep Draft 146 active",
   "requirements": [
     {
-      "id": "REQ-4",
-      "summary": "Promote Draft Version 140 to the live production deployment without making application code changes.",
+      "id": "REQ-13",
+      "summary": "Add frontend build/version stamping and a one-time cache refresh guard so clients consistently load Draft 146 artifacts and do not fall back to older cached builds.",
       "acceptanceCriteria": [
-        "Live/production environment serves the same app version as Draft Version 140",
-        "A live URL (or environment identifier) is provided confirming the production deployment completed successfully"
+        "After the deployment completes, the live/active version reported by the platform is 146 (not 125).",
+        "Refreshing the app and/or reloading the deployment status page does not cause the live version to revert back to 125.",
+        "A subsequent no-op redeploy does not change the live version away from 146 unless explicitly requested."
       ],
       "file_operations": [
         {
-          "path": "frontend/DEPLOYMENT_PROMOTION.md",
-          "operation": "create",
-          "description": "Document the deployment/promotion procedure to promote Draft Version 140 to production using the repository’s existing build/deploy tooling (no app code changes), including required pre-checks (confirm current draft/production versions) and post-checks (confirm production now matches v140)."
+          "path": "frontend/index.html",
+          "operation": "modify",
+          "description": "Stamp the deployed frontend with a Draft 146 build marker (e.g., a meta tag or other static build identifier) so the running client can reliably detect it is on version 146 during load and for diagnostics."
         },
         {
-          "path": "frontend/DEPLOYMENT_STATUS.md",
+          "path": "frontend/src/utils/buildInfo.ts",
           "operation": "create",
-          "description": "Add a lightweight release record template to capture the promotion confirmation for Draft Version 140 (date/time, operator, production environment identifier/live URL, and verification notes that production matches v140)."
+          "description": "Add a single source of truth for the current frontend build identifier (set to 146) and helper(s) to read the build marker from the DOM/environment for runtime verification."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wire a lightweight startup guard that compares the current build identifier (146) with the last-seen build in localStorage/session and triggers a one-time hard refresh strategy on mismatch to reduce chances of clients continuing to run older cached assets (e.g., 125). Also log the active build identifier to the console for verification without changing authentication behavior."
+        }
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "summary": "Ensure clients no longer effectively receive Version 125 frontend artifacts by making the app self-identify as 146 and self-correct stale cached loads.",
+      "acceptanceCriteria": [
+        "Version 125 is not the currently live/active deployment after promotion of 146.",
+        "Users accessing the app receive the 146 build artifacts (UI/behavior matches Draft 146), not 125."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/index.html",
+          "operation": "modify",
+          "description": "Ensure the stamped build marker explicitly indicates version 146 so any served HTML associated with the live deployment cannot ambiguously present as 125."
+        },
+        {
+          "path": "frontend/src/utils/buildInfo.ts",
+          "operation": "modify",
+          "description": "Expose a small verification helper that returns the current expected build (146) and can be used by the app to confirm it is running the correct build artifacts."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wire the build verification helper so the app can detect and correct stale loads (e.g., showing/logging that it is not 146 and forcing a single corrective reload), reducing cases where users are effectively kept on 125 due to caching."
         }
       ]
     }

@@ -1,80 +1,142 @@
-import { MomentsPhoto } from '../utils/momentsPhotosStorage';
-import { formatRelativeTime } from '../utils/timeFormat';
-import { getFeelingEmoji } from '../utils/momentFeelings';
+import React from 'react';
+import { MomentFeeling } from '../utils/momentsPhotosStorage';
 
 interface MomentsImageCardProps {
-  moment: MomentsPhoto;
-  userName?: string;
-  userLocation?: string;
-  userAvatar?: string;
+  imageUrl: string;
+  profilePicture?: string;
+  displayName?: string;
+  location?: string;
+  timestamp: string;
+  who?: string;
+  reflection?: string;
+  feeling?: MomentFeeling;
 }
 
-function MomentsImageCard({ moment, userName, userLocation, userAvatar }: MomentsImageCardProps) {
+function MomentsImageCard({
+  imageUrl,
+  profilePicture,
+  displayName,
+  location,
+  timestamp,
+  who,
+  reflection,
+  feeling,
+}: MomentsImageCardProps) {
   return (
-    <div className="glass-card rounded-3xl overflow-hidden w-full max-w-md mx-auto">
-      {/* Header row */}
-      <div className="flex items-center gap-3 p-4">
-        {/* Avatar */}
-        <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
-          {userAvatar ? (
-            <img src={userAvatar} alt={userName || 'User'} className="w-full h-full object-cover" />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm font-semibold">
-              {userName?.charAt(0).toUpperCase() || 'U'}
+    <div className="w-full px-10">
+      <div
+        className="glass-card relative w-full overflow-hidden"
+        style={{
+          borderRadius: '20px',
+        }}
+      >
+        {/* Header row with avatar, name, location, timestamp */}
+        <div className="flex items-center gap-3 p-4">
+          {/* Profile avatar */}
+          <div
+            className="flex-shrink-0 rounded-full overflow-hidden border-2 border-gray-200"
+            style={{ width: '48px', height: '48px' }}
+          >
+            {profilePicture ? (
+              <img
+                src={profilePicture}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                <i className="fa fa-user text-gray-400 text-xl"></i>
+              </div>
+            )}
+          </div>
+
+          {/* Name and location */}
+          <div className="flex-1 min-w-0">
+            <p
+              className="font-semibold text-gray-900 truncate"
+              style={{
+                fontFamily: "'Bricolage Grotesque', sans-serif",
+                fontSize: '15px',
+              }}
+            >
+              {displayName || 'Anonymous'}
+            </p>
+            <p
+              className="text-gray-500 text-xs truncate"
+              style={{
+                fontFamily: "'Bricolage Grotesque', sans-serif",
+              }}
+            >
+              {location || 'Location not set'}
+            </p>
+          </div>
+
+          {/* Timestamp */}
+          <div
+            className="text-gray-400 text-xs flex-shrink-0"
+            style={{
+              fontFamily: "'Bricolage Grotesque', sans-serif",
+            }}
+          >
+            {timestamp}
+          </div>
+        </div>
+
+        {/* Main image */}
+        <div className="relative w-full" style={{ aspectRatio: '4 / 5' }}>
+          <img
+            src={imageUrl}
+            alt="Moment"
+            className="w-full h-full object-cover"
+          />
+        </div>
+
+        {/* Bottom metadata section - quiet and private */}
+        <div
+          className="px-4 py-3 space-y-2"
+          style={{
+            backgroundColor: '#FFF9E6',
+            borderBottomLeftRadius: '20px',
+            borderBottomRightRadius: '20px',
+          }}
+        >
+          {/* Who */}
+          {who && (
+            <p
+              className="text-sm text-gray-700"
+              style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
+            >
+              <span className="font-semibold">With:</span> {who}
+            </p>
+          )}
+
+          {/* Reflection */}
+          {reflection && (
+            <p
+              className="text-sm text-gray-600 italic"
+              style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
+            >
+              "{reflection}"
+            </p>
+          )}
+
+          {/* Feeling */}
+          {feeling && (
+            <div className="flex items-center gap-2 pt-1">
+              <span className="text-lg">
+                {feeling === 'Meaningful' && '❤️'}
+                {feeling === 'Good' && '🙂'}
+                {feeling === 'Okay' && '😐'}
+              </span>
+              <span
+                className="text-xs text-gray-500"
+                style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
+              >
+                {feeling}
+              </span>
             </div>
           )}
         </div>
-
-        {/* Name and location */}
-        <div className="flex-1 min-w-0">
-          <p className="font-semibold text-gray-900 text-sm truncate">
-            {userName || 'Anonymous'}
-          </p>
-          {userLocation && (
-            <p className="text-xs text-gray-600 truncate">
-              {userLocation}
-            </p>
-          )}
-        </div>
-
-        {/* Timestamp */}
-        <p className="text-xs text-gray-500 flex-shrink-0">
-          {formatRelativeTime(moment.timestamp)}
-        </p>
-      </div>
-
-      {/* Large image */}
-      <div className="relative w-full aspect-[3/4] bg-gray-100">
-        <img
-          src={moment.data}
-          alt="Moment"
-          className="w-full h-full object-cover"
-        />
-      </div>
-
-      {/* Bottom metadata section - quiet, no social actions */}
-      <div className="p-4 space-y-2">
-        {/* Who */}
-        {moment.who && (
-          <p className="text-sm text-gray-700">
-            <span className="font-medium">With:</span> {moment.who}
-          </p>
-        )}
-
-        {/* Reflection */}
-        {moment.reflection && (
-          <p className="text-sm text-gray-700 italic">
-            "{moment.reflection}"
-          </p>
-        )}
-
-        {/* Feeling */}
-        {moment.feeling && (
-          <div className="flex items-center gap-2 text-sm text-gray-700">
-            <span className="text-lg">{getFeelingEmoji(moment.feeling)}</span>
-            <span className="font-medium">{moment.feeling}</span>
-          </div>
-        )}
       </div>
     </div>
   );
